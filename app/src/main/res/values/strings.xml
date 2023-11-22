@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">PrivacyManager</string>
+    <string name="edit_rule">Edit rule</string>
+    <string name="delete_rule">Delete rule</string>
+    <string name="test_rule">Test rule</string>
+    <string name="rules_title">La tue regole</string>
+    <string name="new_rule">New rule</string>
+    <string name="create_new_rule">Crea una nuova regola</string>
+    <string name="create_button">Crea</string>
+    <string name="cancel_button">Annulla</string>
+    <string name="delete_rule_text">Desideri cancellare \"Test rule\"?</string>
+    <string name="confirm_button">Conferma</string>
+    <string name="test_saved_rule">Test rule</string>
+    <string name="saved_rule_app">Le app</string>
+</resources>
