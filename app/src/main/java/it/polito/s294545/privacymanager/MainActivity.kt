@@ -2,8 +2,10 @@ package it.polito.s294545.privacymanager
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -19,13 +21,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Set the toolbar as the app bar
-        val toolbarLayout = findViewById<ConstraintLayout>(R.id.toolbarLayout)
-        val toolbar = toolbarLayout.findViewById<MaterialToolbar>(R.id.toolbar)
-        //toolbar.setNavigationIcon(R.drawable.icons_cross)
-        //toolbar.setNavigationIconTint(resources.getColor(R.color.white))
-        setSupportActionBar(toolbar)
-
+        // Manage select saved rule
+        val ruleButton = findViewById<Button>(R.id.button_rule)
+        ruleButton.setOnClickListener {
+            val intent = Intent(this, SavedRuleActivity::class.java)
+            startActivity(intent)
+        }
 
         // Manage insert new rule button
         val newRuleButton = findViewById<FloatingActionButton>(R.id.new_rule)
