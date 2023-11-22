@@ -22,6 +22,8 @@ class MainActivity : AppCompatActivity() {
         // Set the toolbar as the app bar
         val toolbarLayout = findViewById<ConstraintLayout>(R.id.toolbarLayout)
         val toolbar = toolbarLayout.findViewById<MaterialToolbar>(R.id.toolbar)
+        //toolbar.setNavigationIcon(R.drawable.icons_cross)
+        //toolbar.setNavigationIconTint(resources.getColor(R.color.white))
         setSupportActionBar(toolbar)
 
 
