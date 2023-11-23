@@ -14,7 +14,15 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbarLayout"
+        android:layout_above="@+id/dots_indicator"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/margin_top_title"
+        android:layout_marginBottom="@dimen/margin_top_title"
+        android:layout_marginStart="@dimen/margin_top_title"
+        android:layout_marginEnd="@dimen/margin_top_title"/>
 
     <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
         android:id="@+id/dots_indicator"
@@ -22,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/buttons_container"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="@dimen/margin_top_title"
         app:dotsColor="@color/dark_grey"
         app:dotsCornerRadius="8dp"
         app:dotsSize="18dp"
@@ -37,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="@dimen/margin_top_title"
         android:weightSum="2">
 
         <Button

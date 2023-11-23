@@ -24,23 +24,16 @@ class PermissionsSelectionActivity : AppCompatActivity() {
         toolbar.navigationIcon = ContextCompat.getDrawable(this, R.drawable.icon_cross)
         toolbar.setNavigationIconTint(resources.getColor(R.color.white))
 
-        toolbar.setNavigationOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-        }
+        toolbar.setNavigationOnClickListener { manageBackNavigation() }
 
         // Manage cancel button
         val cancelButton = findViewById<Button>(R.id.cancel_button)
-        cancelButton.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-        }
+        cancelButton.setOnClickListener { manageBackNavigation() }
 
         // Manage user's back pressure
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                val intent = Intent(this@PermissionsSelectionActivity, MainActivity::class.java)
-                startActivity(intent)
+                manageBackNavigation()
             }
         }
         onBackPressedDispatcher.addCallback(this, callback)
@@ -76,6 +69,11 @@ class PermissionsSelectionActivity : AppCompatActivity() {
             val intent = Intent(this, RuleDefinitionActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    private fun manageBackNavigation() {
+        val intent = Intent(this@PermissionsSelectionActivity, MainActivity::class.java)
+        startActivity(intent)
     }
 
     // Manage permission selection/deselection
