@@ -5,36 +5,38 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
-import androidx.constraintlayout.widget.ConstraintLayout
-import com.google.android.material.appbar.MaterialToolbar
+import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+
+val listRules = listOf("Test rule 1", "Test rule 2", "Test rule 3")
+
+private lateinit var context : Context
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        context = this.applicationContext
         setContentView(R.layout.activity_main)
 
-        // Manage select saved rule
-        val ruleButton = findViewById<Button>(R.id.button_rule)
-        ruleButton.setOnClickListener {
-            val intent = Intent(this, SavedRuleActivity::class.java)
-            startActivity(intent)
-        }
+        // Managing recycler view
+        val recyclerView = findViewById<RecyclerView>(R.id.list_rules)
+        recyclerView.adapter = SavedRulesAdapter(listRules, this)
+        recyclerView.layoutManager = LinearLayoutManager(context)
 
         // Manage insert new rule button
         val newRuleButton = findViewById<FloatingActionButton>(R.id.new_rule)
         newRuleButton.setOnClickListener { v -> showPopupNewRule(v) }
-
-        // Manage delete inserted rule button
-        val deleteRuleButton = findViewById<FloatingActionButton>(R.id.delete_rule)
-        deleteRuleButton.setOnClickListener { v -> showPopupDeleteRule(v) }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -50,29 +52,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         val buttonCancel = popupView.findViewById<Button>(R.id.cancel_button)
-        buttonCancel.setOnClickListener {
-            popupWindow.dismiss()
-        }
-
-
-        // Handler for clicking on the inactive zone of the window
-        popupView.setOnTouchListener { v, event -> // Close the window when clicked
-            popupWindow.dismiss()
-            true
-        }
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    private fun showPopupDeleteRule(view: View) {
-        val (popupView, popupWindow) = managePopup(view, R.layout.popup_delete_rule)
-
-        // Initialize the elements of our window, install the handler
-        val buttonConfirm = popupView.findViewById<Button>(R.id.confirm_delete_button)
-        buttonConfirm.setOnClickListener {
-            // Delete rule
-        }
-
-        val buttonCancel = popupView.findViewById<Button>(R.id.cancel_delete_button)
         buttonCancel.setOnClickListener {
             popupWindow.dismiss()
         }
@@ -105,4 +84,62 @@ fun managePopup(view: View, layout: Int) : Pair<View, PopupWindow> {
     popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0)
 
     return Pair(popupView, popupWindow)
+}
+
+// Define recycler view for rules
+class SavedRulesViewHolder(v: View) : RecyclerView.ViewHolder(v){
+    val buttonRule = v.findViewById<Button>(R.id.button_rule)
+    val editRuleButton = v.findViewById<FloatingActionButton>(R.id.edit_rule)
+    val deleteRuleButton = v.findViewById<FloatingActionButton>(R.id.delete_rule)
+}
+
+class SavedRulesAdapter(private val listRules: List<String>, context: Context): RecyclerView.Adapter<SavedRulesViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedRulesViewHolder {
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.box_saved_rule, parent, false)
+
+        return SavedRulesViewHolder(v)
+    }
+
+    override fun getItemCount(): Int {
+        return listRules.size
+    }
+
+    override fun onBindViewHolder(holder: SavedRulesViewHolder, position: Int) {
+        val ruleName = listRules[position]
+
+        holder.buttonRule.text = ruleName
+
+        // Manage saved rule
+        holder.buttonRule.setOnClickListener {
+            val intent = Intent(context, SavedRuleActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+        }
+
+        // Manage delete inserted rule button
+        holder.deleteRuleButton.setOnClickListener { v -> showPopupDeleteRule(v) }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun showPopupDeleteRule(view: View) {
+        val (popupView, popupWindow) = managePopup(view, R.layout.popup_delete_rule)
+
+        // Initialize the elements of our window, install the handler
+        val buttonConfirm = popupView.findViewById<Button>(R.id.confirm_delete_button)
+        buttonConfirm.setOnClickListener {
+            // Delete rule
+        }
+
+        val buttonCancel = popupView.findViewById<Button>(R.id.cancel_delete_button)
+        buttonCancel.setOnClickListener {
+            popupWindow.dismiss()
+        }
+
+
+        // Handler for clicking on the inactive zone of the window
+        popupView.setOnTouchListener { v, event -> // Close the window when clicked
+            popupWindow.dismiss()
+            true
+        }
+    }
 }

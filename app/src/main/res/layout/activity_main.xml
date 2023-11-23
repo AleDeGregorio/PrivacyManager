@@ -27,93 +27,26 @@
         app:layout_constraintVertical_bias="0.025" />
 
     <ScrollView
-        android:id="@+id/scrollview"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:id="@+id/list_rules_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintBottom_toTopOf="@+id/new_rule"
+        android:layout_marginTop="@dimen/margin_top_title">
 
         <LinearLayout
-            android:id="@+id/container"
+            android:id="@+id/rules_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="70dp">
+            android:orientation="vertical">
 
-            <RelativeLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/list_rules"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.4"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView"
-                app:layout_constraintVertical_bias="0.045">
-
-                <Button
-                    android:id="@+id/button_rule"
-                    android:layout_width="193dp"
-                    android:layout_height="65dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="6dp"
-                    android:layout_marginEnd="45dp"
-                    android:layout_toStartOf="@+id/edit_rule"
-                    android:backgroundTint="@color/primary"
-                    android:elevation="6dp"
-                    android:stateListAnimator="@null"
-                    android:text="@string/test_rule"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
-                    tools:layout_editor_absoluteX="25dp"
-                    tools:layout_editor_absoluteY="205dp" />
-
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/edit_rule"
-                    android:layout_width="46dp"
-                    android:layout_height="47dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_gravity="end|bottom"
-                    android:layout_marginTop="13dp"
-                    android:layout_marginEnd="30dp"
-                    android:layout_toStartOf="@+id/delete_rule"
-                    android:contentDescription="@string/edit_rule"
-                    android:src="@drawable/icon_pencil"
-                    app:backgroundTint="@color/white"
-                    app:fabCustomSize="45dp"
-                    app:tint="@color/black"
-                    tools:layout_editor_absoluteX="244dp"
-                    tools:layout_editor_absoluteY="209dp" />
-
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/delete_rule"
-                    android:layout_width="46dp"
-                    android:layout_height="47dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_gravity="end|bottom"
-                    android:layout_marginTop="13dp"
-                    android:layout_marginEnd="10dp"
-                    android:contentDescription="@string/delete_rule"
-                    android:src="@drawable/icon_trash_bin"
-                    app:backgroundTint="@color/white"
-                    app:fabCustomSize="45dp"
-                    app:tint="@color/black" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginEnd="0dp"
-                    android:layout_marginBottom="99dp"
-                    android:background="?android:attr/listDivider" />
-            </RelativeLayout>
+                android:orientation="vertical" />
         </LinearLayout>
     </ScrollView>
 
@@ -131,8 +64,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.894"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollview"
+        app:layout_constraintTop_toBottomOf="@+id/list_rules_container"
         app:layout_constraintVertical_bias="0.908"
+        android:layout_marginBottom="21dp"
         app:maxImageSize="30dp"
         app:tint="@color/white" />
 
