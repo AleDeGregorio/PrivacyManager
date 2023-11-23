@@ -25,7 +25,7 @@
         app:layout_constraintHorizontal_bias="0.075"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbarLayout"
-        app:layout_constraintVertical_bias="0.048" />
+        app:layout_constraintVertical_bias="0.025" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/rule_card"
@@ -75,14 +75,14 @@
         android:src="@drawable/icon_start"
         app:backgroundTint="@color/primary"
         style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
-        app:fabCustomSize="80dp"
+        app:fabCustomSize="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.894"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rule_card"
         app:layout_constraintVertical_bias="0.908"
-        app:maxImageSize="40dp"
+        app:maxImageSize="30dp"
         app:tint="@color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

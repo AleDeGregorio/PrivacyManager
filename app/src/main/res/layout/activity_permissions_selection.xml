@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/toolbarLayout"
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/permissions_text"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        android:layout_below="@+id/toolbarLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/infoTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/info_permissions_selection"
+        android:textSize="20sp"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/infoTextView"
+        android:layout_above="@id/buttons_container"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/margin_top_permissions_selection"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp">
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/notification_permission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="@dimen/margin_start_permissions_selection"
+            android:layout_marginEnd="@dimen/margin_start_permissions_selection"
+            android:contentDescription="@string/info_notification"
+            android:text="@string/notifications_text"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:backgroundTint="@color/grey"
+            app:icon="@drawable/icon_notification"
+            app:iconTint="@color/black"
+            app:tint="@color/black" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/location_permission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/notification_permission"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="@dimen/margin_start_permissions_selection"
+            android:layout_marginEnd="@dimen/margin_start_permissions_selection"
+            android:layout_marginTop="@dimen/margin_top_permissions_selection"
+            android:contentDescription="@string/info_location"
+            android:text="@string/location_text"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:backgroundTint="@color/grey"
+            app:icon="@drawable/icon_location"
+            app:iconTint="@color/black"
+            app:tint="@color/black" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/calendar_permission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/location_permission"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="@dimen/margin_start_permissions_selection"
+            android:layout_marginEnd="@dimen/margin_start_permissions_selection"
+            android:layout_marginTop="@dimen/margin_top_permissions_selection"
+            android:contentDescription="@string/info_calendar"
+            android:text="@string/calendar_text"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:backgroundTint="@color/grey"
+            app:icon="@drawable/icon_calendar"
+            app:iconTint="@color/black"
+            app:tint="@color/black" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/camera_permission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/calendar_permission"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="@dimen/margin_start_permissions_selection"
+            android:layout_marginEnd="@dimen/margin_start_permissions_selection"
+            android:layout_marginTop="@dimen/margin_top_permissions_selection"
+            android:contentDescription="@string/info_camera"
+            android:text="@string/camera_text"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:backgroundTint="@color/grey"
+            app:icon="@drawable/icon_camera"
+            app:iconTint="@color/black"
+            app:tint="@color/black" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/sms_permission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/camera_permission"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="@dimen/margin_start_permissions_selection"
+            android:layout_marginTop="@dimen/margin_top_permissions_selection"
+            android:layout_marginEnd="@dimen/margin_start_permissions_selection"
+            android:contentDescription="@string/info_sms"
+            android:text="@string/sms_text"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:backgroundTint="@color/grey"
+            app:icon="@drawable/icon_sms"
+            app:iconTint="@color/black"
+            app:tint="@color/black" />
+
+        </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/buttons_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/forward_button"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@string/forward_button"
+            android:backgroundTint="@color/primary"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/cancel_button"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:backgroundTint="@color/dark_grey"
+            android:textSize="18sp"
+            android:text="@string/cancel_button"
+            android:textColor="@color/white" />
+    </LinearLayout>
+</RelativeLayout>

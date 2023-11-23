@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin_top_permissions_selection">26dp</dimen>
+    <dimen name="margin_start_permissions_selection">65dp</dimen>
+</resources>

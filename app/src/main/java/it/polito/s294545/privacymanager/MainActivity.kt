@@ -36,6 +36,54 @@ class MainActivity : AppCompatActivity() {
         val deleteRuleButton = findViewById<FloatingActionButton>(R.id.delete_rule)
         deleteRuleButton.setOnClickListener { v -> showPopupDeleteRule(v) }
     }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun showPopupNewRule(view: View) {
+        val (popupView, popupWindow) = managePopup(view, R.layout.popup_new_rule)
+
+        // Initialize the elements of our window, install the handler
+        val buttonCreate = popupView.findViewById<Button>(R.id.create_button)
+        buttonCreate.setOnClickListener {
+            // Create new rule
+            val intent = Intent(this, PermissionsSelectionActivity::class.java)
+            startActivity(intent)
+        }
+
+        val buttonCancel = popupView.findViewById<Button>(R.id.cancel_button)
+        buttonCancel.setOnClickListener {
+            popupWindow.dismiss()
+        }
+
+
+        // Handler for clicking on the inactive zone of the window
+        popupView.setOnTouchListener { v, event -> // Close the window when clicked
+            popupWindow.dismiss()
+            true
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun showPopupDeleteRule(view: View) {
+        val (popupView, popupWindow) = managePopup(view, R.layout.popup_delete_rule)
+
+        // Initialize the elements of our window, install the handler
+        val buttonConfirm = popupView.findViewById<Button>(R.id.confirm_delete_button)
+        buttonConfirm.setOnClickListener {
+            // Delete rule
+        }
+
+        val buttonCancel = popupView.findViewById<Button>(R.id.cancel_delete_button)
+        buttonCancel.setOnClickListener {
+            popupWindow.dismiss()
+        }
+
+
+        // Handler for clicking on the inactive zone of the window
+        popupView.setOnTouchListener { v, event -> // Close the window when clicked
+            popupWindow.dismiss()
+            true
+        }
+    }
 }
 
 fun managePopup(view: View, layout: Int) : Pair<View, PopupWindow> {
@@ -57,50 +105,4 @@ fun managePopup(view: View, layout: Int) : Pair<View, PopupWindow> {
     popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0)
 
     return Pair(popupView, popupWindow)
-}
-
-@SuppressLint("ClickableViewAccessibility")
-fun showPopupNewRule(view: View) {
-    val (popupView, popupWindow) = managePopup(view, R.layout.popup_new_rule)
-
-    // Initialize the elements of our window, install the handler
-    val buttonCreate = popupView.findViewById<Button>(R.id.create_button)
-    buttonCreate.setOnClickListener {
-        // Create new rule
-    }
-
-    val buttonCancel = popupView.findViewById<Button>(R.id.cancel_button)
-    buttonCancel.setOnClickListener {
-        popupWindow.dismiss()
-    }
-
-
-    // Handler for clicking on the inactive zone of the window
-    popupView.setOnTouchListener { v, event -> // Close the window when clicked
-        popupWindow.dismiss()
-        true
-    }
-}
-
-@SuppressLint("ClickableViewAccessibility")
-fun showPopupDeleteRule(view: View) {
-    val (popupView, popupWindow) = managePopup(view, R.layout.popup_delete_rule)
-
-    // Initialize the elements of our window, install the handler
-    val buttonConfirm = popupView.findViewById<Button>(R.id.confirm_delete_button)
-    buttonConfirm.setOnClickListener {
-        // Delete rule
-    }
-
-    val buttonCancel = popupView.findViewById<Button>(R.id.cancel_delete_button)
-    buttonCancel.setOnClickListener {
-        popupWindow.dismiss()
-    }
-
-
-    // Handler for clicking on the inactive zone of the window
-    popupView.setOnTouchListener { v, event -> // Close the window when clicked
-        popupWindow.dismiss()
-        true
-    }
 }
