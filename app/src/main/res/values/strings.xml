@@ -79,4 +79,7 @@
     <string name="bluetooth_text">Bluetooth</string>
     <string name="info_bluetooth_selection">Seleziona uno o più dispositivi salvati al cui collegamento attivare il monitoraggio</string>
     <string name="test_bluetooth_text">Test bluetooth</string>
+    <string name="battery_text">Batteria</string>
+    <string name="info_battery_selection">Inserisci un livello di batteria al di sotto del quale attivare il monitoraggio</string>
+    <string name="battery_level_hint">Inserisci un livello di batteria</string>
 </resources>
