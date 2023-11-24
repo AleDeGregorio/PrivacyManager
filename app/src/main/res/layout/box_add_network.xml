@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="0.045">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_network"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            app:boxBackgroundMode="filled"
+            app:boxStrokeWidth="0dp"
+            tools:ignore="RelativeOverlap">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_network"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text"
+                android:hint="@string/insert_network_hint"
+                android:inputType="textAutoCorrect|text"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/delete_network_button"
+            android:layout_width="46dp"
+            android:layout_height="47dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="end|bottom"
+            android:layout_marginTop="6dp"
+            android:contentDescription="@string/delete_network_info"
+            android:src="@drawable/icon_trash_bin"
+            app:backgroundTint="@color/secondary"
+            app:fabCustomSize="45dp"
+            app:tint="@color/white" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/text_input_network"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="12dp"
+            android:background="?android:attr/listDivider" />
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

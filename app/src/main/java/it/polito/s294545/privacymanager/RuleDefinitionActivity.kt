@@ -47,7 +47,9 @@ class RuleDefinitionActivity : AppCompatActivity() {
         viewPager = findViewById(R.id.view_pager)
         val dotsIndicator = findViewById<DotsIndicator>(R.id.dots_indicator)
 
-        fragmentList = listOf(AppsSelectionFragment(), TimeSlotSelectionFragment(), PositionsSelectionFragment())
+        fragmentList = listOf(
+            AppsSelectionFragment(), TimeSlotSelectionFragment(), PositionsSelectionFragment(),
+            NetworkSelectionFragment())
         val adapter = FormPagerAdapter(this, fragmentList)
 
         viewPager.adapter = adapter

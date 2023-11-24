@@ -69,4 +69,11 @@
     <string name="info_position_button">Edit position</string>
     <string name="insert_position_hint">Inserisci un indirizzo</string>
     <string name="delete_position_info">Delete position</string>
+    <string name="network_text">Rete</string>
+    <string name="info_network_selection">Inserisci una o più reti alla cui connessione attivare il monitoraggio</string>
+    <string name="network_text_button">Nuova rete Wi-Fi</string>
+    <string name="info_network_button">Edit network</string>
+    <string name="mobile_network_text">Connessione dati</string>
+    <string name="insert_network_hint">Inserisci una rete Wi-Fi</string>
+    <string name="delete_network_info">Delete network</string>
 </resources>
