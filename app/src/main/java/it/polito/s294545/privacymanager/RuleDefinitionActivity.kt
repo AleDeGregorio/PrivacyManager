@@ -49,7 +49,7 @@ class RuleDefinitionActivity : AppCompatActivity() {
 
         fragmentList = listOf(
             AppsSelectionFragment(), TimeSlotSelectionFragment(), PositionsSelectionFragment(),
-            NetworkSelectionFragment())
+            NetworkSelectionFragment(), BluetoothSelectionFragment())
         val adapter = FormPagerAdapter(this, fragmentList)
 
         viewPager.adapter = adapter

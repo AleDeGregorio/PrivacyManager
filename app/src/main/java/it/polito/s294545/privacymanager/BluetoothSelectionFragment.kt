@@ -1,0 +1,97 @@
+package it.polito.s294545.privacymanager
+
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+
+val listBluetooth = listOf("Test BT 1", "Test BT 2", "Test BT 3")
+
+// TODO: Rename parameter arguments, choose names that match
+// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+private const val ARG_PARAM1 = "param1"
+private const val ARG_PARAM2 = "param2"
+
+/**
+ * A simple [Fragment] subclass.
+ * Use the [BluetoothSelectionFragment.newInstance] factory method to
+ * create an instance of this fragment.
+ */
+class BluetoothSelectionFragment : Fragment() {
+    // TODO: Rename and change types of parameters
+    private var param1: String? = null
+    private var param2: String? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            param1 = it.getString(ARG_PARAM1)
+            param2 = it.getString(ARG_PARAM2)
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        val v = inflater.inflate(R.layout.fragment_bluetooth_selection, container, false)
+
+        // Managing recycler view
+        val recyclerView = v.findViewById<RecyclerView>(R.id.list_bluetooth)
+        recyclerView.adapter = BluetoothSelectionAdapter(listBluetooth)
+        recyclerView.layoutManager = LinearLayoutManager(context)
+
+        return v
+    }
+
+    companion object {
+        /**
+         * Use this factory method to create a new instance of
+         * this fragment using the provided parameters.
+         *
+         * @param param1 Parameter 1.
+         * @param param2 Parameter 2.
+         * @return A new instance of fragment BluetoothSelectionFragment.
+         */
+        // TODO: Rename and change types and number of parameters
+        @JvmStatic
+        fun newInstance(param1: String, param2: String) =
+            BluetoothSelectionFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_PARAM1, param1)
+                    putString(ARG_PARAM2, param2)
+                }
+            }
+    }
+}
+
+// Define recycler view for bluetooth
+class BluetoothSelectionViewHolder(v: View) : RecyclerView.ViewHolder(v){
+    val bluetoothDevice = v.findViewById<TextView>(R.id.bluetooth_device)
+    val checkBox = v.findViewById<CheckBox>(R.id.checkBox)
+}
+
+class BluetoothSelectionAdapter(private val listBluetooth: List<String>): RecyclerView.Adapter<BluetoothSelectionViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BluetoothSelectionViewHolder {
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.box_bluetooth_selection, parent, false)
+
+        return BluetoothSelectionViewHolder(v)
+    }
+
+    override fun getItemCount(): Int {
+        return listBluetooth.size
+    }
+
+    override fun onBindViewHolder(holder: BluetoothSelectionViewHolder, position: Int) {
+        val deviceName = listBluetooth[position]
+
+        holder.bluetoothDevice.text = deviceName
+    }
+}

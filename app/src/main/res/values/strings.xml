@@ -76,4 +76,7 @@
     <string name="mobile_network_text">Connessione dati</string>
     <string name="insert_network_hint">Inserisci una rete Wi-Fi</string>
     <string name="delete_network_info">Delete network</string>
+    <string name="bluetooth_text">Bluetooth</string>
+    <string name="info_bluetooth_selection">Seleziona uno o più dispositivi salvati al cui collegamento attivare il monitoraggio</string>
+    <string name="test_bluetooth_text">Test bluetooth</string>
 </resources>

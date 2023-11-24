@@ -47,6 +47,7 @@ class AppsSelectionFragment : Fragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.list_apps)
         recyclerView.adapter = AppsSelectionAdapter(listApps)
         recyclerView.layoutManager = LinearLayoutManager(context)
+
         return view
     }
 
