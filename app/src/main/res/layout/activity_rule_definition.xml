@@ -36,7 +36,7 @@
         app:dotsSize="18dp"
         app:dotsSpacing="8dp"
         app:dotsWidthFactor="1"
-        app:progressMode="true"
+        app:progressMode="false"
         app:selectedDotColor="@color/primary"/>
 
     <LinearLayout
