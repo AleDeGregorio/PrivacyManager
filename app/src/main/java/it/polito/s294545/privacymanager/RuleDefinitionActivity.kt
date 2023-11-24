@@ -15,6 +15,10 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 
 class RuleDefinitionActivity : AppCompatActivity() {
+
+    private lateinit var viewPager : ViewPager2
+    private lateinit var fragmentList : List<Fragment>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_rule_definition)
@@ -31,12 +35,6 @@ class RuleDefinitionActivity : AppCompatActivity() {
             manageBackNavigation()
         }
 
-        // Manage cancel button
-        val cancelButton = findViewById<Button>(R.id.back_button)
-        cancelButton.setOnClickListener {
-            manageBackNavigation()
-        }
-
         // Manage user's back pressure
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -46,14 +44,34 @@ class RuleDefinitionActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, callback)
 
         // Define rule parameters fragments
-        val viewPager = findViewById<ViewPager2>(R.id.view_pager)
+        viewPager = findViewById(R.id.view_pager)
         val dotsIndicator = findViewById<DotsIndicator>(R.id.dots_indicator)
 
-        val fragmentList = listOf(AppsSelectionFragment(), PositionsSelectionFragment())
+        fragmentList = listOf(AppsSelectionFragment(), PositionsSelectionFragment())
         val adapter = FormPagerAdapter(this, fragmentList)
 
         viewPager.adapter = adapter
         dotsIndicator.attachTo(viewPager)
+
+        // Manage forward button
+        val forwardButton = findViewById<Button>(R.id.forward_button)
+        forwardButton.setOnClickListener { navigateToNextFragment() }
+
+        // Manage back button
+        val backButton = findViewById<Button>(R.id.back_button)
+        backButton.setOnClickListener { navigateToPreviousFragment() }
+    }
+
+    private fun navigateToNextFragment() {
+        if (viewPager.currentItem < fragmentList.size - 1) {
+            viewPager.currentItem = viewPager.currentItem + 1
+        }
+    }
+
+    private fun navigateToPreviousFragment() {
+        if (viewPager.currentItem > 0) {
+            viewPager.currentItem = viewPager.currentItem - 1
+        }
     }
 
     private fun manageBackNavigation() {
