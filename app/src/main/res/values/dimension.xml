@@ -3,4 +3,5 @@
     <dimen name="margin_top_permissions_selection">26dp</dimen>
     <dimen name="margin_start_permissions_selection">65dp</dimen>
     <dimen name="margin_top_title">16dp</dimen>
+    <dimen name="day_button">80dp</dimen>
 </resources>

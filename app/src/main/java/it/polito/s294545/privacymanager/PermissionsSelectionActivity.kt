@@ -80,7 +80,7 @@ class PermissionsSelectionActivity : AppCompatActivity() {
     private fun togglePermissionSelection(permission: View) {
         if (!permission.isSelected) {
             permission.isSelected = true
-            permission.setBackgroundColor(resources.getColor(R.color.confirm))
+            permission.setBackgroundColor(resources.getColor(R.color.secondary))
         }
         else {
             permission.isSelected = false

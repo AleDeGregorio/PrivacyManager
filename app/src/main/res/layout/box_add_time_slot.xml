@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="0.045">
+
+        <TextView
+            android:id="@+id/days_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/days_text"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/monday"
+            android:layout_width="@dimen/day_button"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/days_text"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="@dimen/margin_top_title"
+            android:contentDescription="@string/monday_info"
+            android:text="@string/monday_text"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:backgroundTint="@color/grey" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/tuesday"
+            android:layout_width="@dimen/day_button"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/days_text"
+            android:layout_toEndOf="@+id/monday"
+            android:layout_marginTop="@dimen/margin_top_title"
+            android:layout_marginStart="@dimen/margin_top_title"
+            android:contentDescription="@string/tuesday_info"
+            android:text="@string/tuesday_text"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:backgroundTint="@color/grey" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/wednesday"
+            android:layout_width="@dimen/day_button"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/days_text"
+            android:layout_toEndOf="@+id/tuesday"
+            android:layout_marginTop="@dimen/margin_top_title"
+            android:layout_marginStart="@dimen/margin_top_title"
+            android:contentDescription="@string/wednesday_info"
+            android:text="@string/wednesday_text"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:backgroundTint="@color/grey" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/thursday"
+            android:layout_width="@dimen/day_button"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/days_text"
+            android:layout_toEndOf="@+id/wednesday"
+            android:layout_marginTop="@dimen/margin_top_title"
+            android:layout_marginStart="@dimen/margin_top_title"
+            android:contentDescription="@string/thursday_info"
+            android:text="@string/thursday_text"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:backgroundTint="@color/grey" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/friday"
+            android:layout_width="@dimen/day_button"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/monday"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="@dimen/margin_top_title"
+            android:contentDescription="@string/friday_info"
+            android:text="@string/friday_text"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:backgroundTint="@color/grey" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/saturday"
+            android:layout_width="@dimen/day_button"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tuesday"
+            android:layout_toEndOf="@id/friday"
+            android:layout_marginTop="@dimen/margin_top_title"
+            android:layout_marginStart="@dimen/margin_top_title"
+            android:contentDescription="@string/saturday_info"
+            android:text="@string/saturday_text"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:backgroundTint="@color/grey" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/sunday"
+            android:layout_width="@dimen/day_button"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/wednesday"
+            android:layout_toEndOf="@id/saturday"
+            android:layout_marginTop="@dimen/margin_top_title"
+            android:layout_marginStart="@dimen/margin_top_title"
+            android:contentDescription="@string/sunday_info"
+            android:text="@string/sunday_text"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:backgroundTint="@color/grey" />
+
+        <TextView
+            android:id="@+id/from_time_slot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/friday"
+            android:layout_marginTop="26dp"
+            android:text="@string/from_time_text"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/select_from_time_slot"
+            android:layout_width="100dp"
+            android:layout_height="48dp"
+            android:layout_toEndOf="@+id/from_time_slot"
+            android:layout_below="@+id/friday"
+            android:layout_marginStart="@dimen/margin_top_title"
+            android:layout_marginTop="@dimen/margin_top_title"
+            android:paddingTop="10dp"
+            android:background="@drawable/field_time"
+            android:contentDescription="@string/from_time_info"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/to_time_slot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/select_to_time_slot"
+            android:layout_below="@+id/friday"
+            android:layout_marginEnd="@dimen/margin_top_title"
+            android:layout_marginTop="26dp"
+            android:text="@string/to_time_text"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/select_to_time_slot"
+            android:layout_width="100dp"
+            android:layout_height="48dp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/friday"
+            android:layout_marginTop="@dimen/margin_top_title"
+            android:paddingTop="10dp"
+            android:background="@drawable/field_time"
+            android:contentDescription="@string/to_time_info"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/confirm_time_slot_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/select_from_time_slot"
+            android:layout_marginTop="@dimen/margin_top_title"
+            android:contentDescription="@string/confirm_time_slot_info"
+            android:text="@string/confirm_time_slot"
+            android:textAlignment="textStart"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:backgroundTint="@color/primary"
+            app:icon="@drawable/icon_confirm"
+            app:iconTint="@color/white"
+            app:tint="@color/white" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/delete_time_slot_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/select_to_time_slot"
+            android:layout_marginTop="@dimen/margin_top_title"
+            android:contentDescription="@string/delete_time_slot_info"
+            android:text="@string/delete_time_slot"
+            android:textAlignment="textStart"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:backgroundTint="@color/secondary"
+            app:icon="@drawable/icon_trash_bin"
+            app:iconTint="@color/white"
+            app:tint="@color/white" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/delete_time_slot_button"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="12dp"
+            android:background="?android:attr/listDivider" />
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
