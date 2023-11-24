@@ -63,4 +63,10 @@
     <string name="sunday_text">Dom</string>
     <string name="confirm_time_slot_info">Confirm time slot</string>
     <string name="confirm_time_slot">Conferma</string>
+    <string name="positions_text">Posizioni</string>
+    <string name="info_position_selection">Inserisci una o più posizioni in cui attivare il monitoraggio</string>
+    <string name="position_text_button">Nuova posizione</string>
+    <string name="info_position_button">Edit position</string>
+    <string name="insert_position_hint">Inserisci un indirizzo</string>
+    <string name="delete_position_info">Delete position</string>
 </resources>
