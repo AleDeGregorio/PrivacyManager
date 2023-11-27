@@ -82,4 +82,11 @@
     <string name="battery_text">Batteria</string>
     <string name="info_battery_selection">Inserisci un livello di batteria al di sotto del quale attivare il monitoraggio</string>
     <string name="battery_level_hint">Inserisci un livello di batteria</string>
+    <string name="action_text">Azione</string>
+    <string name="info_action_notification_selection">Scegli come reagire quando una delle app selezionate invia una notificando violando la regola creata</string>
+    <string name="obscure_notification_text">Oscura notifica</string>
+    <string name="block_notification_text">Chiudi app e blocca notifica</string>
+    <string name="info_action_no_notification_selection">Scegli come reagire quando un\'app viola la regola creata</string>
+    <string name="signal_app_text">Segnala applicazione</string>
+    <string name="close_app_text">Chiudi applicazione</string>
 </resources>

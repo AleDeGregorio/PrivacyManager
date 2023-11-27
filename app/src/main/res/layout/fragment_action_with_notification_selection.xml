@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ActionWithNotificationSelectionFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/action_text"
+            android:textSize="34sp"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"/>
+
+        <TextView
+            android:id="@+id/infoTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/info_action_notification_selection"
+            android:textSize="20sp"
+            android:layout_below="@+id/textView"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="@dimen/margin_top_title"/>
+
+        <RadioGroup
+            android:id="@+id/action_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/infoTextView"
+            android:layout_marginTop="40dp"
+            android:layout_marginStart="@dimen/margin_top_title"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/obscure_notification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/margin_top_title"
+                android:paddingEnd="@dimen/margin_top_title"
+                android:checked="true"
+                android:text="@string/obscure_notification_text"
+                android:buttonTint="@color/secondary"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/block_notification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/margin_top_title"
+                android:paddingEnd="@dimen/margin_top_title"
+                android:buttonTint="@color/secondary"
+                android:textSize="20sp"
+                android:text="@string/block_notification_text" />
+
+        </RadioGroup>
+    </RelativeLayout>
+
+</FrameLayout>
