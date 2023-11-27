@@ -1,8 +1,10 @@
 package it.polito.s294545.privacymanager
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -58,11 +60,49 @@ class RuleDefinitionActivity : AppCompatActivity() {
 
         // Manage forward button
         val forwardButton = findViewById<Button>(R.id.forward_button)
-        forwardButton.setOnClickListener { navigateToNextFragment() }
+        // Change button based on current fragment
+        // Register a callback to listen for page changes
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                // Update button based on the current Fragment
+                // Last fragment -> save rule
+                if (position == fragmentList.lastIndex) {
+                    forwardButton.text = resources.getString(R.string.save)
+                    forwardButton.setOnClickListener { v -> showPopupSaveRule(v) }
+                }
+                // Other fragments -> go to next fragment
+                else {
+                    forwardButton.setOnClickListener { navigateToNextFragment() }
+                }
+            }
+        })
 
         // Manage back button
         val backButton = findViewById<Button>(R.id.back_button)
         backButton.setOnClickListener { navigateToPreviousFragment() }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun showPopupSaveRule(view: View) {
+        val (popupView, popupWindow) = managePopup(view, R.layout.popup_save_rule)
+
+        // Initialize the elements of our window, install the handler
+        val buttonConfirm = popupView.findViewById<Button>(R.id.confirm_save_button)
+        buttonConfirm.setOnClickListener {
+            // Save rule
+        }
+
+        val buttonCancel = popupView.findViewById<Button>(R.id.cancel_save_button)
+        buttonCancel.setOnClickListener {
+            popupWindow.dismiss()
+        }
+
+
+        // Handler for clicking on the inactive zone of the window
+        popupView.setOnTouchListener { v, event -> // Close the window when clicked
+            popupWindow.dismiss()
+            true
+        }
     }
 
     private fun navigateToNextFragment() {

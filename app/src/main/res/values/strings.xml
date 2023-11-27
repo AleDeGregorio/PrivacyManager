@@ -96,4 +96,7 @@
     <string name="notification_details">Dettagli notifica</string>
     <string name="notification_info">La seguente app definita in \"Test rule\" ha inviato questa notifica</string>
     <string name="notification_content">Notification content</string>
+    <string name="insert_name_rule">Inserisci un nome per la regola</string>
+    <string name="rule_name_text">Nome della regola</string>
+    <string name="save">Salva</string>
 </resources>
