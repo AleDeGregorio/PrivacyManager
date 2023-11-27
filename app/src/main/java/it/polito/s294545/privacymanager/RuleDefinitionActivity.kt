@@ -17,11 +17,12 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.appbar.MaterialToolbar
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 
-class RuleDefinitionActivity : AppCompatActivity() {
+class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
     private lateinit var viewPager : ViewPager2
     private lateinit var fragmentList : MutableList<Fragment>
     private lateinit var permissions : ArrayList<*>
+    private lateinit var apps : List<*>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,6 +132,14 @@ class RuleDefinitionActivity : AppCompatActivity() {
     private fun manageBackNavigation() {
         val intent = Intent(this@RuleDefinitionActivity, PermissionsSelectionActivity::class.java)
         startActivity(intent)
+    }
+
+    override fun onParameterEntered(parameter: String, data: Any) {
+        when (parameter) {
+            "apps" -> {
+                apps = data as List<*>
+            }
+        }
     }
 }
 

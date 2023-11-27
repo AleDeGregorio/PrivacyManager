@@ -1,5 +1,6 @@
 package it.polito.s294545.privacymanager
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 val listApps = listOf("Test app 1", "Test app 2", "Test app 3", "Test app 4", "Test app 5", "Test app 6", "Test app 7", "Test app 8", "Test app 9", "Test app 10")
+
+private var savedApps = mutableListOf<String>()
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -27,6 +30,8 @@ class AppsSelectionFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    private var parameterListener : ParameterListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,10 +50,24 @@ class AppsSelectionFragment : Fragment() {
 
         // Managing recycler view
         val recyclerView = view.findViewById<RecyclerView>(R.id.list_apps)
-        recyclerView.adapter = AppsSelectionAdapter(listApps)
+        recyclerView.adapter = AppsSelectionAdapter(listApps, parameterListener)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         return view
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        if (context is ParameterListener) {
+            parameterListener = context
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+
+        parameterListener = null
     }
 
     companion object {
@@ -79,7 +98,7 @@ class AppsSelectionViewHolder(v: View) : RecyclerView.ViewHolder(v){
     val checkBox = v.findViewById<CheckBox>(R.id.checkBox)
 }
 
-class AppsSelectionAdapter(private val listApps: List<String>): RecyclerView.Adapter<AppsSelectionViewHolder>() {
+class AppsSelectionAdapter(private val listApps: List<String>, private val parameterListener: ParameterListener?): RecyclerView.Adapter<AppsSelectionViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppsSelectionViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.box_app_selection, parent, false)
 
@@ -94,5 +113,16 @@ class AppsSelectionAdapter(private val listApps: List<String>): RecyclerView.Ada
         val appName = listApps[position]
 
         holder.appTitle.text = appName
+
+        holder.checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked && !savedApps.contains(appName)) {
+                savedApps.add(appName)
+            }
+            else if (!isChecked && savedApps.contains(appName)) {
+                savedApps.remove(appName)
+            }
+
+            parameterListener?.onParameterEntered("apps", savedApps.toList())
+        }
     }
 }
