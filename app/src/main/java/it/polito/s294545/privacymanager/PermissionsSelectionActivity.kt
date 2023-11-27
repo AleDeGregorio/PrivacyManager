@@ -12,6 +12,10 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 
 class PermissionsSelectionActivity : AppCompatActivity() {
+
+    private val savedPermissions = mutableListOf<String>()
+    private lateinit var forwardButton : Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_permissions_selection)
@@ -43,30 +47,33 @@ class PermissionsSelectionActivity : AppCompatActivity() {
 
         // Notifications
         val notificationsButton = findViewById<ExtendedFloatingActionButton>(R.id.notification_permission)
-        notificationsButton.setOnClickListener { togglePermissionSelection(it) }
+        notificationsButton.setOnClickListener { togglePermissionSelection(it, "notifications") }
 
         // Location
         val locationButton = findViewById<ExtendedFloatingActionButton>(R.id.location_permission)
-        locationButton.setOnClickListener { togglePermissionSelection(it) }
+        locationButton.setOnClickListener { togglePermissionSelection(it, "location") }
 
         // Calendar
         val calendarButton = findViewById<ExtendedFloatingActionButton>(R.id.calendar_permission)
-        calendarButton.setOnClickListener { togglePermissionSelection(it) }
+        calendarButton.setOnClickListener { togglePermissionSelection(it, "calendar") }
 
         // Camera
         val cameraButton = findViewById<ExtendedFloatingActionButton>(R.id.camera_permission)
-        cameraButton.setOnClickListener { togglePermissionSelection(it) }
+        cameraButton.setOnClickListener { togglePermissionSelection(it, "camera") }
 
         // SMS
         val smsButton = findViewById<ExtendedFloatingActionButton>(R.id.sms_permission)
-        smsButton.setOnClickListener { togglePermissionSelection(it) }
+        smsButton.setOnClickListener { togglePermissionSelection(it, "sms") }
 
         // ----- End permissions management -----
 
         // Manage forward button
-        val forwardButton = findViewById<Button>(R.id.forward_button)
+        forwardButton = findViewById(R.id.forward_button)
+
+        // Go to rule definition only if at least one permission has been selected
         forwardButton.setOnClickListener {
             val intent = Intent(this, RuleDefinitionActivity::class.java)
+            intent.putExtra("permissions", ArrayList(savedPermissions))
             startActivity(intent)
         }
     }
@@ -77,14 +84,27 @@ class PermissionsSelectionActivity : AppCompatActivity() {
     }
 
     // Manage permission selection/deselection
-    private fun togglePermissionSelection(permission: View) {
+    private fun togglePermissionSelection(permission: View, text: String) {
         if (!permission.isSelected) {
             permission.isSelected = true
             permission.setBackgroundColor(resources.getColor(R.color.secondary))
+
+            if (savedPermissions.isEmpty()) {
+                forwardButton.setBackgroundColor(resources.getColor(R.color.primary))
+                forwardButton.isClickable = true
+            }
+
+            savedPermissions.add(text)
         }
         else {
             permission.isSelected = false
             permission.setBackgroundColor(resources.getColor(R.color.grey))
+            savedPermissions.remove(text)
+
+            if (savedPermissions.isEmpty()) {
+                forwardButton.setBackgroundColor(resources.getColor(R.color.dark_grey))
+                forwardButton.isClickable = false
+            }
         }
     }
 }

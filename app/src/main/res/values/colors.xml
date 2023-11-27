@@ -7,5 +7,6 @@
     <color name="yellow">#FFF8C018</color>
     <color name="grey">#E0E0E0</color>
     <color name="dark_grey">#A9A9A9</color>
+    <color name="cancel">#47729C</color>
     <color name="confirm">#7FFC90</color>
 </resources>

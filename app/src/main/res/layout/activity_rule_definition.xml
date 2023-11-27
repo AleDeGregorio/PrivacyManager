@@ -71,7 +71,7 @@
             android:layout_weight="1"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:backgroundTint="@color/dark_grey"
+            android:backgroundTint="@color/cancel"
             android:textSize="18sp"
             android:text="@string/back_button"
             android:textColor="@color/white" />

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import androidx.activity.OnBackPressedCallback
@@ -19,7 +20,8 @@ import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 class RuleDefinitionActivity : AppCompatActivity() {
 
     private lateinit var viewPager : ViewPager2
-    private lateinit var fragmentList : List<Fragment>
+    private lateinit var fragmentList : MutableList<Fragment>
+    private lateinit var permissions : ArrayList<*>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,10 +51,19 @@ class RuleDefinitionActivity : AppCompatActivity() {
         viewPager = findViewById(R.id.view_pager)
         val dotsIndicator = findViewById<DotsIndicator>(R.id.dots_indicator)
 
-        fragmentList = listOf(
+        fragmentList = mutableListOf(
             AppsSelectionFragment(), TimeSlotSelectionFragment(), PositionsSelectionFragment(),
-            NetworkSelectionFragment(), BluetoothSelectionFragment(), BatterySelectionFragment(),
-            ActionWithNotificationSelectionFragment(), ActionNoNotificationSelectionFragment())
+            NetworkSelectionFragment(), BluetoothSelectionFragment(), BatterySelectionFragment())
+
+        permissions = intent.extras?.get("permissions") as ArrayList<*>
+
+        if (permissions.contains("notifications")) {
+            fragmentList.add(ActionWithNotificationSelectionFragment())
+        }
+        else {
+            fragmentList.add(ActionNoNotificationSelectionFragment())
+        }
+
         val adapter = FormPagerAdapter(this, fragmentList)
 
         viewPager.adapter = adapter
