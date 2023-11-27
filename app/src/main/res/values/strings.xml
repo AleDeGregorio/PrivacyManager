@@ -89,4 +89,11 @@
     <string name="info_action_no_notification_selection">Scegli come reagire quando un\'app viola la regola creata</string>
     <string name="signal_app_text">Segnala applicazione</string>
     <string name="close_app_text">Chiudi applicazione</string>
+    <string name="violation_title">Dettagli violazione</string>
+    <string name="violation_info">La seguente app ha violato la regola \"Test rule\"</string>
+    <string name="revoke_permission_info">Revoke permission</string>
+    <string name="revoke_permission_text">Revoca autorizzazione</string>
+    <string name="notification_details">Dettagli notifica</string>
+    <string name="notification_info">La seguente app definita in \"Test rule\" ha inviato questa notifica</string>
+    <string name="notification_content">Notification content</string>
 </resources>
