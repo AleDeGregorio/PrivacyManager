@@ -1,5 +1,6 @@
 package it.polito.s294545.privacymanager
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 val listBluetooth = listOf("Test BT 1", "Test BT 2", "Test BT 3")
+
+private var savedBT = mutableListOf<String>()
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -27,6 +30,8 @@ class BluetoothSelectionFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    private var parameterListener : ParameterListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,10 +50,24 @@ class BluetoothSelectionFragment : Fragment() {
 
         // Managing recycler view
         val recyclerView = v.findViewById<RecyclerView>(R.id.list_bluetooth)
-        recyclerView.adapter = BluetoothSelectionAdapter(listBluetooth)
+        recyclerView.adapter = BluetoothSelectionAdapter(listBluetooth, parameterListener)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         return v
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        if (context is ParameterListener) {
+            parameterListener = context
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+
+        parameterListener = null
     }
 
     companion object {
@@ -78,7 +97,7 @@ class BluetoothSelectionViewHolder(v: View) : RecyclerView.ViewHolder(v){
     val checkBox = v.findViewById<CheckBox>(R.id.checkBox)
 }
 
-class BluetoothSelectionAdapter(private val listBluetooth: List<String>): RecyclerView.Adapter<BluetoothSelectionViewHolder>() {
+class BluetoothSelectionAdapter(private val listBluetooth: List<String>, private val parameterListener: ParameterListener?): RecyclerView.Adapter<BluetoothSelectionViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BluetoothSelectionViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.box_bluetooth_selection, parent, false)
 
@@ -93,5 +112,16 @@ class BluetoothSelectionAdapter(private val listBluetooth: List<String>): Recycl
         val deviceName = listBluetooth[position]
 
         holder.bluetoothDevice.text = deviceName
+
+        holder.checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked && !savedBT.contains(deviceName)) {
+                savedBT.add(deviceName)
+            }
+            else if (!isChecked && savedBT.contains(deviceName)) {
+                savedBT.remove(deviceName)
+            }
+
+            parameterListener?.onParameterEntered("bt", savedBT.toList())
+        }
     }
 }

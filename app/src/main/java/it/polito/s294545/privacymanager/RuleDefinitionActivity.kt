@@ -21,8 +21,11 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
     private lateinit var viewPager : ViewPager2
     private lateinit var fragmentList : MutableList<Fragment>
+
+    // Rule parameters
     private lateinit var permissions : ArrayList<*>
     private lateinit var apps : List<*>
+    private lateinit var bt : List<*>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -138,6 +141,9 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         when (parameter) {
             "apps" -> {
                 apps = data as List<*>
+            }
+            "bt" -> {
+                bt = data as List<*>
             }
         }
     }
