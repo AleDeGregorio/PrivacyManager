@@ -28,6 +28,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
     private var networks : List<*>? = null
     private var bt : List<*>? = null
     private var battery : Int? = null
+    private var action : String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,9 +65,11 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         permissions = intent.extras?.get("permissions") as ArrayList<*>
 
         if (permissions.contains("notifications")) {
+            action = "signal_app"
             fragmentList.add(ActionWithNotificationSelectionFragment())
         }
         else {
+            action = "obscure_notification"
             fragmentList.add(ActionNoNotificationSelectionFragment())
         }
 
@@ -153,6 +156,9 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
             }
             "battery" -> {
                 battery = data as Int?
+            }
+            "action" -> {
+                action = data as String
             }
         }
     }

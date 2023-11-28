@@ -1,5 +1,6 @@
 package it.polito.s294545.privacymanager
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
 import androidx.core.content.ContextCompat
+
+private var savedAction = "signal_app"
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -23,6 +26,8 @@ class ActionNoNotificationSelectionFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    private var parameterListener : ParameterListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +51,36 @@ class ActionNoNotificationSelectionFragment : Fragment() {
         val closeAppRadio = v.findViewById<RadioButton>(R.id.close_app)
         closeAppRadio.buttonTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.secondary))
 
+        // Pass action info as parameter
+        signalAppRadio.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                savedAction = "signal_app"
+                parameterListener?.onParameterEntered("action", savedAction)
+            }
+        }
+
+        closeAppRadio.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                savedAction = "close_app"
+                parameterListener?.onParameterEntered("action", savedAction)
+            }
+        }
+
         return v
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        if (context is ParameterListener) {
+            parameterListener = context
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+
+        parameterListener = null
     }
 
     companion object {
