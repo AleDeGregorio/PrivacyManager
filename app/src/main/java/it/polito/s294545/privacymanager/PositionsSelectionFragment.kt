@@ -1,7 +1,11 @@
 package it.polito.s294545.privacymanager
 
+import android.content.Context
 import android.content.res.ColorStateList
+import android.location.Address
+import android.location.Geocoder
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -12,6 +16,8 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
+
+private var savedPositions = mutableListOf<Address>()
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -28,7 +34,10 @@ class PositionsSelectionFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private var parameterListener : ParameterListener? = null
+
     private lateinit var addPositionButton : ExtendedFloatingActionButton
+    private lateinit var geocoder: Geocoder
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +53,9 @@ class PositionsSelectionFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_positions_selection, container, false)
+
+        // Geocoder to manage geographical positions
+        geocoder = Geocoder(requireContext())
 
         // Manage add position button
         addPositionButton = v.findViewById(R.id.add_positions_button)
@@ -83,6 +95,16 @@ class PositionsSelectionFragment : Fragment() {
 
         confirmPosition.setOnClickListener {
             if (!positionName.text.isNullOrEmpty()) {
+                val geoPositions = geocoder.getFromLocationName(positionName.text.toString(), 1)
+
+                if (!geoPositions.isNullOrEmpty()) {
+                    val address = geoPositions[0]
+
+                    savedPositions.add(address)
+                }
+
+                parameterListener?.onParameterEntered("positions", savedPositions)
+
                 confirmPosition.visibility = GONE
                 addPositionButton.isClickable = true
                 addPositionButton.setBackgroundColor(resources.getColor(R.color.primary))
@@ -92,12 +114,36 @@ class PositionsSelectionFragment : Fragment() {
         // Delete inserted position
         val deletePositionButton = positionBox.findViewById<FloatingActionButton>(R.id.delete_position_button)
         deletePositionButton.setOnClickListener {
-            // Logic to remove inserted position...
+            if (!positionName.text.isNullOrEmpty()) {
+                val geoPositions = geocoder.getFromLocationName(positionName.text.toString(), 1)
+
+                if (!geoPositions.isNullOrEmpty()) {
+                    val address = geoPositions[0]
+
+                    savedPositions.removeAll { it.getAddressLine(0) == address.getAddressLine(0) }
+                }
+
+                parameterListener?.onParameterEntered("positions", savedPositions)
+            }
 
             addPositionButton.isClickable = true
             addPositionButton.setBackgroundColor(resources.getColor(R.color.primary))
             positionContainer.removeView(positionBox)
         }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        if (context is ParameterListener) {
+            parameterListener = context
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+
+        parameterListener = null
     }
 
     companion object {

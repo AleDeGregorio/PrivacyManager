@@ -1,8 +1,10 @@
 package it.polito.s294545.privacymanager
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Gravity
@@ -24,10 +26,22 @@ val listRules = listOf("Test rule 1", "Test rule 2", "Test rule 3")
 private lateinit var context : Context
 
 class MainActivity : AppCompatActivity() {
+
+    // Permissions
+    private val LOCATION_PERMISSION_REQUEST = 106
+    private val LOCATION_PERMISSIONS = arrayOf(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         context = this.applicationContext
         setContentView(R.layout.activity_main)
+
+        if (!checkLocationPermission()) {
+            requestLocationPermission()
+        }
 
         // Managing recycler view
         val recyclerView = findViewById<RecyclerView>(R.id.list_rules)
@@ -37,6 +51,15 @@ class MainActivity : AppCompatActivity() {
         // Manage insert new rule button
         val newRuleButton = findViewById<FloatingActionButton>(R.id.new_rule)
         newRuleButton.setOnClickListener { v -> showPopupNewRule(v) }
+    }
+
+    private fun checkLocationPermission() : Boolean {
+        return checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestLocationPermission() {
+        requestPermissions(LOCATION_PERMISSIONS, LOCATION_PERMISSION_REQUEST)
     }
 
     @SuppressLint("ClickableViewAccessibility")

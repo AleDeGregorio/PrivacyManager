@@ -26,6 +26,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
     private lateinit var permissions : ArrayList<*>
     private var apps : List<*>? = null
     private var timeSlot : TimeSlot? = null
+    private var positions : List<*>? = null
     private var networks : List<*>? = null
     private var bt : List<*>? = null
     private var battery : Int? = null
@@ -151,6 +152,9 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
             }
             "time_slot" -> {
                 timeSlot = data as TimeSlot?
+            }
+            "positions" -> {
+                positions = data as List<*>
             }
             "networks" -> {
                 networks = data as List<*>
