@@ -47,8 +47,9 @@ class BatterySelectionFragment : Fragment() {
         val battery = v.findViewById<TextInputEditText>(R.id.edit_battery)
         val checkBox = v.findViewById<CheckBox>(R.id.checkBox)
 
+        // Pass battery info as parameter
         battery.doOnTextChanged { text, start, before, count ->
-            if (checkBox.isChecked && battery.text?.isNotEmpty() == true) {
+            if (checkBox.isChecked && !battery.text.isNullOrEmpty()) {
                 savedBattery = battery.text.toString().toInt()
             }
             else if (!checkBox.isChecked) {
@@ -59,7 +60,7 @@ class BatterySelectionFragment : Fragment() {
         }
 
         checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked && battery.text?.isNotEmpty() == true) {
+            if (isChecked && !battery.text.isNullOrEmpty()) {
                 savedBattery = battery.text.toString().toInt()
             }
             else if (!isChecked) {

@@ -25,6 +25,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
     // Rule parameters
     private lateinit var permissions : ArrayList<*>
     private var apps : List<*>? = null
+    private var networks : List<*>? = null
     private var bt : List<*>? = null
     private var battery : Int? = null
 
@@ -144,12 +145,14 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
             "apps" -> {
                 apps = data as List<*>
             }
+            "networks" -> {
+                networks = data as List<*>
+            }
             "bt" -> {
                 bt = data as List<*>
             }
             "battery" -> {
                 battery = data as Int?
-                Log.d("myapp", battery.toString())
             }
         }
     }

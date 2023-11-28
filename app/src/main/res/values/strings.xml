@@ -99,4 +99,6 @@
     <string name="insert_name_rule">Inserisci un nome per la regola</string>
     <string name="rule_name_text">Nome della regola</string>
     <string name="save">Salva</string>
+    <string name="confirm_network_info">Confirm network</string>
+    <string name="confirm_position_info">Confirm position</string>
 </resources>
