@@ -24,8 +24,9 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
     // Rule parameters
     private lateinit var permissions : ArrayList<*>
-    private lateinit var apps : List<*>
-    private lateinit var bt : List<*>
+    private var apps : List<*>? = null
+    private var bt : List<*>? = null
+    private var battery : Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -137,13 +138,18 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         startActivity(intent)
     }
 
-    override fun onParameterEntered(parameter: String, data: Any) {
+    // When entering data in fragments, save them in activity
+    override fun onParameterEntered(parameter: String, data: Any?) {
         when (parameter) {
             "apps" -> {
                 apps = data as List<*>
             }
             "bt" -> {
                 bt = data as List<*>
+            }
+            "battery" -> {
+                battery = data as Int?
+                Log.d("myapp", battery.toString())
             }
         }
     }

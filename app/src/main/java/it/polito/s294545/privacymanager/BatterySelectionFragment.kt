@@ -1,10 +1,16 @@
 package it.polito.s294545.privacymanager
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
+import androidx.core.widget.doOnTextChanged
+import com.google.android.material.textfield.TextInputEditText
+
+private var savedBattery : Int? = null
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -21,6 +27,8 @@ class BatterySelectionFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private var parameterListener : ParameterListener? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -34,7 +42,48 @@ class BatterySelectionFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_battery_selection, container, false)
+        val v = inflater.inflate(R.layout.fragment_battery_selection, container, false)
+
+        val battery = v.findViewById<TextInputEditText>(R.id.edit_battery)
+        val checkBox = v.findViewById<CheckBox>(R.id.checkBox)
+
+        battery.doOnTextChanged { text, start, before, count ->
+            if (checkBox.isChecked && battery.text?.isNotEmpty() == true) {
+                savedBattery = battery.text.toString().toInt()
+            }
+            else if (!checkBox.isChecked) {
+                savedBattery = null
+            }
+
+            parameterListener?.onParameterEntered("battery", savedBattery)
+        }
+
+        checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked && battery.text?.isNotEmpty() == true) {
+                savedBattery = battery.text.toString().toInt()
+            }
+            else if (!isChecked) {
+                savedBattery = null
+            }
+
+            parameterListener?.onParameterEntered("battery", savedBattery)
+        }
+
+        return v
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        if (context is ParameterListener) {
+            parameterListener = context
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+
+        parameterListener = null
     }
 
     companion object {

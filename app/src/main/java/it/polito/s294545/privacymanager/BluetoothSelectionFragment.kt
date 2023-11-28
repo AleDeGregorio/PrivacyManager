@@ -113,10 +113,13 @@ class BluetoothSelectionAdapter(private val listBluetooth: List<String>, private
 
         holder.bluetoothDevice.text = deviceName
 
+        // When checkbox is clicked, insert or remove the corresponding bt device in the saved list
         holder.checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+            // Save new device
             if (isChecked && !savedBT.contains(deviceName)) {
                 savedBT.add(deviceName)
             }
+            // Remove inserted device
             else if (!isChecked && savedBT.contains(deviceName)) {
                 savedBT.remove(deviceName)
             }

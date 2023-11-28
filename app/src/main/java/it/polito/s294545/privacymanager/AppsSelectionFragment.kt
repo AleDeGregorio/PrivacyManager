@@ -114,10 +114,13 @@ class AppsSelectionAdapter(private val listApps: List<String>, private val param
 
         holder.appTitle.text = appName
 
+        // When checkbox is clicked, insert or remove the corresponding app in the saved list
         holder.checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+            // Save new app
             if (isChecked && !savedApps.contains(appName)) {
                 savedApps.add(appName)
             }
+            // Remove inserted app
             else if (!isChecked && savedApps.contains(appName)) {
                 savedApps.remove(appName)
             }
