@@ -102,4 +102,6 @@
     <string name="confirm_network_info">Confirm network</string>
     <string name="confirm_position_info">Confirm position</string>
     <string name="confirm_slot">Conferma slot:</string>
+    <string name="error_app">Selezionare almeno un\'app per proseguire</string>
+    <string name="error_time">Verificare l\'orario inserito</string>
 </resources>

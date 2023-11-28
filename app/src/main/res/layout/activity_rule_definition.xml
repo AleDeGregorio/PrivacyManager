@@ -16,13 +16,28 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbarLayout"
-        android:layout_above="@+id/dots_indicator"
+        android:layout_above="@+id/error_app"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="@dimen/margin_top_title"
         android:layout_marginBottom="@dimen/margin_top_title"
         android:layout_marginStart="@dimen/margin_top_title"
         android:layout_marginEnd="@dimen/margin_top_title"/>
+
+    <TextView
+        android:id="@+id/error_app"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/error"
+        android:textSize="20sp"
+        android:layout_above="@+id/dots_indicator"
+        android:visibility="gone"
+        android:layout_marginBottom="@dimen/margin_top_title"
+        android:layout_marginStart="@dimen/margin_top_title"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/margin_top_title"/>
 
     <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
         android:id="@+id/dots_indicator"

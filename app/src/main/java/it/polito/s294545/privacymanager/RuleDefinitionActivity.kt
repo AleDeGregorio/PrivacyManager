@@ -6,10 +6,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.Button
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -21,6 +25,8 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
     private lateinit var viewPager : ViewPager2
     private lateinit var fragmentList : MutableList<Fragment>
+
+    private lateinit var error : TextView
 
     // Rule parameters
     private lateinit var permissions : ArrayList<*>
@@ -55,6 +61,9 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
             }
         }
         onBackPressedDispatcher.addCallback(this, callback)
+
+        // Initialize error text
+        error = findViewById(R.id.error_app)
 
         // Define rule parameters fragments
         viewPager = findViewById(R.id.view_pager)
@@ -106,6 +115,39 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun showPopupSaveRule(view: View) {
+        if (apps.isNullOrEmpty()) {
+            viewPager.currentItem = fragmentList.indexOf(AppsSelectionFragment())
+
+            error.text = resources.getString(R.string.error_app)
+            error.visibility = VISIBLE
+
+            return
+        }
+
+        // Signal error on time slot (time) if one of this condition is verified:
+        // - no day defined
+        // - "from" is null
+        // - "to" is null
+        // - "from" (hour) is later than "to" (hour)
+        // - "from" and "to" have the same hour, but "from" (minutes) is later than "to" (minutes)
+        /*
+        if (timeSlot?.days == null || timeSlot?.days?.isEmpty() == true ||
+            timeSlot?.time?.first.isNullOrEmpty() ||
+            timeSlot?.time?.second.isNullOrEmpty() ||
+            timeSlot?.time?.first?.split(":")?.get(0)?.toInt()!! > timeSlot?.time?.second?.split(":")?.get(0)?.toInt()!! ||
+            (timeSlot?.time?.first?.split(":")?.get(0)?.toInt()!! == timeSlot?.time?.second?.split(":")?.get(0)?.toInt()!! &&
+                    timeSlot?.time?.first?.split(":")?.get(1)?.toInt()!! > timeSlot?.time?.second?.split(":")?.get(1)?.toInt()!!)
+            ) {
+            viewPager.currentItem = fragmentList.indexOf(TimeSlotSelectionFragment())
+
+            error.text = resources.getString(R.string.error_time)
+            error.visibility = VISIBLE
+
+            return
+        }
+
+         */
+
         val (popupView, popupWindow) = managePopup(view, R.layout.popup_save_rule)
 
         // Initialize the elements of our window, install the handler
@@ -149,9 +191,20 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         when (parameter) {
             "apps" -> {
                 apps = data as List<*>
+
+                if (error.isVisible) {
+                    error.visibility = GONE
+                }
             }
             "time_slot" -> {
                 timeSlot = data as TimeSlot?
+
+                /*
+                if (error.isVisible) {
+                    error.visibility = GONE
+                }
+
+                 */
             }
             "positions" -> {
                 positions = data as List<*>
