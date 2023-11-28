@@ -1,13 +1,17 @@
 package it.polito.s294545.privacymanager
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.textfield.TextInputEditText
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -53,17 +57,45 @@ class PositionsSelectionFragment : Fragment() {
 
     // Manage new position
     private fun handleNewPosition(v: View) {
+        addPositionButton.isClickable = false
+        addPositionButton.setBackgroundColor(resources.getColor(R.color.dark_grey))
+
         val positionContainer = v.findViewById<LinearLayout>(R.id.positions_container)
 
         val positionBox = layoutInflater.inflate(R.layout.box_add_position, positionContainer, false)
 
         positionContainer.addView(positionBox)
 
+        // Save inserted position as parameter
+        val positionName = positionBox.findViewById<TextInputEditText>(R.id.edit_position)
+        val confirmPosition = positionBox.findViewById<FloatingActionButton>(R.id.confirm_position_button)
+
+        positionName.doOnTextChanged { text, start, before, count ->
+            if (!text.isNullOrEmpty()) {
+                confirmPosition.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.primary))
+                confirmPosition.isClickable = true
+            }
+            else {
+                confirmPosition.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.dark_grey))
+                confirmPosition.isClickable = false
+            }
+        }
+
+        confirmPosition.setOnClickListener {
+            if (!positionName.text.isNullOrEmpty()) {
+                confirmPosition.visibility = GONE
+                addPositionButton.isClickable = true
+                addPositionButton.setBackgroundColor(resources.getColor(R.color.primary))
+            }
+        }
+
         // Delete inserted position
         val deletePositionButton = positionBox.findViewById<FloatingActionButton>(R.id.delete_position_button)
         deletePositionButton.setOnClickListener {
             // Logic to remove inserted position...
 
+            addPositionButton.isClickable = true
+            addPositionButton.setBackgroundColor(resources.getColor(R.color.primary))
             positionContainer.removeView(positionBox)
         }
     }

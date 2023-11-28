@@ -26,13 +26,29 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_position"
-                android:layout_width="250dp"
+                android:layout_width="205dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/edit_text"
                 android:hint="@string/insert_position_hint"
                 android:inputType="textAutoCorrect|text"
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/confirm_position_button"
+            android:layout_width="46dp"
+            android:layout_height="47dp"
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@+id/delete_position_button"
+            android:layout_marginEnd="20dp"
+            android:layout_gravity="end|bottom"
+            android:layout_marginTop="6dp"
+            android:contentDescription="@string/confirm_position_info"
+            android:src="@drawable/icon_confirm"
+            app:backgroundTint="@color/dark_grey"
+            android:clickable="false"
+            app:fabCustomSize="45dp"
+            app:tint="@color/white" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/delete_position_button"
