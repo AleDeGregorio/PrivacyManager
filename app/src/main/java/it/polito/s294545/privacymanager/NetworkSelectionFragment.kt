@@ -2,7 +2,11 @@ package it.polito.s294545.privacymanager
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.content.res.Resources
+import android.location.Address
+import android.location.Geocoder
 import android.os.Bundle
+import android.text.InputType
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,11 +16,15 @@ import android.widget.CheckBox
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
+import java.util.Locale
 
 private var savedNetworks = mutableListOf<String>()
+private var savedMobile = mutableListOf<String>()
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -50,79 +58,38 @@ class NetworkSelectionFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val v = inflater.inflate(R.layout.fragment_network_selection, container, false)
-
-        // Save mobile network as parameter
-        val mobileCheckBox = v.findViewById<CheckBox>(R.id.checkBox)
-        mobileCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked && !savedNetworks.contains("mobile_data")) {
-                savedNetworks.add("mobile_data")
-            }
-            else if (!isChecked && savedNetworks.contains("mobile_data")) {
-                savedNetworks.remove("mobile_data")
-            }
-
-            parameterListener?.onParameterEntered("networks", savedNetworks)
-        }
-
-        // Manage add network button
-        addNetworkButton = v.findViewById(R.id.add_network_button)
-
-        addNetworkButton.setOnClickListener {
-            handleNewNetwork(v)
-        }
-
-        return v
+        return inflater.inflate(R.layout.fragment_network_selection, container, false)
     }
 
-    // Manage new network
-    private fun handleNewNetwork(v: View) {
-        addNetworkButton.isClickable = false
-        addNetworkButton.setBackgroundColor(resources.getColor(R.color.dark_grey))
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        val networkContainer = v.findViewById<LinearLayout>(R.id.network_container)
-
-        val networkBox = layoutInflater.inflate(R.layout.box_add_network, networkContainer, false)
-
-        networkContainer.addView(networkBox)
-
-        // Save inserted network as parameter
-        val networkName = networkBox.findViewById<TextInputEditText>(R.id.edit_network)
-        val confirmNetwork = networkBox.findViewById<FloatingActionButton>(R.id.confirm_network_button)
-
-        networkName.doOnTextChanged { text, start, before, count ->
-            if (!text.isNullOrEmpty()) {
-                confirmNetwork.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.primary))
-                confirmNetwork.isClickable = true
+        // Save mobile network as parameter
+        val mobileCheckBox = view.findViewById<CheckBox>(R.id.checkBox)
+        mobileCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked && !savedMobile.contains("mobile_data")) {
+                savedMobile.add("mobile_data")
             }
-            else {
-                confirmNetwork.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.dark_grey))
-                confirmNetwork.isClickable = false
+            else if (!isChecked && savedMobile.contains("mobile_data")) {
+                savedMobile.remove("mobile_data")
             }
+
+            parameterListener?.onParameterEntered("networks", savedNetworks + savedMobile)
         }
 
-        confirmNetwork.setOnClickListener {
-            if (!networkName.text.isNullOrEmpty() && !savedNetworks.contains(networkName.text.toString())) {
-                savedNetworks.add(networkName.text.toString())
-                parameterListener?.onParameterEntered("networks", savedNetworks)
+        // Manage add position button
+        addNetworkButton = view.findViewById(R.id.add_network_button)
 
-                confirmNetwork.visibility = GONE
-                addNetworkButton.isClickable = true
-                addNetworkButton.setBackgroundColor(resources.getColor(R.color.primary))
-            }
-        }
+        // Managing recycler view
+        val recyclerView = view.findViewById<RecyclerView>(R.id.list_networks)
+        val adapter = NetworksSelectionAdapter(savedNetworks, parameterListener, addNetworkButton, resources)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(context)
 
-        // Delete inserted network
-        val deleteNetworkButton = networkBox.findViewById<FloatingActionButton>(R.id.delete_network_button)
-        deleteNetworkButton.setOnClickListener {
-            if (!networkName.text.isNullOrEmpty() && savedNetworks.contains(networkName.text.toString())) {
-                savedNetworks.remove(networkName.text.toString())
-                parameterListener?.onParameterEntered("networks", savedNetworks)
-            }
-
-            addNetworkButton.isClickable = true
-            addNetworkButton.setBackgroundColor(resources.getColor(R.color.primary))
-            networkContainer.removeView(networkBox)
+        addNetworkButton.setOnClickListener {
+            savedNetworks.add("")
+            adapter.notifyItemInserted(savedNetworks.size - 1)
+            recyclerView.smoothScrollToPosition(savedNetworks.size - 1)
         }
     }
 
@@ -158,5 +125,87 @@ class NetworkSelectionFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+}
+
+// Define recycler view for positions
+class NetworksSelectionViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+    val networkName = v.findViewById<TextInputEditText>(R.id.edit_network)
+    val confirmNetwork = v.findViewById<FloatingActionButton>(R.id.confirm_network_button)
+    val deleteNetworkButton = v.findViewById<FloatingActionButton>(R.id.delete_network_button)
+}
+
+class NetworksSelectionAdapter(
+    private val listNetworks: MutableList<String>,
+    private val parameterListener: ParameterListener?,
+    private val addNetworkButton: ExtendedFloatingActionButton,
+    private val resources: Resources
+)
+    : RecyclerView.Adapter<NetworksSelectionViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NetworksSelectionViewHolder {
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.box_add_network, parent, false)
+
+        return NetworksSelectionViewHolder(v)
+    }
+
+    override fun getItemCount(): Int {
+        return listNetworks.size
+    }
+
+    override fun onBindViewHolder(holder: NetworksSelectionViewHolder, position: Int) {
+        // Check if a network has already been saved
+        if (savedNetworks[position] == "") {
+            holder.networkName.setText(savedNetworks[position])
+            holder.confirmNetwork.visibility = GONE
+        }
+        else {
+            // Make the addNetworkButton unavailable while inserting new network, waiting for saving
+            addNetworkButton.isClickable = false
+            addNetworkButton.setBackgroundColor(resources.getColor(R.color.dark_grey))
+        }
+
+        // If starting to insert text, make available the confirm button
+        // If text is blank, make the button unavailable
+        holder.networkName.doOnTextChanged { text, start, before, count ->
+            holder.confirmNetwork.visibility = View.VISIBLE
+
+            if (!text.isNullOrEmpty()) {
+                holder.confirmNetwork.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.primary))
+                holder.confirmNetwork.isClickable = true
+            }
+            else {
+                holder.confirmNetwork.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.dark_grey))
+                holder.confirmNetwork.isClickable = false
+            }
+        }
+
+        // Save inserted network
+        holder.confirmNetwork.setOnClickListener {
+            if (!holder.networkName.text.isNullOrEmpty() && !savedNetworks.contains(holder.networkName.text.toString())) {
+                savedNetworks[position] = holder.networkName.text.toString()
+
+                // Save parameter in activity
+                parameterListener?.onParameterEntered("networks", savedNetworks + savedMobile)
+
+                // After new network has been saved, we don't need the confirm button anymore
+                holder.confirmNetwork.visibility = GONE
+                addNetworkButton.isClickable = true
+                addNetworkButton.setBackgroundColor(resources.getColor(R.color.primary))
+
+                // We also disable the input text
+                holder.networkName.isFocusable = false
+                holder.networkName.inputType = InputType.TYPE_NULL
+            }
+        }
+
+        // Delete inserted position
+        holder.deleteNetworkButton.setOnClickListener {
+            savedNetworks.removeAt(holder.adapterPosition)
+            parameterListener?.onParameterEntered("networks", savedNetworks + savedMobile)
+            notifyItemRemoved(holder.adapterPosition)
+
+            addNetworkButton.isClickable = true
+            addNetworkButton.setBackgroundColor(resources.getColor(R.color.primary))
+        }
     }
 }
