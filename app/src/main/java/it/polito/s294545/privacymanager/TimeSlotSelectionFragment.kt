@@ -220,10 +220,10 @@ class TimeSlotSelectionFragment : Fragment() {
                         checkBox.isChecked = false
                         errorTimeSlot.visibility = VISIBLE
                     }
-                    else {
-                        errorTimeSlot.visibility = GONE
-                        parameterListener?.onParameterEntered("time_slot", savedSlot)
-                    }
+                }
+                else {
+                    errorTimeSlot.visibility = GONE
+                    parameterListener?.onParameterEntered("time_slot", savedSlot)
                 }
             }
             else {
