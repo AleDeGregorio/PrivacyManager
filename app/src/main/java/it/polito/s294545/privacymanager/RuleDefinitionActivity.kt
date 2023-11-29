@@ -103,6 +103,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
                 }
                 // Other fragments -> go to next fragment
                 else {
+                    forwardButton.text = resources.getString(R.string.forward_button)
                     forwardButton.setOnClickListener { navigateToNextFragment() }
                 }
             }
