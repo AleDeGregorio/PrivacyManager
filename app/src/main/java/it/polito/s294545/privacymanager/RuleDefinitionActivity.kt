@@ -124,30 +124,6 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
             return
         }
 
-        // Signal error on time slot (time) if one of this condition is verified:
-        // - no day defined
-        // - "from" is null
-        // - "to" is null
-        // - "from" (hour) is later than "to" (hour)
-        // - "from" and "to" have the same hour, but "from" (minutes) is later than "to" (minutes)
-        /*
-        if (timeSlot?.days == null || timeSlot?.days?.isEmpty() == true ||
-            timeSlot?.time?.first.isNullOrEmpty() ||
-            timeSlot?.time?.second.isNullOrEmpty() ||
-            timeSlot?.time?.first?.split(":")?.get(0)?.toInt()!! > timeSlot?.time?.second?.split(":")?.get(0)?.toInt()!! ||
-            (timeSlot?.time?.first?.split(":")?.get(0)?.toInt()!! == timeSlot?.time?.second?.split(":")?.get(0)?.toInt()!! &&
-                    timeSlot?.time?.first?.split(":")?.get(1)?.toInt()!! > timeSlot?.time?.second?.split(":")?.get(1)?.toInt()!!)
-            ) {
-            viewPager.currentItem = fragmentList.indexOf(TimeSlotSelectionFragment())
-
-            error.text = resources.getString(R.string.error_time)
-            error.visibility = VISIBLE
-
-            return
-        }
-
-         */
-
         val (popupView, popupWindow) = managePopup(view, R.layout.popup_save_rule)
 
         // Initialize the elements of our window, install the handler
@@ -198,13 +174,6 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
             }
             "time_slot" -> {
                 timeSlot = data as TimeSlot?
-
-                /*
-                if (error.isVisible) {
-                    error.visibility = GONE
-                }
-
-                 */
             }
             "positions" -> {
                 positions = data as List<*>
