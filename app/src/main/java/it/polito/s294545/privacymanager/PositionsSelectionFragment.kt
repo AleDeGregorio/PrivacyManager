@@ -2,9 +2,12 @@ package it.polito.s294545.privacymanager
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.content.res.Resources
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,9 +16,12 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
+import java.util.Locale
 
 private var savedPositions = mutableListOf<Address>()
 
@@ -52,83 +58,28 @@ class PositionsSelectionFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val v = inflater.inflate(R.layout.fragment_positions_selection, container, false)
+        return inflater.inflate(R.layout.fragment_positions_selection, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         // Geocoder to manage geographical positions
         geocoder = Geocoder(requireContext())
 
         // Manage add position button
-        addPositionButton = v.findViewById(R.id.add_positions_button)
+        addPositionButton = view.findViewById(R.id.add_positions_button)
+
+        // Managing recycler view
+        val recyclerView = view.findViewById<RecyclerView>(R.id.list_positions)
+        val adapter = PositionsSelectionAdapter(savedPositions, parameterListener, geocoder, addPositionButton, resources)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(context)
 
         addPositionButton.setOnClickListener {
-            handleNewPosition(v)
-        }
-
-        return v
-    }
-
-    // Manage new position
-    private fun handleNewPosition(v: View) {
-        addPositionButton.isClickable = false
-        addPositionButton.setBackgroundColor(resources.getColor(R.color.dark_grey))
-
-        val positionContainer = v.findViewById<LinearLayout>(R.id.positions_container)
-
-        val positionBox = layoutInflater.inflate(R.layout.box_add_position, positionContainer, false)
-
-        positionContainer.addView(positionBox)
-
-        // Save inserted position as parameter
-        val positionName = positionBox.findViewById<TextInputEditText>(R.id.edit_position)
-        val confirmPosition = positionBox.findViewById<FloatingActionButton>(R.id.confirm_position_button)
-
-        positionName.doOnTextChanged { text, start, before, count ->
-            if (!text.isNullOrEmpty()) {
-                confirmPosition.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.primary))
-                confirmPosition.isClickable = true
-            }
-            else {
-                confirmPosition.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.dark_grey))
-                confirmPosition.isClickable = false
-            }
-        }
-
-        confirmPosition.setOnClickListener {
-            if (!positionName.text.isNullOrEmpty()) {
-                val geoPositions = geocoder.getFromLocationName(positionName.text.toString(), 1)
-
-                if (!geoPositions.isNullOrEmpty()) {
-                    val address = geoPositions[0]
-
-                    savedPositions.add(address)
-                }
-
-                parameterListener?.onParameterEntered("positions", savedPositions)
-
-                confirmPosition.visibility = GONE
-                addPositionButton.isClickable = true
-                addPositionButton.setBackgroundColor(resources.getColor(R.color.primary))
-            }
-        }
-
-        // Delete inserted position
-        val deletePositionButton = positionBox.findViewById<FloatingActionButton>(R.id.delete_position_button)
-        deletePositionButton.setOnClickListener {
-            if (!positionName.text.isNullOrEmpty()) {
-                val geoPositions = geocoder.getFromLocationName(positionName.text.toString(), 1)
-
-                if (!geoPositions.isNullOrEmpty()) {
-                    val address = geoPositions[0]
-
-                    savedPositions.removeAll { it.getAddressLine(0) == address.getAddressLine(0) }
-                }
-
-                parameterListener?.onParameterEntered("positions", savedPositions)
-            }
-
-            addPositionButton.isClickable = true
-            addPositionButton.setBackgroundColor(resources.getColor(R.color.primary))
-            positionContainer.removeView(positionBox)
+            savedPositions.add(Address(Locale.ITALY))
+            adapter.notifyItemInserted(savedPositions.size - 1)
+            recyclerView.smoothScrollToPosition(savedPositions.size - 1)
         }
     }
 
@@ -164,5 +115,82 @@ class PositionsSelectionFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+}
+
+// Define recycler view for positions
+class PositionsSelectionViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+    val positionName = v.findViewById<TextInputEditText>(R.id.edit_position)
+    val confirmPosition = v.findViewById<FloatingActionButton>(R.id.confirm_position_button)
+    val deletePositionButton = v.findViewById<FloatingActionButton>(R.id.delete_position_button)
+}
+
+class PositionsSelectionAdapter(
+    private val listPositions: MutableList<Address>,
+    private val parameterListener: ParameterListener?,
+    private val geocoder: Geocoder,
+    private val addPositionButton: ExtendedFloatingActionButton,
+    private val resources: Resources)
+    : RecyclerView.Adapter<PositionsSelectionViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PositionsSelectionViewHolder {
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.box_add_position, parent, false)
+
+        return PositionsSelectionViewHolder(v)
+    }
+
+    override fun getItemCount(): Int {
+        return listPositions.size
+    }
+
+    override fun onBindViewHolder(holder: PositionsSelectionViewHolder, position: Int) {
+        // Make the addPositionButton unavailable while inserting new position, waiting for saving
+        addPositionButton.isClickable = false
+        addPositionButton.setBackgroundColor(resources.getColor(R.color.dark_grey))
+
+        // If starting to insert text, make available the confirm button
+        // If text is blank, make the button unavailable
+        holder.positionName.doOnTextChanged { text, start, before, count ->
+            if (!text.isNullOrEmpty()) {
+                holder.confirmPosition.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.primary))
+                holder.confirmPosition.isClickable = true
+            }
+            else {
+                holder.confirmPosition.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.dark_grey))
+                holder.confirmPosition.isClickable = false
+            }
+        }
+
+        // Save inserted position
+        holder.confirmPosition.setOnClickListener {
+            if (!holder.positionName.text.isNullOrEmpty()) {
+                // Get the geographical position from the inserted address
+                val geoPositions = geocoder.getFromLocationName(holder.positionName.text.toString(), 1)
+
+                if (!geoPositions.isNullOrEmpty()) {
+                    val address = geoPositions[0]
+
+                    // Insert the position in the list changing the default item set at the beginning
+                    savedPositions[position] = address
+                }
+
+                // Save parameter in activity
+                parameterListener?.onParameterEntered("positions", savedPositions)
+
+                // After new position has been saved, we don't need the confirm button anymore
+                holder.confirmPosition.visibility = GONE
+                addPositionButton.isClickable = true
+                addPositionButton.setBackgroundColor(resources.getColor(R.color.primary))
+            }
+        }
+
+        // Delete inserted position
+        holder.deletePositionButton.setOnClickListener {
+            savedPositions.removeAt(holder.adapterPosition)
+            parameterListener?.onParameterEntered("positions", savedPositions)
+            notifyItemRemoved(holder.adapterPosition)
+
+            addPositionButton.isClickable = true
+            addPositionButton.setBackgroundColor(resources.getColor(R.color.primary))
+        }
     }
 }
