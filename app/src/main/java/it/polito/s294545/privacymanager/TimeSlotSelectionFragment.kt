@@ -78,30 +78,37 @@ class TimeSlotSelectionFragment : Fragment() {
 
         // Monday
         val mondayButton = v.findViewById<ExtendedFloatingActionButton>(R.id.monday)
+        initializeDay("monday", mondayButton)
         mondayButton.setOnClickListener { toggleDaySelection(it, "monday") }
 
         // Tuesday
         val tuesdayButton = v.findViewById<ExtendedFloatingActionButton>(R.id.tuesday)
+        initializeDay("tuesday", tuesdayButton)
         tuesdayButton.setOnClickListener { toggleDaySelection(it, "tuesday") }
 
         // Wednesday
         val wednesdayButton = v.findViewById<ExtendedFloatingActionButton>(R.id.wednesday)
+        initializeDay("wednesday", wednesdayButton)
         wednesdayButton.setOnClickListener { toggleDaySelection(it, "wednesday") }
 
         // Thursday
         val thursdayButton = v.findViewById<ExtendedFloatingActionButton>(R.id.thursday)
+        initializeDay("thursday", thursdayButton)
         thursdayButton.setOnClickListener { toggleDaySelection(it, "thursday") }
 
         // Friday
         val fridayButton = v.findViewById<ExtendedFloatingActionButton>(R.id.friday)
+        initializeDay("friday", fridayButton)
         fridayButton.setOnClickListener { toggleDaySelection(it, "friday") }
 
         // Saturday
         val saturdayButton = v.findViewById<ExtendedFloatingActionButton>(R.id.saturday)
+        initializeDay("saturday", saturdayButton)
         saturdayButton.setOnClickListener { toggleDaySelection(it, "saturday") }
 
         // Sunday
         val sundayButton = v.findViewById<ExtendedFloatingActionButton>(R.id.sunday)
+        initializeDay("sunday", sundayButton)
         sundayButton.setOnClickListener { toggleDaySelection(it, "sunday") }
 
         // ----- End time slot day management -----
@@ -110,6 +117,7 @@ class TimeSlotSelectionFragment : Fragment() {
 
         // Set from time picker
         selectFromTimeSlot = v.findViewById(R.id.select_from_time_slot)
+        selectFromTimeSlot.text = savedSlot.time.first
         var fromHour : Int? = null
         var fromMinutes : Int? = null
 
@@ -152,6 +160,7 @@ class TimeSlotSelectionFragment : Fragment() {
 
         // Set to time picker
         selectToTimeSlot = v.findViewById(R.id.select_to_time_slot)
+        selectToTimeSlot.text = savedSlot.time.second
         var toHour : Int? = null
         var toMinutes : Int? = null
 
@@ -199,19 +208,22 @@ class TimeSlotSelectionFragment : Fragment() {
             if (isChecked) {
                 // Check if inserted time slot is correct
                 // Signal error on time slot (time) if one of this condition is verified:
+                // - time slot has not been saved yet
                 // - no day defined
                 // - "from" is null
                 // - "to" is null
                 // - "from" (hour) is later than "to" (hour)
                 // - "from" and "to" have the same hour, but "from" (minutes) is later than "to" (minutes)
-                if (savedSlot.days.isEmpty() || fromHour == null || toHour == null || fromHour!! > toHour!! ||
-                    (fromHour == toHour && fromMinutes!! >= toMinutes!!)) {
-                    checkBox.isChecked = false
-                    errorTimeSlot.visibility = VISIBLE
-                }
-                else {
-                    errorTimeSlot.visibility = GONE
-                    parameterListener?.onParameterEntered("time_slot", savedSlot)
+                if (!(savedSlot.days.isNotEmpty() && savedSlot.time.first != "" && savedSlot.time.second != "")) {
+                    if (savedSlot.days.isEmpty() || fromHour == null || toHour == null || fromHour!! > toHour!! ||
+                        (fromHour == toHour && fromMinutes!! >= toMinutes!!)) {
+                        checkBox.isChecked = false
+                        errorTimeSlot.visibility = VISIBLE
+                    }
+                    else {
+                        errorTimeSlot.visibility = GONE
+                        parameterListener?.onParameterEntered("time_slot", savedSlot)
+                    }
                 }
             }
             else {
@@ -236,6 +248,13 @@ class TimeSlotSelectionFragment : Fragment() {
             day.setBackgroundColor(resources.getColor(R.color.grey))
 
             savedSlot.days.remove(dayText)
+        }
+    }
+
+    private fun initializeDay(day: String, dayButton: ExtendedFloatingActionButton) {
+        if (savedSlot.days.contains(day)) {
+            dayButton.isSelected = true
+            dayButton.setBackgroundColor(resources.getColor(R.color.secondary))
         }
     }
 
