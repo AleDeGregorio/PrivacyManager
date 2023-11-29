@@ -8,10 +8,12 @@ import android.location.Geocoder
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.widget.doOnTextChanged
@@ -143,13 +145,23 @@ class PositionsSelectionAdapter(
     }
 
     override fun onBindViewHolder(holder: PositionsSelectionViewHolder, position: Int) {
-        // Make the addPositionButton unavailable while inserting new position, waiting for saving
-        addPositionButton.isClickable = false
-        addPositionButton.setBackgroundColor(resources.getColor(R.color.dark_grey))
+        // Check if a position has already been saved
+        if (savedPositions[position].getAddressLine(0) != null) {
+            holder.positionName.setText(savedPositions[position].getAddressLine(0))
+            holder.confirmPosition.visibility = GONE
+        }
+        else {
+            // Make the addPositionButton unavailable while inserting new position, waiting for saving
+            addPositionButton.isClickable = false
+            addPositionButton.setBackgroundColor(resources.getColor(R.color.dark_grey))
+
+        }
 
         // If starting to insert text, make available the confirm button
         // If text is blank, make the button unavailable
         holder.positionName.doOnTextChanged { text, start, before, count ->
+            holder.confirmPosition.visibility = VISIBLE
+
             if (!text.isNullOrEmpty()) {
                 holder.confirmPosition.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.primary))
                 holder.confirmPosition.isClickable = true
@@ -180,6 +192,10 @@ class PositionsSelectionAdapter(
                 holder.confirmPosition.visibility = GONE
                 addPositionButton.isClickable = true
                 addPositionButton.setBackgroundColor(resources.getColor(R.color.primary))
+
+                // We also disable the input text
+                holder.positionName.isFocusable = false
+                holder.positionName.inputType = InputType.TYPE_NULL
             }
         }
 
