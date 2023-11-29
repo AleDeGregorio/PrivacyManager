@@ -2,6 +2,7 @@ package it.polito.s294545.privacymanager
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -113,6 +114,10 @@ class AppsSelectionAdapter(private val listApps: List<String>, private val param
         val appName = listApps[position]
 
         holder.appTitle.text = appName
+
+        if (savedApps.contains(appName)) {
+            holder.checkBox.isChecked = true
+        }
 
         // When checkbox is clicked, insert or remove the corresponding app in the saved list
         holder.checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
