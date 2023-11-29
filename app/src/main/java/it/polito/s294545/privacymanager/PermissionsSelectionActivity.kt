@@ -72,9 +72,11 @@ class PermissionsSelectionActivity : AppCompatActivity() {
 
         // Go to rule definition only if at least one permission has been selected
         forwardButton.setOnClickListener {
-            val intent = Intent(this, RuleDefinitionActivity::class.java)
-            intent.putExtra("permissions", ArrayList(savedPermissions))
-            startActivity(intent)
+            if (savedPermissions.isNotEmpty()) {
+                val intent = Intent(this, RuleDefinitionActivity::class.java)
+                intent.putExtra("permissions", ArrayList(savedPermissions))
+                startActivity(intent)
+            }
         }
     }
 
