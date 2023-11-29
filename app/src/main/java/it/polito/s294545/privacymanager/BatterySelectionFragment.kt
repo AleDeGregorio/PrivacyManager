@@ -62,12 +62,15 @@ class BatterySelectionFragment : Fragment() {
         checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked && !battery.text.isNullOrEmpty()) {
                 savedBattery = battery.text.toString().toInt()
+                parameterListener?.onParameterEntered("battery", savedBattery)
             }
             else if (!isChecked) {
                 savedBattery = null
+                parameterListener?.onParameterEntered("battery", savedBattery)
             }
-
-            parameterListener?.onParameterEntered("battery", savedBattery)
+            else if (isChecked && battery.text.isNullOrEmpty()) {
+                checkBox.isChecked = false
+            }
         }
 
         return v
