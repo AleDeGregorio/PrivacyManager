@@ -1,11 +1,9 @@
-package it.polito.s294545.privacymanager
+package it.polito.s294545.privacymanager.activities
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Html
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -13,6 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import it.polito.s294545.privacymanager.R
 
 class SavedRuleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

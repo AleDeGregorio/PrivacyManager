@@ -1,12 +1,10 @@
-package it.polito.s294545.privacymanager
+package it.polito.s294545.privacymanager.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.location.Address
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -24,9 +22,22 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputEditText
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
-import kotlinx.serialization.decodeFromString
+import it.polito.s294545.privacymanager.customDataClasses.CustomAddress
+import it.polito.s294545.privacymanager.utilities.ParameterListener
+import it.polito.s294545.privacymanager.utilities.PreferencesManager
+import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.customDataClasses.Rule
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.ActionNoNotificationSelectionFragment
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.ActionWithNotificationSelectionFragment
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.AppsSelectionFragment
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.BatterySelectionFragment
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.BluetoothSelectionFragment
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.NetworkSelectionFragment
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.PermissionsSelectionActivity
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.PositionsSelectionFragment
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.TimeSlotSelectionFragment
+import it.polito.s294545.privacymanager.customDataClasses.TimeSlot
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
 
 class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
@@ -79,7 +90,8 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
         fragmentList = mutableListOf(
             AppsSelectionFragment(), TimeSlotSelectionFragment(), PositionsSelectionFragment(),
-            NetworkSelectionFragment(), BluetoothSelectionFragment(), BatterySelectionFragment())
+            NetworkSelectionFragment(), BluetoothSelectionFragment(), BatterySelectionFragment()
+        )
 
         permissions = intent.extras?.get("permissions") as ArrayList<String>
 

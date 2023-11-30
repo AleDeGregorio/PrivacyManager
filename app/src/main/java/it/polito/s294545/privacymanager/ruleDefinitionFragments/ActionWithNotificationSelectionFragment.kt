@@ -1,4 +1,4 @@
-package it.polito.s294545.privacymanager
+package it.polito.s294545.privacymanager.ruleDefinitionFragments
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
 import androidx.core.content.ContextCompat
+import it.polito.s294545.privacymanager.utilities.ParameterListener
+import it.polito.s294545.privacymanager.R
 
 private var savedAction = "obscure_notification"
 
@@ -46,10 +48,14 @@ class ActionWithNotificationSelectionFragment : Fragment() {
 
         // Setting radio buttons color programmatically
         val obscureNotificationRadio = v.findViewById<RadioButton>(R.id.obscure_notification)
-        obscureNotificationRadio.buttonTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.secondary))
+        obscureNotificationRadio.buttonTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),
+            R.color.secondary
+        ))
 
         val blockNotificationRadio = v.findViewById<RadioButton>(R.id.block_notification)
-        blockNotificationRadio.buttonTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.secondary))
+        blockNotificationRadio.buttonTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),
+            R.color.secondary
+        ))
 
         // Pass action info as parameter
         obscureNotificationRadio.setOnCheckedChangeListener { buttonView, isChecked ->

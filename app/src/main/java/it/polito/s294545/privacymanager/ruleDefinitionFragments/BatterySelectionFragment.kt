@@ -1,4 +1,4 @@
-package it.polito.s294545.privacymanager
+package it.polito.s294545.privacymanager.ruleDefinitionFragments
 
 import android.content.Context
 import android.os.Bundle
@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.core.widget.doOnTextChanged
 import com.google.android.material.textfield.TextInputEditText
+import it.polito.s294545.privacymanager.utilities.ParameterListener
+import it.polito.s294545.privacymanager.R
 
 private var savedBattery : Int? = null
 

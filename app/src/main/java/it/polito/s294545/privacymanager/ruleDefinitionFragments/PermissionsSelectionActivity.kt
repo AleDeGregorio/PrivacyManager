@@ -1,4 +1,4 @@
-package it.polito.s294545.privacymanager
+package it.polito.s294545.privacymanager.ruleDefinitionFragments
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +10,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import it.polito.s294545.privacymanager.activities.MainActivity
+import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.activities.RuleDefinitionActivity
 
 class PermissionsSelectionActivity : AppCompatActivity() {
 

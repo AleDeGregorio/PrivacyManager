@@ -1,4 +1,4 @@
-package it.polito.s294545.privacymanager
+package it.polito.s294545.privacymanager.ruleDefinitionFragments
 
 import android.content.Context
 import android.os.Bundle
@@ -7,10 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import it.polito.s294545.privacymanager.utilities.ParameterListener
+import it.polito.s294545.privacymanager.R
 
 val listBluetooth = listOf("Test BT 1", "Test BT 2", "Test BT 3")
 

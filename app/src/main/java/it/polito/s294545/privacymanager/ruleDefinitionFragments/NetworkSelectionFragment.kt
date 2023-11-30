@@ -1,10 +1,8 @@
-package it.polito.s294545.privacymanager
+package it.polito.s294545.privacymanager.ruleDefinitionFragments
 
 import android.content.Context
 import android.content.res.ColorStateList
 import android.content.res.Resources
-import android.location.Address
-import android.location.Geocoder
 import android.os.Bundle
 import android.text.InputType
 import androidx.fragment.app.Fragment
@@ -13,15 +11,14 @@ import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.LinearLayout
-import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
-import java.util.Locale
+import it.polito.s294545.privacymanager.utilities.ParameterListener
+import it.polito.s294545.privacymanager.R
 
 private var savedNetworks = mutableListOf<String>()
 private var savedMobile = mutableListOf<String>()
@@ -170,11 +167,15 @@ class NetworksSelectionAdapter(
             holder.confirmNetwork.visibility = View.VISIBLE
 
             if (!text.isNullOrEmpty()) {
-                holder.confirmNetwork.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.primary))
+                holder.confirmNetwork.backgroundTintList = ColorStateList.valueOf(resources.getColor(
+                    R.color.primary
+                ))
                 holder.confirmNetwork.isClickable = true
             }
             else {
-                holder.confirmNetwork.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.dark_grey))
+                holder.confirmNetwork.backgroundTintList = ColorStateList.valueOf(resources.getColor(
+                    R.color.dark_grey
+                ))
                 holder.confirmNetwork.isClickable = false
             }
         }

@@ -1,4 +1,4 @@
-package it.polito.s294545.privacymanager
+package it.polito.s294545.privacymanager.activities
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -12,14 +12,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.CheckBox
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
-import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.PermissionsSelectionActivity
 
 val listRules = listOf("Test rule 1", "Test rule 2", "Test rule 3")
 

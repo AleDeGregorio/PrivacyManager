@@ -1,4 +1,4 @@
-package it.polito.s294545.privacymanager
+package it.polito.s294545.privacymanager.customDataClasses
 
 import kotlinx.serialization.Serializable
 

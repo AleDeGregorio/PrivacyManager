@@ -1,4 +1,4 @@
-package it.polito.s294545.privacymanager
+package it.polito.s294545.privacymanager.ruleDefinitionFragments
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
 import androidx.core.content.ContextCompat
+import it.polito.s294545.privacymanager.utilities.ParameterListener
+import it.polito.s294545.privacymanager.R
 
 private var savedAction = "signal_app"
 
@@ -46,10 +48,14 @@ class ActionNoNotificationSelectionFragment : Fragment() {
 
         // Setting radio buttons color programmatically
         val signalAppRadio = v.findViewById<RadioButton>(R.id.signal_app)
-        signalAppRadio.buttonTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.secondary))
+        signalAppRadio.buttonTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),
+            R.color.secondary
+        ))
 
         val closeAppRadio = v.findViewById<RadioButton>(R.id.close_app)
-        closeAppRadio.buttonTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.secondary))
+        closeAppRadio.buttonTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),
+            R.color.secondary
+        ))
 
         // Pass action info as parameter
         signalAppRadio.setOnCheckedChangeListener { buttonView, isChecked ->
