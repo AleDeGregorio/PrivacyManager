@@ -10,17 +10,25 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.customDataClasses.Rule
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.PermissionsSelectionActivity
+import it.polito.s294545.privacymanager.utilities.PreferencesManager
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
-val listRules = listOf("Test rule 1", "Test rule 2", "Test rule 3")
+//val listRules = listOf("Test rule 1", "Test rule 2", "Test rule 3")
+private var savedRules = mutableListOf<Rule>()
 
 private lateinit var context : Context
 
@@ -42,9 +50,22 @@ class MainActivity : AppCompatActivity() {
             requestLocationPermission()
         }
 
+        val retrievedRules = PreferencesManager.getAllPrivacyRules(this)
+
+        if (!retrievedRules.isNullOrEmpty()) {
+            for (r in retrievedRules.keys) {
+                val decodedRule = Json.decodeFromString<Rule>(retrievedRules[r].toString())
+                savedRules.add(decodedRule)
+            }
+        }
+        else {
+            val noRule = findViewById<TextView>(R.id.no_rule)
+            noRule.visibility = VISIBLE
+        }
+
         // Managing recycler view
         val recyclerView = findViewById<RecyclerView>(R.id.list_rules)
-        recyclerView.adapter = SavedRulesAdapter(listRules, this)
+        recyclerView.adapter = SavedRulesAdapter(savedRules, this)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         // Manage insert new rule button
@@ -115,7 +136,7 @@ class SavedRulesViewHolder(v: View) : RecyclerView.ViewHolder(v){
     val deleteRuleButton = v.findViewById<FloatingActionButton>(R.id.delete_rule)
 }
 
-class SavedRulesAdapter(private val listRules: List<String>, context: Context): RecyclerView.Adapter<SavedRulesViewHolder>() {
+class SavedRulesAdapter(private val listRules: MutableList<Rule>, context: Context): RecyclerView.Adapter<SavedRulesViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedRulesViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.box_saved_rule, parent, false)
 
@@ -127,29 +148,38 @@ class SavedRulesAdapter(private val listRules: List<String>, context: Context): 
     }
 
     override fun onBindViewHolder(holder: SavedRulesViewHolder, position: Int) {
-        val ruleName = listRules[position]
+        val rule = listRules[position]
+        val ruleName = rule.name
 
         holder.buttonRule.text = ruleName
 
         // Manage saved rule
         holder.buttonRule.setOnClickListener {
             val intent = Intent(context, SavedRuleActivity::class.java)
+            intent.putExtra("rule", Json.encodeToString(rule))
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
         }
 
         // Manage delete inserted rule button
-        holder.deleteRuleButton.setOnClickListener { v -> showPopupDeleteRule(v) }
+        holder.deleteRuleButton.setOnClickListener { v -> showPopupDeleteRule(v, ruleName!!, position, holder) }
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun showPopupDeleteRule(view: View) {
+    private fun showPopupDeleteRule(view: View, ruleName: String, position: Int, holder: SavedRulesViewHolder) {
         val (popupView, popupWindow) = managePopup(view, R.layout.popup_delete_rule)
+
+        val deleteInfo = popupView.findViewById<TextView>(R.id.delete_info)
+        deleteInfo.text = "Desideri cancellare \"$ruleName\"?"
 
         // Initialize the elements of our window, install the handler
         val buttonConfirm = popupView.findViewById<Button>(R.id.confirm_delete_button)
         buttonConfirm.setOnClickListener {
             // Delete rule
+            popupWindow.dismiss()
+            PreferencesManager.deletePrivacyRule(context, ruleName)
+            savedRules.removeAt(holder.adapterPosition)
+            notifyItemRemoved(position)
         }
 
         val buttonCancel = popupView.findViewById<Button>(R.id.cancel_delete_button)

@@ -151,9 +151,12 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         val ruleName = popupView.findViewById<TextInputEditText>(R.id.edit_rule_name)
         val buttonConfirm = popupView.findViewById<Button>(R.id.confirm_save_button)
         val buttonCancel = popupView.findViewById<Button>(R.id.cancel_save_button)
+        val errorName = popupView.findViewById<TextView>(R.id.error_name)
 
         // Rule name
         ruleName.doOnTextChanged { text, start, before, count ->
+            errorName.visibility = GONE
+
             if (!text.isNullOrEmpty()) {
                 buttonConfirm.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.primary))
                 buttonConfirm.isClickable = true
@@ -169,23 +172,28 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
             if (!ruleName.text.isNullOrEmpty()) {
                 name = ruleName.text.toString()
 
-                // Save the inserted rule in a Rule object
-                val rule = Rule()
-                rule.name = name
-                rule.permissions = permissions
-                rule.apps = apps
-                rule.timeSlot = timeSlot
-                rule.positions = positions
-                rule.networks = networks
-                rule.bt = bt
-                rule.battery = battery
-                rule.action = action
+                if (PreferencesManager.ruleNameAlreadyExists(this, name!!)) {
+                    errorName.visibility = VISIBLE
+                }
+                else {
+                    // Save the inserted rule in a Rule object
+                    val rule = Rule()
+                    rule.name = name
+                    rule.permissions = permissions
+                    rule.apps = apps
+                    rule.timeSlot = timeSlot
+                    rule.positions = positions
+                    rule.networks = networks
+                    rule.bt = bt
+                    rule.battery = battery
+                    rule.action = action
 
-                // Convert rule object to JSON string
-                val ruleJSON = Json.encodeToString(Rule.serializer(), rule)
+                    // Convert rule object to JSON string
+                    val ruleJSON = Json.encodeToString(Rule.serializer(), rule)
 
-                // Save privacy rule in shared preferences
-                PreferencesManager.savePrivacyRule(this, rule.name!!, ruleJSON)
+                    // Save privacy rule in shared preferences
+                    PreferencesManager.savePrivacyRule(this, rule.name!!, ruleJSON)
+                }
             }
         }
 

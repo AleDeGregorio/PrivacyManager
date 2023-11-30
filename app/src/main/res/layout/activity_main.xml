@@ -24,6 +24,20 @@
         android:layout_marginTop="@dimen/margin_top_title"
         android:layout_centerHorizontal="true" />
 
+    <TextView
+        android:id="@+id/no_rule"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nessuna regola salvata"
+        android:visibility="gone"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/error"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="@dimen/margin_top_title"
+        android:layout_marginTop="32dp"/>
+
     <LinearLayout
         android:id="@+id/list_rules_container"
         android:layout_width="match_parent"

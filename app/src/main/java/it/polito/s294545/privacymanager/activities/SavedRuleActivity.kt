@@ -12,6 +12,9 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.customDataClasses.Rule
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 class SavedRuleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,11 +35,19 @@ class SavedRuleActivity : AppCompatActivity() {
 
         // Set rule text in card
         val ruleText = findViewById<TextView>(R.id.rule_text)
+        val retrievedRule = intent.extras?.get("rule")
+        val rule = Json.decodeFromString<Rule>(retrievedRule.toString())
+
+        ruleText.text = rule.toString()
+
+        /*
         ruleText.text = Html.fromHtml(
             "Le <i>app</i> <b>WhatsApp</b> e <b>Maps</b> con <i>autorizzazioni</i> <b>Localizzazione</b> e <b>Fotocamera</b> " +
             "i <i>giorni</i> <b>Lun-Ven 08:00-17:00</b> e <b>Sabato (tutto il giorno)</b> e con le condizioni di <i>rete</i> <b>Connessione dati</b>, " +
             "<i>bluetooth</i> <b>Smartwatch</b> e <i>batteria</i> <<b>50%</b> subiscono l'<i>azione</i> <b>Chiudi applicazione</b>."
         )
+
+         */
 
         // Manage start rule
         val startRuleButton = findViewById<FloatingActionButton>(R.id.start_rule_button)
