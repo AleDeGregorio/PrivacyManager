@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.os.Bundle
+import android.text.Editable
 import android.text.InputType
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -160,6 +161,8 @@ class NetworksSelectionAdapter(
             // Make the addNetworkButton unavailable while inserting new network, waiting for saving
             addNetworkButton.isClickable = false
             addNetworkButton.setBackgroundColor(resources.getColor(R.color.dark_grey))
+            holder.networkName.text = Editable.Factory.getInstance().newEditable("")
+            holder.networkName.isFocusable = true
         }
 
         // If starting to insert text, make available the confirm button
@@ -193,20 +196,14 @@ class NetworksSelectionAdapter(
                 holder.confirmNetwork.visibility = GONE
                 addNetworkButton.isClickable = true
                 addNetworkButton.setBackgroundColor(resources.getColor(R.color.primary))
-
-                // We also disable the input text
-                holder.networkName.isFocusable = false
-                holder.networkName.inputType = InputType.TYPE_NULL
             }
         }
 
         // Delete inserted position
         holder.deleteNetworkButton.setOnClickListener {
-            Log.d("myapp", "${holder.adapterPosition}")
             savedNetworks.removeAt(holder.adapterPosition)
-            Log.d("myapp", "$position")
             parameterListener?.onParameterEntered("networks", savedNetworks + savedMobile)
-            notifyItemRemoved(holder.adapterPosition)
+            notifyItemRemoved(position)
 
             addNetworkButton.isClickable = true
             addNetworkButton.setBackgroundColor(resources.getColor(R.color.primary))

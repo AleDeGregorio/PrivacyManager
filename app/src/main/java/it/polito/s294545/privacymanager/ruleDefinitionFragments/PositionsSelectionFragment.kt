@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.location.Geocoder
 import android.os.Bundle
+import android.text.Editable
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
@@ -151,7 +152,8 @@ class PositionsSelectionAdapter(
             // Make the addPositionButton unavailable while inserting new position, waiting for saving
             addPositionButton.isClickable = false
             addPositionButton.setBackgroundColor(resources.getColor(R.color.dark_grey))
-
+            holder.positionName.text = Editable.Factory.getInstance().newEditable("")
+            holder.positionName.isFocusable = true
         }
 
         // If starting to insert text, make available the confirm button
@@ -198,10 +200,6 @@ class PositionsSelectionAdapter(
                 holder.confirmPosition.visibility = GONE
                 addPositionButton.isClickable = true
                 addPositionButton.setBackgroundColor(resources.getColor(R.color.primary))
-
-                // We also disable the input text
-                holder.positionName.isFocusable = false
-                holder.positionName.inputType = InputType.TYPE_NULL
             }
         }
 
