@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:contentDescription="@string/new_rule"
-        android:src="@drawable/icon_start"
+        android:src="@drawable/icon_plus"
         app:backgroundTint="@color/primary"
         style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
         app:fabCustomSize="60dp"
