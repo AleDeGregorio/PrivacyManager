@@ -6,4 +6,5 @@
     <dimen name="day_button">50dp</dimen>
     <dimen name="text_day_button">14sp</dimen>
     <dimen name="text_box_add_time_slot">18sp</dimen>
+    <dimen name="saved_rule_card">185dp</dimen>
 </resources>

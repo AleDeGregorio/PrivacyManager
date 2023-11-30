@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -14,75 +14,426 @@
         android:layout_alignParentTop="true"/>
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/rule_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbarLayout"
+        android:layout_marginTop="@dimen/margin_top_title"
+        android:layout_centerHorizontal="true"
         android:text="@string/test_rule_title"
         android:textSize="34sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.075"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbarLayout"
-        app:layout_constraintVertical_bias="0.025" />
+        android:textStyle="bold" />
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/rule_card"
-        android:layout_width="match_parent"
+        android:id="@+id/permissions_card"
+        android:layout_width="@dimen/saved_rule_card"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="20dp"
+        android:layout_below="@+id/rule_name"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="@dimen/margin_top_title"
         app:cardBackgroundColor="@color/grey"
-        app:cardCornerRadius="50dp"
+        app:cardCornerRadius="35dp"
         app:cardElevation="10dp"
         app:cardMaxElevation="12dp"
         app:cardPreventCornerOverlap="false"
         app:cardUseCompatPadding="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.051"
         app:strokeColor="@color/primary"
-        app:strokeWidth="5dp">
+        app:strokeWidth="2dp">
 
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/permissions_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="8dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/permissions_icon"
+            app:srcCompat="@drawable/icon_permissions" />
 
         <TextView
-            android:id="@+id/rule_text"
+            android:id="@+id/permissions_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textIsSelectable="true"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="18dp"
+            android:layout_marginStart="45dp"
             android:layout_marginBottom="18dp"
             android:layout_marginTop="18dp"
-            android:layout_marginEnd="18dp"
-            android:text="@string/lorem_ipsum"
+            android:text="Autorizzazioni"
             android:textColor="@color/black"
-            android:textSize="25sp" />
+            android:textStyle="bold"
+            android:textSize="18sp" />
 
+        <TextView
+            android:id="@+id/permissions_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="18dp"
+            android:layout_marginTop="45dp"
+            android:layout_marginEnd="8dp"
+            android:text="Localizzazione, Calendario, Notifiche"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/apps_card"
+        android:layout_width="@dimen/saved_rule_card"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rule_name"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="2dp"
+        android:layout_marginTop="@dimen/margin_top_title"
+        app:cardBackgroundColor="@color/grey"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="10dp"
+        app:cardMaxElevation="12dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="false"
+        app:strokeColor="@color/primary"
+        app:strokeWidth="2dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/apps_icon"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginStart="8dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/app_icon_info"
+            app:srcCompat="@drawable/icon_app" />
+
+        <TextView
+            android:id="@+id/apps_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="45dp"
+            android:layout_marginBottom="18dp"
+            android:layout_marginTop="18dp"
+            android:text="Applicazioni"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/apps_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="18dp"
+            android:layout_marginTop="45dp"
+            android:layout_marginEnd="8dp"
+            android:text="Whatsapp, Facebook, Instagram"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/action_card"
+        android:layout_width="@dimen/saved_rule_card"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/permissions_card"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="@dimen/margin_top_title"
+        app:cardBackgroundColor="@color/grey"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="10dp"
+        app:cardMaxElevation="12dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="false"
+        app:strokeColor="@color/primary"
+        app:strokeWidth="2dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/action_icon"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginStart="12dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/action_icon"
+            app:srcCompat="@drawable/icon_block" />
+
+        <TextView
+            android:id="@+id/action_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="55dp"
+            android:layout_marginBottom="18dp"
+            android:layout_marginTop="18dp"
+            android:text="Azione"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/action_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="18dp"
+            android:layout_marginTop="45dp"
+            android:text="Chiudi app"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/positions_card"
+        android:layout_width="@dimen/saved_rule_card"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/apps_card"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="2dp"
+        android:layout_marginTop="@dimen/margin_top_title"
+        app:cardBackgroundColor="@color/grey"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="10dp"
+        app:cardMaxElevation="12dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="false"
+        app:strokeColor="@color/primary"
+        app:strokeWidth="2dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/location_icon"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginStart="8dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/location_icon"
+            app:srcCompat="@drawable/icon_location" />
+
+        <TextView
+            android:id="@+id/positions_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="45dp"
+            android:layout_marginBottom="18dp"
+            android:layout_marginTop="18dp"
+            android:text="Posizioni"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/positions_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="18dp"
+            android:layout_marginTop="45dp"
+            android:layout_marginEnd="8dp"
+            android:text="Torino, Via Roma\nMilano"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/time_slot_card"
+        android:layout_width="@dimen/saved_rule_card"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/action_card"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="@dimen/margin_top_title"
+        app:cardBackgroundColor="@color/grey"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="10dp"
+        app:cardMaxElevation="12dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="false"
+        app:strokeColor="@color/primary"
+        app:strokeWidth="2dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/time_slot_icon"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginStart="8dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/time_slot_icon"
+            app:srcCompat="@drawable/icon_time_slot" />
+
+        <TextView
+            android:id="@+id/time_slot_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="50dp"
+            android:layout_marginBottom="18dp"
+            android:layout_marginTop="18dp"
+            android:text="Giorni e ora"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/time_slot_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="18dp"
+            android:layout_marginTop="45dp"
+            android:layout_marginEnd="8dp"
+            android:text="Lun, Mar, Mer 08:00-12:00"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/parameters_card"
+        android:layout_width="@dimen/saved_rule_card"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/positions_card"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="2dp"
+        android:layout_marginTop="@dimen/margin_top_title"
+        app:cardBackgroundColor="@color/grey"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="10dp"
+        app:cardMaxElevation="12dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="false"
+        app:strokeColor="@color/primary"
+        app:strokeWidth="2dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/parameters_icon"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginStart="12dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/parameters_icon"
+            app:srcCompat="@drawable/icon_parameters" />
+
+        <TextView
+            android:id="@+id/parameters_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="65dp"
+            android:layout_marginBottom="18dp"
+            android:layout_marginTop="18dp"
+            android:text="Altro"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="18sp" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="18dp"
+            android:layout_marginTop="45dp"
+            android:layout_marginEnd="8dp">
+
+            <TextView
+                android:id="@+id/networks_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textIsSelectable="true"
+                android:text="Reti: "
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/networks_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textIsSelectable="true"
+                android:layout_toEndOf="@+id/networks_title"
+                android:text="rete1, rete2, rete3"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/bluetooth_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/networks_text"
+                android:textIsSelectable="true"
+                android:text="Bluetooth: "
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/bluetooth_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textIsSelectable="true"
+                android:layout_below="@+id/networks_text"
+                android:layout_toEndOf="@+id/bluetooth_title"
+                android:text="bt1, bt2, bt3"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/battery_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/bluetooth_text"
+                android:textIsSelectable="true"
+                android:text="Batteria: "
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/battery_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textIsSelectable="true"
+                android:layout_below="@+id/bluetooth_text"
+                android:layout_toEndOf="@+id/battery_title"
+                android:text="&lt;55&#37;"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+        </RelativeLayout>
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/start_rule_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="37.5dp"
+        android:layout_marginBottom="21dp"
         android:layout_gravity="end|bottom"
         android:contentDescription="@string/new_rule"
         android:src="@drawable/icon_start"
         app:backgroundTint="@color/primary"
         style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
         app:fabCustomSize="60dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.894"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rule_card"
-        app:layout_constraintVertical_bias="0.908"
         app:maxImageSize="30dp"
         app:tint="@color/white" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

@@ -33,7 +33,6 @@ import it.polito.s294545.privacymanager.ruleDefinitionFragments.AppsSelectionFra
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.BatterySelectionFragment
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.BluetoothSelectionFragment
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.NetworkSelectionFragment
-import it.polito.s294545.privacymanager.ruleDefinitionFragments.PermissionsSelectionActivity
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.PositionsSelectionFragment
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.TimeSlotSelectionFragment
 import it.polito.s294545.privacymanager.customDataClasses.TimeSlot
@@ -193,6 +192,10 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
                     // Save privacy rule in shared preferences
                     PreferencesManager.savePrivacyRule(this, rule.name!!, ruleJSON)
+
+                    // Navigate back to homepage
+                    val intent = Intent(this@RuleDefinitionActivity, MainActivity::class.java)
+                    startActivity(intent)
                 }
             }
         }

@@ -22,7 +22,7 @@
             android:name=".activities.ViolationActivity"
             android:exported="false" />
         <activity
-            android:name=".ruleDefinitionFragments.PermissionsSelectionActivity"
+            android:name=".activities.PermissionsSelectionActivity"
             android:exported="false" />
         <activity
             android:name=".activities.RuleDefinitionActivity"
