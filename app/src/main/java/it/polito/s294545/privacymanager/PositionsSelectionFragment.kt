@@ -25,7 +25,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import java.util.Locale
 
-private var savedPositions = mutableListOf<Address>()
+private var savedPositions = mutableListOf<CustomAddress>()
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -79,7 +79,7 @@ class PositionsSelectionFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         addPositionButton.setOnClickListener {
-            savedPositions.add(Address(Locale.ITALY))
+            savedPositions.add(CustomAddress())
             adapter.notifyItemInserted(savedPositions.size - 1)
             recyclerView.smoothScrollToPosition(savedPositions.size - 1)
         }
@@ -128,7 +128,7 @@ class PositionsSelectionViewHolder(v: View) : RecyclerView.ViewHolder(v) {
 }
 
 class PositionsSelectionAdapter(
-    private val listPositions: MutableList<Address>,
+    private val listPositions: MutableList<CustomAddress>,
     private val parameterListener: ParameterListener?,
     private val geocoder: Geocoder,
     private val addPositionButton: ExtendedFloatingActionButton,
@@ -146,8 +146,8 @@ class PositionsSelectionAdapter(
 
     override fun onBindViewHolder(holder: PositionsSelectionViewHolder, position: Int) {
         // Check if a position has already been saved
-        if (savedPositions[position].getAddressLine(0) != null) {
-            holder.positionName.setText(savedPositions[position].getAddressLine(0))
+        if (savedPositions[position].address != null) {
+            holder.positionName.setText(savedPositions[position].address)
             holder.confirmPosition.visibility = GONE
         }
         else {
@@ -181,8 +181,13 @@ class PositionsSelectionAdapter(
                 if (!geoPositions.isNullOrEmpty()) {
                     val address = geoPositions[0]
 
+                    val customAddress = CustomAddress()
+                    customAddress.address = address.getAddressLine(0)
+                    customAddress.latitude = address.latitude
+                    customAddress.longitude = address.longitude
+
                     // Insert the position in the list changing the default item set at the beginning
-                    savedPositions[position] = address
+                    savedPositions[position] = customAddress
                 }
 
                 // Save parameter in activity
@@ -203,7 +208,7 @@ class PositionsSelectionAdapter(
         holder.deletePositionButton.setOnClickListener {
             savedPositions.removeAt(holder.adapterPosition)
             parameterListener?.onParameterEntered("positions", savedPositions)
-            notifyItemRemoved(holder.adapterPosition)
+            notifyItemRemoved(position)
 
             addPositionButton.isClickable = true
             addPositionButton.setBackgroundColor(resources.getColor(R.color.primary))

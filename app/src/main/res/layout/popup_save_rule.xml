@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 app:boxBackgroundMode="filled"
                 android:padding="10dp"
-                android:layout_marginStart="40dp"
+                android:layout_marginStart="30dp"
                 app:boxStrokeWidth="0dp">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -64,7 +64,8 @@
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
                     android:text="@string/confirm_button"
-                    android:backgroundTint="@color/primary"
+                    android:clickable="false"
+                    android:backgroundTint="@color/dark_grey"
                     android:textColor="@color/white"
                     android:textSize="18sp" />
 

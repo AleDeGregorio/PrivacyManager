@@ -2,6 +2,8 @@ package it.polito.s294545.privacymanager
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.location.Address
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -14,12 +16,17 @@ import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.textfield.TextInputEditText
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
 
 class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
@@ -29,14 +36,15 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
     private lateinit var error : TextView
 
     // Rule parameters
-    private lateinit var permissions : ArrayList<*>
-    private var apps : List<*>? = null
+    private lateinit var permissions : ArrayList<String>
+    private var apps : List<String>? = null
     private var timeSlot : TimeSlot? = null
-    private var positions : List<*>? = null
-    private var networks : List<*>? = null
-    private var bt : List<*>? = null
+    private var positions : List<CustomAddress>? = null
+    private var networks : List<String>? = null
+    private var bt : List<String>? = null
     private var battery : Int? = null
     private var action : String? = null
+    private var name : String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,7 +81,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
             AppsSelectionFragment(), TimeSlotSelectionFragment(), PositionsSelectionFragment(),
             NetworkSelectionFragment(), BluetoothSelectionFragment(), BatterySelectionFragment())
 
-        permissions = intent.extras?.get("permissions") as ArrayList<*>
+        permissions = intent.extras?.get("permissions") as ArrayList<String>
 
         if (permissions.contains("notifications")) {
             action = "signal_app"
@@ -128,12 +136,48 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         val (popupView, popupWindow) = managePopup(view, R.layout.popup_save_rule)
 
         // Initialize the elements of our window, install the handler
+        val ruleName = popupView.findViewById<TextInputEditText>(R.id.edit_rule_name)
         val buttonConfirm = popupView.findViewById<Button>(R.id.confirm_save_button)
-        buttonConfirm.setOnClickListener {
-            // Save rule
+        val buttonCancel = popupView.findViewById<Button>(R.id.cancel_save_button)
+
+        // Rule name
+        ruleName.doOnTextChanged { text, start, before, count ->
+            if (!text.isNullOrEmpty()) {
+                buttonConfirm.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.primary))
+                buttonConfirm.isClickable = true
+            }
+            else {
+                buttonConfirm.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.dark_grey))
+                buttonConfirm.isClickable = false
+            }
         }
 
-        val buttonCancel = popupView.findViewById<Button>(R.id.cancel_save_button)
+        // Save rule
+        buttonConfirm.setOnClickListener {
+            if (!ruleName.text.isNullOrEmpty()) {
+                name = ruleName.text.toString()
+
+                // Save the inserted rule in a Rule object
+                val rule = Rule()
+                rule.name = name
+                rule.permissions = permissions
+                rule.apps = apps
+                rule.timeSlot = timeSlot
+                rule.positions = positions
+                rule.networks = networks
+                rule.bt = bt
+                rule.battery = battery
+                rule.action = action
+
+                // Convert rule object to JSON string
+                val ruleJSON = Json.encodeToString(Rule.serializer(), rule)
+
+                // Save privacy rule in shared preferences
+                PreferencesManager.savePrivacyRule(this, rule.name!!, ruleJSON)
+            }
+        }
+
+        // Dismiss window
         buttonCancel.setOnClickListener {
             popupWindow.dismiss()
         }
@@ -167,7 +211,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
     override fun onParameterEntered(parameter: String, data: Any?) {
         when (parameter) {
             "apps" -> {
-                apps = data as List<*>
+                apps = data as List<String>
 
                 if (error.isVisible) {
                     error.visibility = GONE
@@ -177,13 +221,13 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
                 timeSlot = data as TimeSlot?
             }
             "positions" -> {
-                positions = data as List<*>
+                positions = data as List<CustomAddress>
             }
             "networks" -> {
-                networks = data as List<*>
+                networks = data as List<String>
             }
             "bt" -> {
-                bt = data as List<*>
+                bt = data as List<String>
             }
             "battery" -> {
                 battery = data as Int?
