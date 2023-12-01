@@ -2,12 +2,15 @@ package it.polito.s294545.privacymanager.activities
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.AppOpsManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -19,11 +22,13 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
+import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import it.polito.s294545.privacymanager.R
 import it.polito.s294545.privacymanager.customDataClasses.Rule
+import it.polito.s294545.privacymanager.utilities.MonitorManager
 import it.polito.s294545.privacymanager.utilities.PreferencesManager
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -38,6 +43,8 @@ private lateinit var noRule : TextView
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var monitorManager: MonitorManager
+
     // Permissions
     private val LOCATION_PERMISSION_REQUEST = 106
     private val LOCATION_PERMISSIONS = arrayOf(
@@ -50,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         context = this.applicationContext
         setContentView(R.layout.activity_main)
 
-        if (!checkLocationPermission()) {
+        if (!hasLocationPermission()) {
             requestLocationPermission()
         }
 
@@ -87,6 +94,10 @@ class MainActivity : AppCompatActivity() {
         if (activeRules.isNotEmpty()) {
             val containerActiveRules = findViewById<LinearLayout>(R.id.list_active_rules_container)
             containerActiveRules.visibility = VISIBLE
+
+            monitorManager = MonitorManager(this, activeRules)
+
+            monitorManager.startMonitoring()
         }
 
         val activeRulesRecyclerView = findViewById<RecyclerView>(R.id.list_active_rules)
@@ -103,8 +114,12 @@ class MainActivity : AppCompatActivity() {
 
         savedRules.clear()
         activeRules.clear()
+
+        if (activeRules.isNotEmpty()) {
+            monitorManager.stopMonitoring()
+        }
     }
-    private fun checkLocationPermission() : Boolean {
+    private fun hasLocationPermission() : Boolean {
         return checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
