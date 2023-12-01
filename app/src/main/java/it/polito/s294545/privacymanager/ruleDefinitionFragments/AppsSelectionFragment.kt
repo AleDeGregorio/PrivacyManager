@@ -1,6 +1,7 @@
 package it.polito.s294545.privacymanager.ruleDefinitionFragments
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -16,7 +17,8 @@ import it.polito.s294545.privacymanager.utilities.ParameterListener
 import it.polito.s294545.privacymanager.R
 import it.polito.s294545.privacymanager.activities.retrievedRule
 
-val listApps = listOf("Test app 1", "Test app 2", "Test app 3", "Test app 4", "Test app 5", "Test app 6", "Test app 7", "Test app 8", "Test app 9", "Test app 10")
+var listApps = listOf("Test app 1", "Test app 2", "Test app 3", "Test app 4", "Test app 5", "Test app 6", "Test app 7", "Test app 8", "Test app 9", "Test app 10")
+var listIcons = listOf<Drawable>()
 
 var savedApps = mutableListOf<String>()
 
@@ -121,8 +123,10 @@ class AppsSelectionAdapter(private val listApps: List<String>, private val param
 
     override fun onBindViewHolder(holder: AppsSelectionViewHolder, position: Int) {
         val appName = listApps[position]
+        val appIcon = listIcons[position]
 
         holder.appTitle.text = appName
+        holder.appIcon.setImageDrawable(appIcon)
 
         if (savedApps.contains(appName)) {
             holder.checkBox.isChecked = true

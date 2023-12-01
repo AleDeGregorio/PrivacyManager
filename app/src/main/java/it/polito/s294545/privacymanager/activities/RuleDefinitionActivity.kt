@@ -2,7 +2,9 @@ package it.polito.s294545.privacymanager.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -37,6 +39,8 @@ import it.polito.s294545.privacymanager.ruleDefinitionFragments.NetworkSelection
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.PositionsSelectionFragment
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.TimeSlotSelectionFragment
 import it.polito.s294545.privacymanager.customDataClasses.TimeSlot
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.listApps
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.listIcons
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedApps
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedBT
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedBattery
@@ -128,6 +132,9 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         viewPager.adapter = adapter
         dotsIndicator.attachTo(viewPager)
 
+        // Initialize list of apps
+        getApps()
+
         // Manage forward button
         val forwardButton = findViewById<Button>(R.id.forward_button)
         // Change button based on current fragment
@@ -190,6 +197,52 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         savedMobile.clear()
         savedBT.clear()
         savedBattery = null
+    }
+
+    private fun getApps() {
+        // Specify the permissions to check
+        val permissionsToCheck = mutableListOf<String>()
+
+        for (p in permissions) {
+            when (p) {
+                "notifications" -> permissionsToCheck.add("android.permission.POST_NOTIFICATIONS")
+                "location" -> permissionsToCheck.addAll(listOf("android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"))
+                "calendar" -> permissionsToCheck.add("android.permission.WRITE_CALENDAR")
+                "camera" -> permissionsToCheck.add("android.permission.CAMERA")
+                "sms" -> permissionsToCheck.add("android.permission.SEND_SMS")
+            }
+        }
+
+        // Get a reference to the PackageManager
+        val packageManager = packageManager
+
+        // Get a list of all installed apps
+        val installedApps = packageManager.getInstalledPackages(PackageManager.GET_PERMISSIONS)
+
+        val appsAndIcons = mutableMapOf<String, Drawable>()
+
+        // Iterate through the installed apps
+        for (packageInfo in installedApps) {
+            val requestedPermissions = packageInfo.requestedPermissions
+
+            // Check if the app has the specific permission
+            if (requestedPermissions != null) {
+                for (permission in requestedPermissions) {
+                    if (permissionsToCheck.contains(permission)) {
+                        val tmpName = packageInfo.applicationInfo.loadLabel(packageManager).toString()
+                        val appName = tmpName.substring(0, 1).uppercase() + tmpName.substring(1)
+                        val appIcon = packageInfo.applicationInfo.loadIcon(packageManager)
+
+                        appsAndIcons[appName] = appIcon
+                    }
+                }
+            }
+        }
+
+        val orderedAppsAndIcons = appsAndIcons.toSortedMap()
+
+        listApps = orderedAppsAndIcons.keys.toList()
+        listIcons = orderedAppsAndIcons.values.toList()
     }
 
     @SuppressLint("ClickableViewAccessibility")
