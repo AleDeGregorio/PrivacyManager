@@ -224,9 +224,13 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         // Iterate through the installed apps
         for (packageInfo in installedApps) {
             val requestedPermissions = packageInfo.requestedPermissions
+            val packageName = packageInfo.packageName
 
-            // Check if the app has the specific permission
-            if (requestedPermissions != null) {
+            // Check if the app has the specific permission (excluding system apps and this app)
+            if (requestedPermissions != null &&
+                !(packageName.startsWith("com.android", true) ||
+                        packageName.startsWith("com.google.android") ||
+                        packageName.startsWith("it.polito.s294545"))) {
                 for (permission in requestedPermissions) {
                     if (permissionsToCheck.contains(permission)) {
                         val tmpName = packageInfo.applicationInfo.loadLabel(packageManager).toString()
