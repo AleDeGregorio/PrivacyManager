@@ -17,6 +17,7 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import it.polito.s294545.privacymanager.R
 import it.polito.s294545.privacymanager.customDataClasses.Rule
+import it.polito.s294545.privacymanager.utilities.PreferencesManager
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlin.text.StringBuilder
@@ -129,9 +130,14 @@ class SavedRuleActivity : AppCompatActivity() {
             }
         }
 
-        // Manage start rule
-        val startRuleButton = findViewById<FloatingActionButton>(R.id.start_rule_button)
-        startRuleButton.setOnClickListener { v -> showPopupStartRule(v) }
+        // Manage start and stop rule
+        val startStopRuleButton = findViewById<FloatingActionButton>(R.id.start_rule_button)
+
+        if (rule.active) {
+            startStopRuleButton.setImageDrawable(resources.getDrawable(R.drawable.icon_stop))
+        }
+
+        startStopRuleButton.setOnClickListener { v -> showPopupStartStopRule(v) }
     }
 
     private fun manageBackNavigation() {
@@ -239,27 +245,48 @@ class SavedRuleActivity : AppCompatActivity() {
     private fun getBatteryString() : String {
         return "<${rule.battery}%"
     }
-}
 
-@SuppressLint("ClickableViewAccessibility")
-fun showPopupStartRule(view: View) {
-    val (popupView, popupWindow) = managePopup(view, R.layout.popup_start_rule)
+    @SuppressLint("ClickableViewAccessibility")
+    fun showPopupStartStopRule(view: View) {
+        val (popupView, popupWindow) = managePopup(view, R.layout.popup_start_rule)
 
-    // Initialize the elements of our window, install the handler
-    val buttonStartRule = popupView.findViewById<Button>(R.id.start_rule_button)
-    buttonStartRule.setOnClickListener {
-        // Start rule
-    }
+        // Initialize the elements of our window, install the handler
+        val title = popupView.findViewById<TextView>(R.id.title)
+        val buttonStartStopRule = popupView.findViewById<Button>(R.id.start_rule_button)
+        val buttonCancel = popupView.findViewById<Button>(R.id.cancel_button)
 
-    val buttonCancel = popupView.findViewById<Button>(R.id.cancel_button)
-    buttonCancel.setOnClickListener {
-        popupWindow.dismiss()
-    }
+        if (rule.active) {
+            title.text = "Disattivare la regola?"
+            buttonStartStopRule.text = "Disattiva"
+        }
+
+        buttonStartStopRule.setOnClickListener {
+            // Change rule state
+            rule.active = !rule.active
+
+            // Update rule in shared preferences
+            // Convert rule object to JSON string
+            val ruleJSON = Json.encodeToString(Rule.serializer(), rule)
+
+            // Save privacy rule in shared preferences
+            PreferencesManager.savePrivacyRule(this, rule.name!!, ruleJSON)
+
+            // Navigate back to homepage
+            val intent = Intent(this@SavedRuleActivity, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(intent)
+            finish()
+        }
+
+        buttonCancel.setOnClickListener {
+            popupWindow.dismiss()
+        }
 
 
-    // Handler for clicking on the inactive zone of the window
-    popupView.setOnTouchListener { v, event -> // Close the window when clicked
-        popupWindow.dismiss()
-        true
+        // Handler for clicking on the inactive zone of the window
+        popupView.setOnTouchListener { v, event -> // Close the window when clicked
+            popupWindow.dismiss()
+            true
+        }
     }
 }

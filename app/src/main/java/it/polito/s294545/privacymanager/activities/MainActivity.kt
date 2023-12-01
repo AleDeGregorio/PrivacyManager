@@ -5,12 +5,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
@@ -29,6 +31,7 @@ import kotlinx.serialization.json.Json
 
 //val listRules = listOf("Test rule 1", "Test rule 2", "Test rule 3")
 private var savedRules = mutableListOf<Rule>()
+private var activeRules = mutableListOf<Rule>()
 
 private lateinit var context : Context
 private lateinit var noRule : TextView
@@ -57,17 +60,38 @@ class MainActivity : AppCompatActivity() {
         if (!retrievedRules.isNullOrEmpty()) {
             for (r in retrievedRules.keys) {
                 val decodedRule = Json.decodeFromString<Rule>(retrievedRules[r].toString())
-                savedRules.add(decodedRule)
+
+                if (decodedRule.active) {
+                    activeRules.add(decodedRule)
+                }
+                else {
+                    savedRules.add(decodedRule)
+                }
             }
         }
         else {
             noRule.visibility = VISIBLE
         }
 
-        // Managing recycler view
-        val recyclerView = findViewById<RecyclerView>(R.id.list_rules)
-        recyclerView.adapter = SavedRulesAdapter(savedRules, this)
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        // Managing saved rules recycler view
+        if (savedRules.isEmpty() && activeRules.isNotEmpty()) {
+            val containerSavedRules = findViewById<LinearLayout>(R.id.list_rules_container)
+            containerSavedRules.visibility = GONE
+        }
+
+        val savedRulesRecyclerView = findViewById<RecyclerView>(R.id.list_rules)
+        savedRulesRecyclerView.adapter = SavedRulesAdapter(savedRules, this)
+        savedRulesRecyclerView.layoutManager = LinearLayoutManager(context)
+
+        // Managing active rules recycler view
+        if (activeRules.isNotEmpty()) {
+            val containerActiveRules = findViewById<LinearLayout>(R.id.list_active_rules_container)
+            containerActiveRules.visibility = VISIBLE
+        }
+
+        val activeRulesRecyclerView = findViewById<RecyclerView>(R.id.list_active_rules)
+        activeRulesRecyclerView.adapter = ActiveRulesAdapter(activeRules, this, resources)
+        activeRulesRecyclerView.layoutManager = LinearLayoutManager(context)
 
         // Manage insert new rule button
         val newRuleButton = findViewById<FloatingActionButton>(R.id.new_rule)
@@ -78,6 +102,7 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
 
         savedRules.clear()
+        activeRules.clear()
     }
     private fun checkLocationPermission() : Boolean {
         return checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
@@ -137,7 +162,7 @@ fun managePopup(view: View, layout: Int) : Pair<View, PopupWindow> {
     return Pair(popupView, popupWindow)
 }
 
-// Define recycler view for rules
+// Define recycler view for saved rules
 class SavedRulesViewHolder(v: View) : RecyclerView.ViewHolder(v){
     val buttonRule = v.findViewById<Button>(R.id.button_rule)
     val editRuleButton = v.findViewById<FloatingActionButton>(R.id.edit_rule)
@@ -214,6 +239,44 @@ class SavedRulesAdapter(private val listRules: MutableList<Rule>, context: Conte
         popupView.setOnTouchListener { v, event -> // Close the window when clicked
             popupWindow.dismiss()
             true
+        }
+    }
+}
+
+// Define recycler view for active rules
+class ActiveRulesViewHolder(v: View) : RecyclerView.ViewHolder(v){
+    val buttonRule = v.findViewById<Button>(R.id.button_rule)
+    val editRuleButton = v.findViewById<FloatingActionButton>(R.id.edit_rule)
+    val deleteRuleButton = v.findViewById<FloatingActionButton>(R.id.delete_rule)
+}
+
+class ActiveRulesAdapter(private val listRules: MutableList<Rule>, context: Context, private val resources: Resources): RecyclerView.Adapter<ActiveRulesViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActiveRulesViewHolder {
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.box_saved_rule, parent, false)
+
+        return ActiveRulesViewHolder(v)
+    }
+
+    override fun getItemCount(): Int {
+        return listRules.size
+    }
+
+    override fun onBindViewHolder(holder: ActiveRulesViewHolder, position: Int) {
+        val rule = listRules[position]
+        val ruleName = rule.name
+
+        holder.buttonRule.text = ruleName
+        holder.buttonRule.setBackgroundColor(resources.getColor(R.color.primary))
+
+        holder.editRuleButton.visibility = GONE
+        holder.deleteRuleButton.visibility = GONE
+
+        // Manage saved rule
+        holder.buttonRule.setOnClickListener {
+            val intent = Intent(context, SavedRuleActivity::class.java)
+            intent.putExtra("rule", Json.encodeToString(rule))
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
         }
     }
 }

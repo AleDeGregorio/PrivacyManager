@@ -28,7 +28,7 @@
         android:id="@+id/no_rule"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nessuna regola salvata"
+        android:text="@string/no_rule_saved"
         android:visibility="gone"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -36,7 +36,36 @@
         android:layout_below="@+id/textView"
         android:layout_alignParentStart="true"
         android:layout_marginStart="@dimen/margin_top_title"
-        android:layout_marginTop="32dp"/>
+        android:layout_marginTop="50dp"/>
+
+    <LinearLayout
+        android:id="@+id/list_active_rules_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:visibility="gone"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/textView"
+        android:layout_marginTop="@dimen/margin_top_title"
+        android:layout_marginBottom="@dimen/margin_top_title"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/active_rules"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/active_rules"
+            android:layout_marginStart="@dimen/margin_top_title"
+            android:layout_marginBottom="@dimen/margin_top_title"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list_active_rules"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/list_rules_container"
@@ -44,11 +73,21 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/textView"
+        android:layout_below="@+id/list_active_rules_container"
         android:layout_above="@+id/new_rule"
         android:layout_marginTop="@dimen/margin_top_title"
         android:layout_marginBottom="@dimen/margin_top_title"
         android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/saved_rules"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/saved_rules"
+            android:layout_marginStart="@dimen/margin_top_title"
+            android:layout_marginBottom="@dimen/margin_top_title"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_rules"
