@@ -3,6 +3,7 @@ package it.polito.s294545.privacymanager.ruleDefinitionFragments
 import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.text.Editable
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import android.widget.RadioButton
 import androidx.core.content.ContextCompat
 import it.polito.s294545.privacymanager.utilities.ParameterListener
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.activities.retrievedRule
 
 private var savedAction = "obscure_notification"
 
@@ -56,6 +58,18 @@ class ActionWithNotificationSelectionFragment : Fragment() {
         blockNotificationRadio.buttonTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),
             R.color.secondary
         ))
+
+        // Check if we are editing a rule
+        if (retrievedRule != null) {
+            savedAction = retrievedRule!!.action!!
+
+            if (savedAction == "block_notification") {
+                obscureNotificationRadio.isChecked = false
+                blockNotificationRadio.isChecked = true
+            }
+
+            parameterListener?.onParameterEntered("action", savedAction)
+        }
 
         // Pass action info as parameter
         obscureNotificationRadio.setOnCheckedChangeListener { buttonView, isChecked ->

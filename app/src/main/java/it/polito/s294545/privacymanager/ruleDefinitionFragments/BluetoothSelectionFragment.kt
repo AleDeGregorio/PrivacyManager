@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import it.polito.s294545.privacymanager.utilities.ParameterListener
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.activities.retrievedRule
 
 val listBluetooth = listOf("Test BT 1", "Test BT 2", "Test BT 3")
 
@@ -48,6 +49,15 @@ class BluetoothSelectionFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_bluetooth_selection, container, false)
+
+        // Check if we are editing a rule
+        if (retrievedRule != null) {
+            // Check if in the saved rule have been defined some bt
+            if (retrievedRule!!.bt != null && !retrievedRule!!.bt.isNullOrEmpty()) {
+                savedBT.addAll(retrievedRule!!.bt!!)
+                parameterListener?.onParameterEntered("bt", savedBT.toList())
+            }
+        }
 
         // Managing recycler view
         val recyclerView = v.findViewById<RecyclerView>(R.id.list_bluetooth)

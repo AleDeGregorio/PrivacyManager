@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import it.polito.s294545.privacymanager.utilities.ParameterListener
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.activities.retrievedRule
 import it.polito.s294545.privacymanager.customDataClasses.TimeSlot
 import java.util.Calendar
 
@@ -64,6 +65,16 @@ class TimeSlotSelectionFragment : Fragment() {
         val v = inflater.inflate(R.layout.fragment_time_slot_selection, container, false)
 
         checkBox = v.findViewById(R.id.checkBox)
+
+        // Check if we are editing a rule
+        if (retrievedRule != null) {
+            // Check if in the saved rule has been defined a time slot
+            if (retrievedRule!!.timeSlot != null && !retrievedRule!!.timeSlot?.days.isNullOrEmpty()) {
+                savedSlot = retrievedRule!!.timeSlot!!
+                checkBox.isChecked = true
+                parameterListener?.onParameterEntered("time_slot", savedSlot)
+            }
+        }
 
         errorTimeSlot = v.findViewById(R.id.error_time_slot)
 

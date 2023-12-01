@@ -21,6 +21,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import it.polito.s294545.privacymanager.utilities.ParameterListener
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.activities.retrievedRule
 
 var savedNetworks = mutableListOf<String>()
 var savedMobile = mutableListOf<String>()
@@ -63,8 +64,29 @@ class NetworkSelectionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Save mobile network as parameter
         val mobileCheckBox = view.findViewById<CheckBox>(R.id.checkBox)
+
+        // Check if we are editing a rule
+        if (retrievedRule != null) {
+            // Check if in the saved rule have been defined some networks
+            if (retrievedRule!!.networks != null && !retrievedRule!!.networks.isNullOrEmpty()) {
+                val list = retrievedRule!!.networks!!
+
+                if (list.contains("mobile_data")) {
+                    savedMobile.add("mobile_data")
+                    mobileCheckBox.isChecked = true
+                }
+                for (n in list) {
+                    if (n != "mobile_data") {
+                        savedNetworks.add(n)
+                    }
+                }
+
+                parameterListener?.onParameterEntered("networks", savedNetworks + savedMobile)
+            }
+        }
+
+        // Save mobile network as parameter
         mobileCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked && !savedMobile.contains("mobile_data")) {
                 savedMobile.add("mobile_data")

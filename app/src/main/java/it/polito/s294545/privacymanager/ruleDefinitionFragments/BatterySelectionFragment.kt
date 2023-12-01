@@ -2,6 +2,7 @@ package it.polito.s294545.privacymanager.ruleDefinitionFragments
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.core.widget.doOnTextChanged
 import com.google.android.material.textfield.TextInputEditText
 import it.polito.s294545.privacymanager.utilities.ParameterListener
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.activities.retrievedRule
 
 var savedBattery : Int? = null
 
@@ -48,6 +50,17 @@ class BatterySelectionFragment : Fragment() {
 
         val battery = v.findViewById<TextInputEditText>(R.id.edit_battery)
         val checkBox = v.findViewById<CheckBox>(R.id.checkBox)
+
+        // Check if we are editing a rule
+        if (retrievedRule != null) {
+            // Check if in the saved rule has been defined battery
+            if (retrievedRule!!.battery != null) {
+                savedBattery = retrievedRule!!.battery!!
+                checkBox.isChecked = true
+                battery.text = Editable.Factory.getInstance().newEditable(savedBattery.toString())
+                parameterListener?.onParameterEntered("battery", savedBattery)
+            }
+        }
 
         // Pass battery info as parameter
         battery.doOnTextChanged { text, start, before, count ->

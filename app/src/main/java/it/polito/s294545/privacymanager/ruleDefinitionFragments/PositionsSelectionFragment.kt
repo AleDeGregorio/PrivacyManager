@@ -22,6 +22,7 @@ import com.google.android.material.textfield.TextInputEditText
 import it.polito.s294545.privacymanager.customDataClasses.CustomAddress
 import it.polito.s294545.privacymanager.utilities.ParameterListener
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.activities.retrievedRule
 
 var savedPositions = mutableListOf<CustomAddress>()
 
@@ -63,6 +64,15 @@ class PositionsSelectionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Check if we are editing a rule
+        if (retrievedRule != null) {
+            // Check if in the saved rule have been defined some positions
+            if (retrievedRule!!.positions != null && !retrievedRule!!.positions.isNullOrEmpty()) {
+                savedPositions.addAll(retrievedRule!!.positions!!)
+                parameterListener?.onParameterEntered("positions", savedPositions)
+            }
+        }
 
         // Geocoder to manage geographical positions
         geocoder = Geocoder(requireContext())

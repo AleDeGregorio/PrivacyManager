@@ -44,7 +44,10 @@ import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedMobile
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedNetworks
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedPositions
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedSlot
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+
+var retrievedRule: Rule? = null
 
 class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
@@ -91,6 +94,15 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         // Initialize error text
         error = findViewById(R.id.error_app)
 
+        // Initialize eventual edit rule
+        val editRule = intent.extras?.get("rule")
+        // Check if we are editing a rule
+        if (editRule != null) {
+            retrievedRule = Json.decodeFromString(editRule.toString())
+
+            name = retrievedRule!!.name
+        }
+
         // Define rule parameters fragments
         viewPager = findViewById(R.id.view_pager)
         val dotsIndicator = findViewById<DotsIndicator>(R.id.dots_indicator)
@@ -126,7 +138,25 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
                 // Last fragment -> save rule
                 if (position == fragmentList.lastIndex) {
                     forwardButton.text = resources.getString(R.string.save)
-                    forwardButton.setOnClickListener { v -> showPopupSaveRule(v) }
+
+                    // Check if we are editing a rule
+                    if (editRule != null) {
+                        forwardButton.setOnClickListener {
+                            if (apps.isNullOrEmpty()) {
+                                viewPager.currentItem = fragmentList.indexOf(AppsSelectionFragment())
+
+                                error.text = resources.getString(R.string.error_app)
+                                error.visibility = VISIBLE
+                            }
+                            else {
+                                saveRule()
+                            }
+                        }
+                    }
+                    // Or it is a new rule
+                    else {
+                        forwardButton.setOnClickListener { v -> showPopupSaveRule(v) }
+                    }
                 }
                 // Other fragments -> go to next fragment
                 else {
@@ -204,29 +234,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
                     errorName.visibility = VISIBLE
                 }
                 else {
-                    // Save the inserted rule in a Rule object
-                    val rule = Rule()
-                    rule.name = name
-                    rule.permissions = permissions
-                    rule.apps = apps
-                    rule.timeSlot = timeSlot
-                    rule.positions = positions
-                    rule.networks = networks
-                    rule.bt = bt
-                    rule.battery = battery
-                    rule.action = action
-
-                    // Convert rule object to JSON string
-                    val ruleJSON = Json.encodeToString(Rule.serializer(), rule)
-
-                    // Save privacy rule in shared preferences
-                    PreferencesManager.savePrivacyRule(this, rule.name!!, ruleJSON)
-
-                    // Navigate back to homepage
-                    val intent = Intent(this@RuleDefinitionActivity, MainActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    startActivity(intent)
-                    finish()
+                    saveRule()
                 }
             }
         }
@@ -242,6 +250,32 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
             popupWindow.dismiss()
             true
         }
+    }
+
+    private fun saveRule() {
+        // Save the inserted rule in a Rule object
+        val rule = Rule()
+        rule.name = name
+        rule.permissions = permissions
+        rule.apps = apps
+        rule.timeSlot = timeSlot
+        rule.positions = positions
+        rule.networks = networks
+        rule.bt = bt
+        rule.battery = battery
+        rule.action = action
+
+        // Convert rule object to JSON string
+        val ruleJSON = Json.encodeToString(Rule.serializer(), rule)
+
+        // Save privacy rule in shared preferences
+        PreferencesManager.savePrivacyRule(this, rule.name!!, ruleJSON)
+
+        // Navigate back to homepage
+        val intent = Intent(this@RuleDefinitionActivity, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
+        finish()
     }
 
     private fun navigateToNextFragment() {

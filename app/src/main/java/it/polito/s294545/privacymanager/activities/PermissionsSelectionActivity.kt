@@ -11,6 +11,9 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.customDataClasses.Rule
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 class PermissionsSelectionActivity : AppCompatActivity() {
 
@@ -43,7 +46,6 @@ class PermissionsSelectionActivity : AppCompatActivity() {
         }
         onBackPressedDispatcher.addCallback(this, callback)
 
-
         // ----- Manage permission buttons -----
 
         // Notifications
@@ -68,13 +70,58 @@ class PermissionsSelectionActivity : AppCompatActivity() {
 
         // ----- End permissions management -----
 
-        // Manage forward button
         forwardButton = findViewById(R.id.forward_button)
 
+        // Check if we are editing a rule
+        val editRule = intent.extras?.get("rule")
+        if (editRule != null) {
+            val retrievedRule = Json.decodeFromString<Rule>(editRule.toString())
+
+            for (p in retrievedRule.permissions!!) {
+                savedPermissions.add(p)
+
+                when (p) {
+                    "notifications" -> {
+                        notificationsButton.isSelected = true
+                        notificationsButton.setBackgroundColor(resources.getColor(R.color.secondary))
+                    }
+
+                    "location" -> {
+                        locationButton.isSelected = true
+                        locationButton.setBackgroundColor(resources.getColor(R.color.secondary))
+                    }
+
+                    "calendar" -> {
+                        calendarButton.isSelected = true
+                        calendarButton.setBackgroundColor(resources.getColor(R.color.secondary))
+                    }
+
+                    "camera" -> {
+                        cameraButton.isSelected = true
+                        cameraButton.setBackgroundColor(resources.getColor(R.color.secondary))
+                    }
+
+                    "sms" -> {
+                        smsButton.isSelected = true
+                        smsButton.setBackgroundColor(resources.getColor(R.color.secondary))
+                    }
+                }
+            }
+
+            forwardButton.setBackgroundColor(resources.getColor(R.color.primary))
+            forwardButton.isClickable = true
+        }
+
+        // Manage forward button
         // Go to rule definition only if at least one permission has been selected
         forwardButton.setOnClickListener {
             if (savedPermissions.isNotEmpty()) {
                 val intent = Intent(this, RuleDefinitionActivity::class.java)
+
+                if (editRule != null) {
+                    intent.putExtra("rule", editRule.toString())
+                }
+
                 intent.putExtra("permissions", ArrayList(savedPermissions))
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 startActivity(intent)

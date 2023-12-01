@@ -169,6 +169,14 @@ class SavedRulesAdapter(private val listRules: MutableList<Rule>, context: Conte
             context.startActivity(intent)
         }
 
+        // Manage edit rule
+        holder.editRuleButton.setOnClickListener {
+            val intent = Intent(context, PermissionsSelectionActivity::class.java)
+            intent.putExtra("rule", Json.encodeToString(rule))
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+        }
+
         // Manage delete inserted rule button
         holder.deleteRuleButton.setOnClickListener { v -> showPopupDeleteRule(v, ruleName!!, position, holder) }
     }

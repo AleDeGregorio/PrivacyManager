@@ -3,6 +3,7 @@ package it.polito.s294545.privacymanager.ruleDefinitionFragments
 import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import android.widget.RadioButton
 import androidx.core.content.ContextCompat
 import it.polito.s294545.privacymanager.utilities.ParameterListener
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.activities.retrievedRule
 
 private var savedAction = "signal_app"
 
@@ -56,6 +58,18 @@ class ActionNoNotificationSelectionFragment : Fragment() {
         closeAppRadio.buttonTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),
             R.color.secondary
         ))
+
+        // Check if we are editing a rule
+        if (retrievedRule != null) {
+            savedAction = retrievedRule!!.action!!
+
+            if (savedAction == "close_app") {
+                signalAppRadio.isChecked = false
+                closeAppRadio.isChecked = true
+            }
+
+            parameterListener?.onParameterEntered("action", savedAction)
+        }
 
         // Pass action info as parameter
         signalAppRadio.setOnCheckedChangeListener { buttonView, isChecked ->

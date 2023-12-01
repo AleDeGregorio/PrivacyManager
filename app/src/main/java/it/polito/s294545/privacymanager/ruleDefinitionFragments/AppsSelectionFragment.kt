@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import it.polito.s294545.privacymanager.utilities.ParameterListener
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.activities.retrievedRule
 
 val listApps = listOf("Test app 1", "Test app 2", "Test app 3", "Test app 4", "Test app 5", "Test app 6", "Test app 7", "Test app 8", "Test app 9", "Test app 10")
 
@@ -50,6 +51,12 @@ class AppsSelectionFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_apps_selection, container, false)
+
+        // Check if we are editing a rule
+        if (retrievedRule != null) {
+            savedApps.addAll(retrievedRule!!.apps as Collection<String>)
+            parameterListener?.onParameterEntered("apps", savedApps.toList())
+        }
 
         // Managing recycler view
         val recyclerView = view.findViewById<RecyclerView>(R.id.list_apps)
