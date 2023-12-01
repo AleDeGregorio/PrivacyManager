@@ -138,7 +138,9 @@ class PermissionsSelectionActivity : AppCompatActivity() {
 
     private fun manageBackNavigation() {
         val intent = Intent(this@PermissionsSelectionActivity, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(intent)
+        finish()
     }
 
     // Manage permission selection/deselection

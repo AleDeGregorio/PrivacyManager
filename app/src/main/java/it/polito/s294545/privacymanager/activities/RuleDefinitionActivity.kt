@@ -292,7 +292,9 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
     private fun manageBackNavigation() {
         val intent = Intent(this@RuleDefinitionActivity, PermissionsSelectionActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(intent)
+        finish()
     }
 
     // When entering data in fragments, save them in activity

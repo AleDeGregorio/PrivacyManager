@@ -1,6 +1,7 @@
 package it.polito.s294545.privacymanager.activities
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Html
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.View.GONE
 import android.widget.Button
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.google.android.material.appbar.MaterialToolbar
@@ -36,8 +38,16 @@ class SavedRuleActivity : AppCompatActivity() {
         toolbar.setNavigationIconTint(resources.getColor(R.color.white))
 
         toolbar.setNavigationOnClickListener {
-            onBackPressed()
+            manageBackNavigation()
         }
+
+        // Manage user's back pressure
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                manageBackNavigation()
+            }
+        }
+        onBackPressedDispatcher.addCallback(this, callback)
 
         // Get saved rule info
         val retrievedRule = intent.extras?.get("rule")
@@ -122,6 +132,13 @@ class SavedRuleActivity : AppCompatActivity() {
         // Manage start rule
         val startRuleButton = findViewById<FloatingActionButton>(R.id.start_rule_button)
         startRuleButton.setOnClickListener { v -> showPopupStartRule(v) }
+    }
+
+    private fun manageBackNavigation() {
+        val intent = Intent(this@SavedRuleActivity, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
+        finish()
     }
 
     private fun getPermissionsString() : String {
