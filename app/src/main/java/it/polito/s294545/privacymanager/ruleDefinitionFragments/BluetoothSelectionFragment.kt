@@ -15,7 +15,7 @@ import it.polito.s294545.privacymanager.R
 
 val listBluetooth = listOf("Test BT 1", "Test BT 2", "Test BT 3")
 
-private var savedBT = mutableListOf<String>()
+var savedBT = mutableListOf<String>()
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

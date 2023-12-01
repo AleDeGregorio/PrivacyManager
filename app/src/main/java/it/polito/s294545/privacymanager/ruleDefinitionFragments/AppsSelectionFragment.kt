@@ -2,6 +2,7 @@ package it.polito.s294545.privacymanager.ruleDefinitionFragments
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +17,7 @@ import it.polito.s294545.privacymanager.R
 
 val listApps = listOf("Test app 1", "Test app 2", "Test app 3", "Test app 4", "Test app 5", "Test app 6", "Test app 7", "Test app 8", "Test app 9", "Test app 10")
 
-private var savedApps = mutableListOf<String>()
+var savedApps = mutableListOf<String>()
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

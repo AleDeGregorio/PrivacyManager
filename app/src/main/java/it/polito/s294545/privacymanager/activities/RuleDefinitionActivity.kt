@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -36,6 +37,13 @@ import it.polito.s294545.privacymanager.ruleDefinitionFragments.NetworkSelection
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.PositionsSelectionFragment
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.TimeSlotSelectionFragment
 import it.polito.s294545.privacymanager.customDataClasses.TimeSlot
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedApps
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedBT
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedBattery
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedMobile
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedNetworks
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedPositions
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedSlot
 import kotlinx.serialization.json.Json
 
 class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
@@ -133,6 +141,27 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         backButton.setOnClickListener { navigateToPreviousFragment() }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        apps = null
+        timeSlot = null
+        positions = null
+        networks = null
+        bt = null
+        battery = null
+        action = null
+        name = null
+
+        savedApps.clear()
+        savedSlot = TimeSlot()
+        savedPositions.clear()
+        savedNetworks.clear()
+        savedMobile.clear()
+        savedBT.clear()
+        savedBattery = null
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     private fun showPopupSaveRule(view: View) {
         if (apps.isNullOrEmpty()) {
@@ -169,7 +198,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         // Save rule
         buttonConfirm.setOnClickListener {
             if (!ruleName.text.isNullOrEmpty()) {
-                name = ruleName.text.toString()
+                name = ruleName.text.toString().trim()
 
                 if (PreferencesManager.ruleNameAlreadyExists(this, name!!)) {
                     errorName.visibility = VISIBLE
@@ -195,7 +224,9 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
                     // Navigate back to homepage
                     val intent = Intent(this@RuleDefinitionActivity, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     startActivity(intent)
+                    finish()
                 }
             }
         }

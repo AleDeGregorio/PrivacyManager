@@ -17,7 +17,7 @@ import it.polito.s294545.privacymanager.R
 import it.polito.s294545.privacymanager.customDataClasses.TimeSlot
 import java.util.Calendar
 
-private var savedSlot = TimeSlot()
+var savedSlot = TimeSlot()
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

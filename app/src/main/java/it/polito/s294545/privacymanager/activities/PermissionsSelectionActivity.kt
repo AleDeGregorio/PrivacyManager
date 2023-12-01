@@ -76,9 +76,17 @@ class PermissionsSelectionActivity : AppCompatActivity() {
             if (savedPermissions.isNotEmpty()) {
                 val intent = Intent(this, RuleDefinitionActivity::class.java)
                 intent.putExtra("permissions", ArrayList(savedPermissions))
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 startActivity(intent)
+                finish()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        savedPermissions.clear()
     }
 
     private fun manageBackNavigation() {

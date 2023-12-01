@@ -22,8 +22,8 @@ import com.google.android.material.textfield.TextInputEditText
 import it.polito.s294545.privacymanager.utilities.ParameterListener
 import it.polito.s294545.privacymanager.R
 
-private var savedNetworks = mutableListOf<String>()
-private var savedMobile = mutableListOf<String>()
+var savedNetworks = mutableListOf<String>()
+var savedMobile = mutableListOf<String>()
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

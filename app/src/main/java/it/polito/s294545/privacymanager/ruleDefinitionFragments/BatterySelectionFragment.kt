@@ -12,7 +12,7 @@ import com.google.android.material.textfield.TextInputEditText
 import it.polito.s294545.privacymanager.utilities.ParameterListener
 import it.polito.s294545.privacymanager.R
 
-private var savedBattery : Int? = null
+var savedBattery : Int? = null
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

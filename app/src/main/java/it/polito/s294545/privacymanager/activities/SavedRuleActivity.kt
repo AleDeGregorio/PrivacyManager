@@ -87,31 +87,34 @@ class SavedRuleActivity : AppCompatActivity() {
         else {
             // Set rule networks
             val networksTitle = findViewById<TextView>(R.id.networks_title)
+            val networks = findViewById<TextView>(R.id.networks_text)
             if (rule.networks.isNullOrEmpty()) {
                 networksTitle.visibility = GONE
+                networks.visibility = GONE
             }
             else {
-                val networks = findViewById<TextView>(R.id.networks_text)
                 networks.text = getNetworkString()
             }
 
             // Set rule bluetooth
             val bluetoothTitle = findViewById<TextView>(R.id.bluetooth_title)
+            val bluetooth = findViewById<TextView>(R.id.bluetooth_text)
             if (rule.bt.isNullOrEmpty()) {
                 bluetoothTitle.visibility = GONE
+                bluetooth.visibility = GONE
             }
             else {
-                val bluetooth = findViewById<TextView>(R.id.bluetooth_text)
                 bluetooth.text = getBluetoothString()
             }
 
             // Set rule battery
             val batteryTitle = findViewById<TextView>(R.id.battery_title)
+            val battery = findViewById<TextView>(R.id.battery_text)
             if (rule.battery == null) {
                 batteryTitle.visibility = GONE
+                battery.visibility = GONE
             }
             else {
-                val battery = findViewById<TextView>(R.id.battery_text)
                 battery.text = getBatteryString()
             }
         }

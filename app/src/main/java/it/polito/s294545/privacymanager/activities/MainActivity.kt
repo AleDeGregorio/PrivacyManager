@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +31,7 @@ import kotlinx.serialization.json.Json
 private var savedRules = mutableListOf<Rule>()
 
 private lateinit var context : Context
+private lateinit var noRule : TextView
 
 class MainActivity : AppCompatActivity() {
 
@@ -50,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val retrievedRules = PreferencesManager.getAllPrivacyRules(this)
+        noRule = findViewById(R.id.no_rule)
 
         if (!retrievedRules.isNullOrEmpty()) {
             for (r in retrievedRules.keys) {
@@ -58,7 +61,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
         else {
-            val noRule = findViewById<TextView>(R.id.no_rule)
             noRule.visibility = VISIBLE
         }
 
@@ -72,6 +74,11 @@ class MainActivity : AppCompatActivity() {
         newRuleButton.setOnClickListener { v -> showPopupNewRule(v) }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        savedRules.clear()
+    }
     private fun checkLocationPermission() : Boolean {
         return checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
@@ -90,7 +97,9 @@ class MainActivity : AppCompatActivity() {
         buttonCreate.setOnClickListener {
             // Create new rule
             val intent = Intent(this, PermissionsSelectionActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             startActivity(intent)
+            finish()
         }
 
         val buttonCancel = popupView.findViewById<Button>(R.id.cancel_button)
@@ -176,8 +185,14 @@ class SavedRulesAdapter(private val listRules: MutableList<Rule>, context: Conte
         buttonConfirm.setOnClickListener {
             // Delete rule
             popupWindow.dismiss()
-            PreferencesManager.deletePrivacyRule(context, ruleName)
             savedRules.removeAt(holder.adapterPosition)
+            PreferencesManager.deletePrivacyRule(context, ruleName)
+
+            // Show "no saved rule" message if list is empty
+            if (savedRules.isEmpty()) {
+                noRule.visibility = VISIBLE
+            }
+
             notifyItemRemoved(position)
         }
 

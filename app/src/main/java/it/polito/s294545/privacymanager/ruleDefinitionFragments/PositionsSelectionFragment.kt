@@ -23,7 +23,7 @@ import it.polito.s294545.privacymanager.customDataClasses.CustomAddress
 import it.polito.s294545.privacymanager.utilities.ParameterListener
 import it.polito.s294545.privacymanager.R
 
-private var savedPositions = mutableListOf<CustomAddress>()
+var savedPositions = mutableListOf<CustomAddress>()
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
