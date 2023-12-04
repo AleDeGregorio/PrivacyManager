@@ -133,9 +133,11 @@ class AppsSelectionAdapter(private val listApps: List<String>, private val param
         holder.appTitle.text = appName
         holder.appIcon.setImageDrawable(appIcon)
 
-        if (savedApps.contains(appName)) {
-            holder.checkBox.isChecked = true
-        }
+        // Remove previous listener to prevent unwanted callbacks during recycling
+        holder.checkBox.setOnCheckedChangeListener(null)
+
+        // Set the checkbox state based on whether the app is in the savedApps list
+        holder.checkBox.isChecked = savedApps.contains(appName)
 
         // When checkbox is clicked, insert or remove the corresponding app in the saved list
         holder.checkBox.setOnCheckedChangeListener { buttonView, isChecked ->

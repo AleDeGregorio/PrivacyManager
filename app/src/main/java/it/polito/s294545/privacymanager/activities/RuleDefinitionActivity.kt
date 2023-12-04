@@ -235,7 +235,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
             // Check if the app has the specific permission (excluding system apps and this app)
             if (requestedPermissions != null &&
-                !(//packageName.startsWith("com.android", true) ||
+                !(packageName.startsWith("com.android", true) ||
                         //packageName.startsWith("com.google.android") ||
                         packageName.startsWith("it.polito.s294545"))) {
                 for (permission in requestedPermissions) {
@@ -357,6 +357,25 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
     }
 
     private fun manageBackNavigation() {
+        apps = null
+        packageNames = null
+        timeSlot = null
+        positions = null
+        networks = null
+        bt = null
+        battery = null
+        action = null
+        name = null
+
+        savedApps.clear()
+        savedPkg.clear()
+        savedSlot = TimeSlot()
+        savedPositions.clear()
+        savedNetworks.clear()
+        savedMobile.clear()
+        savedBT.clear()
+        savedBattery = null
+
         val intent = Intent(this@RuleDefinitionActivity, PermissionsSelectionActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
