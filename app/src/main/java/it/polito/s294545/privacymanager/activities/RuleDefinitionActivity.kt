@@ -235,8 +235,8 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
             // Check if the app has the specific permission (excluding system apps and this app)
             if (requestedPermissions != null &&
-                !(packageName.startsWith("com.android", true) ||
-                        packageName.startsWith("com.google.android") ||
+                !(//packageName.startsWith("com.android", true) ||
+                        //packageName.startsWith("com.google.android") ||
                         packageName.startsWith("it.polito.s294545"))) {
                 for (permission in requestedPermissions) {
                     if (permissionsToCheck.contains(permission)) {

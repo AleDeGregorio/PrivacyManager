@@ -52,6 +52,11 @@ class MainActivity : AppCompatActivity() {
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
+    private val CALENDAR_PERMISSION_REQUEST = 102
+    private val CALENDAR_PERMISSIONS = arrayOf(
+        Manifest.permission.READ_CALENDAR,
+        Manifest.permission.WRITE_CALENDAR
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +65,9 @@ class MainActivity : AppCompatActivity() {
 
         if (!hasLocationPermission()) {
             requestLocationPermission()
+        }
+        if (!hasCalendarPermission()) {
+            requestCalendarPermission()
         }
 
         val retrievedRules = PreferencesManager.getAllPrivacyRules(this)
@@ -129,6 +137,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun requestLocationPermission() {
         requestPermissions(LOCATION_PERMISSIONS, LOCATION_PERMISSION_REQUEST)
+    }
+
+    private fun hasCalendarPermission() : Boolean {
+        return checkSelfPermission(Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestCalendarPermission() {
+        requestPermissions(CALENDAR_PERMISSIONS, CALENDAR_PERMISSION_REQUEST)
     }
 
     @SuppressLint("ClickableViewAccessibility")

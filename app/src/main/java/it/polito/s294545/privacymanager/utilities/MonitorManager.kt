@@ -6,10 +6,16 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.app.usage.UsageStatsManager
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
+import android.database.ContentObserver
+import android.database.Cursor
+import android.net.Uri
 import android.os.Handler
+import android.os.HandlerThread
 import android.os.IBinder
+import android.provider.CalendarContract
 import android.provider.Settings
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -34,6 +40,8 @@ class MonitorManager : Service() {
     private val monitoringInterval = 5000
     // List of all currently active rules
     private lateinit var activeRules: List<Rule>
+
+    private lateinit var calendarObserver: CalendarObserver
 
     private val monitorRunnable = object : Runnable {
         override fun run() {
@@ -92,7 +100,7 @@ class MonitorManager : Service() {
         // Query usage statistics for apps within the time interval
         val appList = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, currentTime - timeInterval, currentTime)
 
-        // Create a list to store all the running app processes
+        // Create a list to store all the running app processes. Just apps defined in a rule are saved
         val runningApps = mutableListOf<String>()
 
         // Iterate over each app in the list
@@ -109,7 +117,26 @@ class MonitorManager : Service() {
             }
         }
 
-        Log.d("myapp", "$runningApps") //apps running in the last timeInterval ms
+        // Check if an active rule defined permission calendar
+        for (rule in activeRules) {
+            // Check also if the rule has some running app
+            if (rule.permissions!!.contains("calendar") && rule.packageNames!!.any { it in runningApps }) {
+                monitorCalendar()
+            }
+        }
+    }
+
+    private fun monitorCalendar() {
+        // creates and starts a new thread set up as a looper
+        val thread = HandlerThread("CalendarHandlerThread")
+        thread.start()
+
+        // creates the handler using the passed looper
+        val handler = Handler(thread.looper)
+
+        calendarObserver = CalendarObserver(contentResolver, handler)
+
+        calendarObserver.startObserving()
     }
 
     private fun hasUsageStatsPermission() : Boolean {
@@ -140,5 +167,41 @@ class MonitorManager : Service() {
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
+    }
+}
+
+class CalendarObserver(private val contentResolver: ContentResolver, handler: Handler) {
+
+    private val uri: Uri = CalendarContract.Events.CONTENT_URI
+
+    private val observer = object : ContentObserver(handler) {
+        override fun onChange(selfChange: Boolean) {
+            Log.d("myapp", "calendar event changed")
+            /*
+            // Check which app made the change
+            val cursor: Cursor? = contentResolver.query(uri, null, null, null, null)
+            if (cursor != null) {
+                try {
+                    //val packageName: String = cursor.getString(cursor.getColumnIndexOrThrow("customAppUri"))
+                    //Log.d("calendar", "pkg_name: $packageName")
+                    // Do something with the packageName
+                } finally {
+                    cursor.close()
+                }
+            }
+            */
+        }
+    }
+
+    private fun observe() {
+        contentResolver.registerContentObserver(uri, true, observer)
+    }
+
+    fun startObserving() {
+        observe()
+    }
+
+    fun stopObserving() {
+        contentResolver.unregisterContentObserver(observer)
     }
 }
