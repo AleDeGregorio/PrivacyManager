@@ -9,9 +9,9 @@ import android.app.usage.UsageStatsManager
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.pm.PackageManager
 import android.database.ContentObserver
-import android.database.Cursor
 import android.hardware.camera2.CameraManager
 import android.net.Uri
 import android.os.Handler
@@ -19,12 +19,15 @@ import android.os.HandlerThread
 import android.os.IBinder
 import android.provider.CalendarContract
 import android.provider.Settings
+import android.service.notification.NotificationListenerService
+import android.service.notification.StatusBarNotification
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import it.polito.s294545.privacymanager.R
 import it.polito.s294545.privacymanager.customDataClasses.Rule
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+
 
 class MonitorManager : Service() {
     // Permissions
@@ -60,6 +63,11 @@ class MonitorManager : Service() {
         startForeground(NOTIFICATION_ID, createNotification()) // Start as a foreground service
         // Initiate monitoring
         handler.post(monitorRunnable)
+
+        if (activeRules.any { it.permissions!!.contains("notifications") }) {
+            val notificationIntent = Intent(this, NotificationListener::class.java)
+            startService(notificationIntent)
+        }
 
         return START_STICKY
     }
@@ -207,12 +215,49 @@ class MonitorManager : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+
+        // Stop notification service as well
+        val notificationIntent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
+        notificationIntent.addFlags(FLAG_ACTIVITY_NEW_TASK)
+        startActivity(notificationIntent)
+
         stopForeground(STOP_FOREGROUND_REMOVE) // Stop as a foreground service
         stopSelf()
     }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
+    }
+}
+
+// Extend the NotificationListenerService class and override the methods
+class NotificationListener : NotificationListenerService() {
+
+    override fun onBind(intent: Intent): IBinder? {
+        return super.onBind(intent)
+    }
+
+    override fun onNotificationPosted(sbn: StatusBarNotification) {
+        // Get the notification object
+        val notification = sbn.notification
+        // Get the notification title
+        val title = notification.extras.getString(Notification.EXTRA_TITLE)
+        // Get the notification text
+        val text = notification.extras.getString(Notification.EXTRA_TEXT)
+        // Do something with the notification data
+        Log.d("myapp", "notification: ${sbn.packageName}")
+
+        //cancelNotification(sbn.key)
+
+        /*
+        val intent = Intent("android.service.notification.NotificationListenerService")
+        intent.putExtra("Notification Title", notification)
+        sendBroadcast(intent)
+         */
+    }
+
+    override fun onNotificationRemoved(sbn: StatusBarNotification) {
+        // Do something when the notification is removed
     }
 }
 

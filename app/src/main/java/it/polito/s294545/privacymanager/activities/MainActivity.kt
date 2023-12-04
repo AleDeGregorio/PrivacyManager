@@ -2,16 +2,12 @@ package it.polito.s294545.privacymanager.activities
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.AppOpsManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.Settings
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -22,7 +18,6 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,7 +25,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import it.polito.s294545.privacymanager.R
 import it.polito.s294545.privacymanager.customDataClasses.Rule
 import it.polito.s294545.privacymanager.utilities.MonitorManager
-import it.polito.s294545.privacymanager.utilities.NotificationMonitorManager
 import it.polito.s294545.privacymanager.utilities.PreferencesManager
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -68,9 +62,6 @@ class MainActivity : AppCompatActivity() {
         }
         if (!hasCalendarPermission()) {
             requestCalendarPermission()
-        }
-        if (!hasNotificationPermission()) {
-            requestNotificationPermission()
         }
 
         val retrievedRules = PreferencesManager.getAllPrivacyRules(this)
@@ -112,8 +103,9 @@ class MainActivity : AppCompatActivity() {
             ContextCompat.startForegroundService(this, intent)
 
             if (activeRules.any { it.permissions!!.contains("notifications") }) {
-                val notificationIntent = Intent(this, NotificationMonitorManager::class.java)
-                ContextCompat.startForegroundService(this, notificationIntent)
+                if (!hasNotificationPermission()) {
+                    requestNotificationPermission()
+                }
             }
         }
         // If no active rules, stop monitoring service
@@ -143,6 +135,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestNotificationPermission() {
+        // It has to be granted manually by the user
+        val notificationIntent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
+        startActivity(notificationIntent)
+
         requestPermissions(arrayOf(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE), NOTIFICATION_PERMISSION_REQUEST)
     }
 
