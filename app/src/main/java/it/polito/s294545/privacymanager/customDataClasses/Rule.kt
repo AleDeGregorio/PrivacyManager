@@ -7,6 +7,7 @@ class Rule {
     var name: String? = null
     var permissions: List<String>? = null
     var apps: List<String>? = null
+    var packageNames: List<String>? = null
     var timeSlot: TimeSlot? = null
     var positions: List<CustomAddress>? = null
     var networks: List<String>? = null

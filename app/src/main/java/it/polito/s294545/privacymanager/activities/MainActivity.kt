@@ -23,6 +23,7 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -95,9 +96,14 @@ class MainActivity : AppCompatActivity() {
             val containerActiveRules = findViewById<LinearLayout>(R.id.list_active_rules_container)
             containerActiveRules.visibility = VISIBLE
 
-            monitorManager = MonitorManager(this, activeRules)
-
-            monitorManager.startMonitoring()
+            val intent = Intent(this, MonitorManager::class.java)
+            intent.putExtra("activeRules", Json.encodeToString(activeRules))
+            ContextCompat.startForegroundService(this, intent)
+        }
+        // If no active rules, stop monitoring service
+        else {
+            val intent = Intent(this, MonitorManager::class.java)
+            stopService(intent)
         }
 
         val activeRulesRecyclerView = findViewById<RecyclerView>(R.id.list_active_rules)
@@ -114,11 +120,8 @@ class MainActivity : AppCompatActivity() {
 
         savedRules.clear()
         activeRules.clear()
-
-        if (activeRules.isNotEmpty()) {
-            monitorManager.stopMonitoring()
-        }
     }
+
     private fun hasLocationPermission() : Boolean {
         return checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED

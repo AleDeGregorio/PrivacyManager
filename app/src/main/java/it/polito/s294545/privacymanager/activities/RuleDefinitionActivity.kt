@@ -41,11 +41,13 @@ import it.polito.s294545.privacymanager.ruleDefinitionFragments.TimeSlotSelectio
 import it.polito.s294545.privacymanager.customDataClasses.TimeSlot
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.listApps
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.listIcons
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.listPackageName
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedApps
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedBT
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedBattery
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedMobile
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedNetworks
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedPkg
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedPositions
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedSlot
 import kotlinx.serialization.decodeFromString
@@ -64,6 +66,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
     // Rule parameters
     private lateinit var permissions : ArrayList<String>
     private var apps : List<String>? = null
+    private var packageNames : List<String>? = null
     private var timeSlot : TimeSlot? = null
     private var positions : List<CustomAddress>? = null
     private var networks : List<String>? = null
@@ -183,6 +186,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         super.onDestroy()
 
         apps = null
+        packageNames = null
         timeSlot = null
         positions = null
         networks = null
@@ -192,6 +196,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         name = null
 
         savedApps.clear()
+        savedPkg.clear()
         savedSlot = TimeSlot()
         savedPositions.clear()
         savedNetworks.clear()
@@ -220,7 +225,8 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         // Get a list of all installed apps
         val installedApps = packageManager.getInstalledPackages(PackageManager.GET_PERMISSIONS)
 
-        val appsAndIcons = mutableMapOf<String, Drawable>()
+        // Key = app name, value = icon, package name
+        val appsAndIcons = mutableMapOf<String, Pair<Drawable, String>>()
 
         // Iterate through the installed apps
         for (packageInfo in installedApps) {
@@ -238,7 +244,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
                         val appName = tmpName.substring(0, 1).uppercase() + tmpName.substring(1)
                         val appIcon = packageInfo.applicationInfo.loadIcon(packageManager)
 
-                        appsAndIcons[appName] = appIcon
+                        appsAndIcons[appName] = Pair(appIcon, packageName)
                     }
                 }
             }
@@ -247,7 +253,8 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         val orderedAppsAndIcons = appsAndIcons.toSortedMap()
 
         listApps = orderedAppsAndIcons.keys.toList()
-        listIcons = orderedAppsAndIcons.values.toList()
+        listIcons = orderedAppsAndIcons.values.map { it.first }
+        listPackageName = orderedAppsAndIcons.values.map { it.second }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -316,6 +323,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         rule.name = name
         rule.permissions = permissions
         rule.apps = apps
+        rule.packageNames = packageNames
         rule.timeSlot = timeSlot
         rule.positions = positions
         rule.networks = networks
@@ -369,6 +377,9 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
                 if (error.isVisible) {
                     error.visibility = GONE
                 }
+            }
+            "packageNames" -> {
+                packageNames = data as List<String>
             }
             "time_slot" -> {
                 timeSlot = data as TimeSlot?

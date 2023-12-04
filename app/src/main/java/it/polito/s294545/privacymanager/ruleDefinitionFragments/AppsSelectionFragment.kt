@@ -19,8 +19,10 @@ import it.polito.s294545.privacymanager.activities.retrievedRule
 
 var listApps = listOf("Test app 1", "Test app 2", "Test app 3", "Test app 4", "Test app 5", "Test app 6", "Test app 7", "Test app 8", "Test app 9", "Test app 10")
 var listIcons = listOf<Drawable>()
+var listPackageName = listOf<String>()
 
 var savedApps = mutableListOf<String>()
+var savedPkg = mutableListOf<String>()
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -57,7 +59,9 @@ class AppsSelectionFragment : Fragment() {
         // Check if we are editing a rule
         if (retrievedRule != null) {
             savedApps.addAll(retrievedRule!!.apps as Collection<String>)
+            savedPkg.addAll(retrievedRule!!.packageNames as Collection<String>)
             parameterListener?.onParameterEntered("apps", savedApps.toList())
+            parameterListener?.onParameterEntered("packageNames", savedPkg.toList())
         }
 
         // Managing recycler view
@@ -123,6 +127,7 @@ class AppsSelectionAdapter(private val listApps: List<String>, private val param
 
     override fun onBindViewHolder(holder: AppsSelectionViewHolder, position: Int) {
         val appName = listApps[position]
+        val pkg = listPackageName[position]
         val appIcon = listIcons[position]
 
         holder.appTitle.text = appName
@@ -137,13 +142,16 @@ class AppsSelectionAdapter(private val listApps: List<String>, private val param
             // Save new app
             if (isChecked && !savedApps.contains(appName)) {
                 savedApps.add(appName)
+                savedPkg.add(pkg)
             }
             // Remove inserted app
             else if (!isChecked && savedApps.contains(appName)) {
                 savedApps.remove(appName)
+                savedPkg.remove(pkg)
             }
 
             parameterListener?.onParameterEntered("apps", savedApps.toList())
+            parameterListener?.onParameterEntered("packageNames", savedPkg.toList())
         }
     }
 }
