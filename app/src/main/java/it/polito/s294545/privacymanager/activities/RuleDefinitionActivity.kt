@@ -49,6 +49,7 @@ import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedNetworks
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedPositions
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedSlot
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 var retrievedRule: Rule? = null
@@ -350,6 +351,11 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
     private fun manageBackNavigation() {
         val intent = Intent(this@RuleDefinitionActivity, PermissionsSelectionActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+
+        if (retrievedRule != null) {
+            intent.putExtra("rule", Json.encodeToString(retrievedRule))
+        }
+
         startActivity(intent)
         finish()
     }
