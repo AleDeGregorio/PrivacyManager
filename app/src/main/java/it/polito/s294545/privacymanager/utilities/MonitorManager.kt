@@ -9,6 +9,7 @@ import android.app.usage.UsageStatsManager
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.database.ContentObserver
 import android.database.Cursor
 import android.hardware.camera2.CameraManager
@@ -120,6 +121,10 @@ class MonitorManager : Service() {
 
         // Check for defined permissions monitoring
         for (rule in activeRules) {
+            // Check location permission and if the rule has some running app
+            if (rule.permissions!!.contains("location") && rule.packageNames!!.any { it in runningApps }) {
+                monitorLocation(rule.packageNames!!.filter { it in runningApps })
+            }
             // Check calendar permission and if the rule has some running app
             if (rule.permissions!!.contains("calendar") && rule.packageNames!!.any { it in runningApps }) {
                 monitorCalendar()
@@ -127,6 +132,21 @@ class MonitorManager : Service() {
             // Check camera permission and if the rule has some running app
             if (rule.permissions!!.contains("camera") && rule.packageNames!!.any { it in runningApps }) {
                 monitorCamera()
+            }
+        }
+    }
+
+    private fun monitorLocation(listApps : List<String>) {
+        // Get a reference to the PackageManager
+        val packageManager = packageManager
+
+        for (app in listApps) {
+            val packageInfo = packageManager.getPackageInfo(app, PackageManager.GET_PERMISSIONS)
+
+            val listPermissions = packageInfo.requestedPermissions
+
+            if (listPermissions!!.contains("android.permission.ACCESS_COARSE_LOCATION") || listPermissions.contains("android.permission.ACCESS_FINE_LOCATION")) {
+                Log.d("myapp", app)
             }
         }
     }
