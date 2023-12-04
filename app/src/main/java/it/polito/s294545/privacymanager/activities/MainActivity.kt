@@ -30,6 +30,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import it.polito.s294545.privacymanager.R
 import it.polito.s294545.privacymanager.customDataClasses.Rule
 import it.polito.s294545.privacymanager.utilities.MonitorManager
+import it.polito.s294545.privacymanager.utilities.NotificationMonitorManager
 import it.polito.s294545.privacymanager.utilities.PreferencesManager
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -44,8 +45,6 @@ private lateinit var noRule : TextView
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var monitorManager: MonitorManager
-
     // Permissions
     private val LOCATION_PERMISSION_REQUEST = 106
     private val LOCATION_PERMISSIONS = arrayOf(
@@ -57,6 +56,7 @@ class MainActivity : AppCompatActivity() {
         Manifest.permission.READ_CALENDAR,
         Manifest.permission.WRITE_CALENDAR
     )
+    private val NOTIFICATION_PERMISSION_REQUEST = 108
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +68,9 @@ class MainActivity : AppCompatActivity() {
         }
         if (!hasCalendarPermission()) {
             requestCalendarPermission()
+        }
+        if (!hasNotificationPermission()) {
+            requestNotificationPermission()
         }
 
         val retrievedRules = PreferencesManager.getAllPrivacyRules(this)
@@ -107,6 +110,11 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, MonitorManager::class.java)
             intent.putExtra("activeRules", Json.encodeToString(activeRules))
             ContextCompat.startForegroundService(this, intent)
+
+            if (activeRules.any { it.permissions!!.contains("notifications") }) {
+                val notificationIntent = Intent(this, NotificationMonitorManager::class.java)
+                ContextCompat.startForegroundService(this, notificationIntent)
+            }
         }
         // If no active rules, stop monitoring service
         else {
@@ -128,6 +136,14 @@ class MainActivity : AppCompatActivity() {
 
         savedRules.clear()
         activeRules.clear()
+    }
+
+    private fun hasNotificationPermission() : Boolean {
+        return checkSelfPermission(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestNotificationPermission() {
+        requestPermissions(arrayOf(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE), NOTIFICATION_PERMISSION_REQUEST)
     }
 
     private fun hasLocationPermission() : Boolean {
