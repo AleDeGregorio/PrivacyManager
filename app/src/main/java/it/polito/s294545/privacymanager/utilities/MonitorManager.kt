@@ -11,6 +11,7 @@ import android.content.Context
 import android.content.Intent
 import android.database.ContentObserver
 import android.database.Cursor
+import android.hardware.camera2.CameraManager
 import android.net.Uri
 import android.os.Handler
 import android.os.HandlerThread
@@ -117,11 +118,15 @@ class MonitorManager : Service() {
             }
         }
 
-        // Check if an active rule defined permission calendar
+        // Check for defined permissions monitoring
         for (rule in activeRules) {
-            // Check also if the rule has some running app
+            // Check calendar permission and if the rule has some running app
             if (rule.permissions!!.contains("calendar") && rule.packageNames!!.any { it in runningApps }) {
                 monitorCalendar()
+            }
+            // Check camera permission and if the rule has some running app
+            if (rule.permissions!!.contains("camera") && rule.packageNames!!.any { it in runningApps }) {
+                monitorCamera()
             }
         }
     }
@@ -137,6 +142,27 @@ class MonitorManager : Service() {
         calendarObserver = CalendarObserver(contentResolver, handler)
 
         calendarObserver.startObserving()
+    }
+
+    private fun monitorCamera() {
+        // Get an instance of the CameraManager
+        val cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
+
+        // Create an availability callback
+        val availabilityCallback = object : CameraManager.AvailabilityCallback() {
+            override fun onCameraAvailable(cameraId: String) {
+                // This is called when a camera device becomes available to open
+            }
+
+            override fun onCameraUnavailable(cameraId: String) {
+                // This is called when a camera device becomes unavailable to open
+                Log.d("myapp", "Camera is unavailable")
+            }
+        }
+
+        // Register the availability callback
+        cameraManager.registerAvailabilityCallback(availabilityCallback, null)
+        //cameraManager.unregisterAvailabilityCallback(availabilityCallback, null)
     }
 
     private fun hasUsageStatsPermission() : Boolean {
@@ -177,19 +203,6 @@ class CalendarObserver(private val contentResolver: ContentResolver, handler: Ha
     private val observer = object : ContentObserver(handler) {
         override fun onChange(selfChange: Boolean) {
             Log.d("myapp", "calendar event changed")
-            /*
-            // Check which app made the change
-            val cursor: Cursor? = contentResolver.query(uri, null, null, null, null)
-            if (cursor != null) {
-                try {
-                    //val packageName: String = cursor.getString(cursor.getColumnIndexOrThrow("customAppUri"))
-                    //Log.d("calendar", "pkg_name: $packageName")
-                    // Do something with the packageName
-                } finally {
-                    cursor.close()
-                }
-            }
-            */
         }
     }
 
