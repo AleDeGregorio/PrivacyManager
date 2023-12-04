@@ -126,6 +126,7 @@
             app:iconTint="@color/black"
             app:tint="@color/black" />
 
+        <!--
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/sms_permission"
             android:layout_width="wrap_content"
@@ -145,6 +146,7 @@
             app:icon="@drawable/icon_sms"
             app:iconTint="@color/black"
             app:tint="@color/black" />
+            -->
 
         </RelativeLayout>
 

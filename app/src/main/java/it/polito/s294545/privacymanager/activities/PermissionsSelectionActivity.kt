@@ -64,9 +64,12 @@ class PermissionsSelectionActivity : AppCompatActivity() {
         val cameraButton = findViewById<ExtendedFloatingActionButton>(R.id.camera_permission)
         cameraButton.setOnClickListener { togglePermissionSelection(it, "camera") }
 
+        /*
         // SMS
         val smsButton = findViewById<ExtendedFloatingActionButton>(R.id.sms_permission)
         smsButton.setOnClickListener { togglePermissionSelection(it, "sms") }
+
+         */
 
         // ----- End permissions management -----
 
@@ -101,10 +104,13 @@ class PermissionsSelectionActivity : AppCompatActivity() {
                         cameraButton.setBackgroundColor(resources.getColor(R.color.secondary))
                     }
 
+                    /*
                     "sms" -> {
                         smsButton.isSelected = true
                         smsButton.setBackgroundColor(resources.getColor(R.color.secondary))
                     }
+
+                     */
                 }
             }
 

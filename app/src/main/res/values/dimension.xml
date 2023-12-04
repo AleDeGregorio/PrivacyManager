@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="margin_top_permissions_selection">26dp</dimen>
+    <dimen name="margin_top_permissions_selection">45dp</dimen>
     <dimen name="margin_start_permissions_selection">65dp</dimen>
     <dimen name="margin_top_title">16dp</dimen>
     <dimen name="day_button">50dp</dimen>

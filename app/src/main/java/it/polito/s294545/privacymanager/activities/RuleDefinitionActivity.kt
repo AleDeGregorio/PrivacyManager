@@ -215,7 +215,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
                 "location" -> permissionsToCheck.addAll(listOf("android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"))
                 "calendar" -> permissionsToCheck.add("android.permission.WRITE_CALENDAR")
                 "camera" -> permissionsToCheck.add("android.permission.CAMERA")
-                "sms" -> permissionsToCheck.add("android.permission.SEND_SMS")
+                //"sms" -> permissionsToCheck.add("android.permission.SEND_SMS")
             }
         }
 
