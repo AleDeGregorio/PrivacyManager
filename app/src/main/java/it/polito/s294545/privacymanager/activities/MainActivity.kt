@@ -273,11 +273,11 @@ class SavedRulesAdapter(private val listRules: MutableList<Rule>, context: Conte
         }
 
         // Manage delete inserted rule button
-        holder.deleteRuleButton.setOnClickListener { v -> showPopupDeleteRule(v, ruleName!!, position, holder) }
+        holder.deleteRuleButton.setOnClickListener { v -> showPopupDeleteRule(v, ruleName!!, holder) }
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun showPopupDeleteRule(view: View, ruleName: String, position: Int, holder: SavedRulesViewHolder) {
+    private fun showPopupDeleteRule(view: View, ruleName: String, holder: SavedRulesViewHolder) {
         val (popupView, popupWindow) = managePopup(view, R.layout.popup_delete_rule)
 
         val deleteInfo = popupView.findViewById<TextView>(R.id.delete_info)
@@ -296,7 +296,7 @@ class SavedRulesAdapter(private val listRules: MutableList<Rule>, context: Conte
                 noRule.visibility = VISIBLE
             }
 
-            notifyItemRemoved(position)
+            notifyItemRemoved(holder.adapterPosition)
         }
 
         val buttonCancel = popupView.findViewById<Button>(R.id.cancel_delete_button)
