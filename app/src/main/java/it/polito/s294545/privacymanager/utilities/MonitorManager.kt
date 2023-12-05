@@ -14,6 +14,7 @@ import android.content.pm.PackageManager
 import android.database.ContentObserver
 import android.hardware.camera2.CameraManager
 import android.net.Uri
+import android.os.BatteryManager
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
@@ -101,6 +102,16 @@ class MonitorManager : Service() {
             return
         }
 
+        // Active rules with satisfied conditions
+        val rulesToMonitor = mutableListOf<Rule>()
+
+        for (r in activeRules!!) {
+            // If parameter battery is not defined, or it is defined and device is in the correct level then we have to monitor
+            if (r.battery == null || monitorBattery(r.battery!!)) {
+                rulesToMonitor.add(r)
+            }
+        }
+
         // Your code for accessing package usage statistics goes here
         // Get a reference to the activity manager service and usage stats manager object
         val usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
@@ -120,7 +131,7 @@ class MonitorManager : Service() {
         // Iterate over each app in the list
         for (app in appList) {
             // Check if the app is defined in a monitoring rule
-            for (rule in activeRules!!) {
+            for (rule in rulesToMonitor) {
                 if (rule.packageNames!!.contains(app.packageName)) {
                     // Check if the app has a last time used value greater than or equal to the current time minus the time interval
                     if (app.lastTimeUsed >= currentTime - timeInterval) {
@@ -132,7 +143,7 @@ class MonitorManager : Service() {
         }
 
         // Check for defined permissions monitoring
-        for (rule in activeRules!!) {
+        for (rule in rulesToMonitor) {
             // Check location permission and if the rule has some running app
             if (rule.permissions!!.contains("location") && rule.packageNames!!.any { it in runningApps }) {
                 monitorLocation(rule.packageNames!!.filter { it in runningApps })
@@ -194,7 +205,14 @@ class MonitorManager : Service() {
 
         // Register the availability callback
         cameraManager.registerAvailabilityCallback(availabilityCallback, null)
-        //cameraManager.unregisterAvailabilityCallback(availabilityCallback, null)
+        cameraManager.unregisterAvailabilityCallback(availabilityCallback)
+    }
+
+    private fun monitorBattery(level: Int) : Boolean {
+        val bm = getSystemService(BATTERY_SERVICE) as BatteryManager
+        val batLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+
+        return batLevel < level
     }
 
     private fun hasUsageStatsPermission() : Boolean {
