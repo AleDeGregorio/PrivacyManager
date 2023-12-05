@@ -16,7 +16,12 @@ import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.pm.PackageManager
 import android.database.ContentObserver
 import android.hardware.camera2.CameraManager
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.net.Uri
+import android.net.wifi.WifiManager
 import android.os.BatteryManager
 import android.os.Handler
 import android.os.HandlerThread
@@ -51,6 +56,8 @@ class MonitorManager : Service() {
     private val monitoringInterval = 5000
 
     private lateinit var calendarObserver: CalendarObserver
+
+    private var isConnected = false
 
     private val monitorRunnable = object : Runnable {
         override fun run() {
@@ -110,12 +117,19 @@ class MonitorManager : Service() {
 
         // For each rule, check if it is not already in the rulesToMonitor list (avoid duplicates)
         for (r in activeRules!!) {
-            // If parameter bt is not defined, or it is defined and a defined bt device is connected then we have to monitor
-            if ((r.bt == null || monitorBT(r.bt!!)) && rulesToMonitor.none { it.name == r.name }) {
+            // If parameter network is defined and device is connected to the corresponding network then we have to monitor
+            if (r.networks != null && rulesToMonitor.none { it.name == r.name }) {
+                monitorNetwork(r.networks!!)
+                if (isConnected) {
+                    rulesToMonitor.add(r)
+                }
+            }
+            // If parameter bt is defined and a defined bt device is connected then we have to monitor
+            if (r.bt != null && monitorBT(r.bt!!) && rulesToMonitor.none { it.name == r.name }) {
                 rulesToMonitor.add(r)
             }
-            // If parameter battery is not defined, or it is defined and device is in the correct level then we have to monitor
-            if ((r.battery == null || monitorBattery(r.battery!!)) && rulesToMonitor.none { it.name == r.name }) {
+            // If parameter battery is defined and device is in the correct level then we have to monitor
+            if (r.battery != null && monitorBattery(r.battery!!) && rulesToMonitor.none { it.name == r.name }) {
                 rulesToMonitor.add(r)
             }
         }
@@ -214,6 +228,57 @@ class MonitorManager : Service() {
         // Register the availability callback
         cameraManager.registerAvailabilityCallback(availabilityCallback, null)
         cameraManager.unregisterAvailabilityCallback(availabilityCallback)
+    }
+
+    private fun monitorNetwork(listNetwork: List<String>) {
+        // Get an instance of ConnectivityManager and WifiManager
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiManager = getSystemService(Context.WIFI_SERVICE) as WifiManager
+
+        // Create a network request for wi-fi network
+        val wifiNetworkRequest = NetworkRequest.Builder()
+            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+            .build()
+
+        // Get the network capabilities of the active network
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+
+        if (listNetwork.contains("mobile_data")) {
+            // Check if the network has cellular transport type
+            isConnected = networkCapabilities?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ?: false
+            return
+        }
+
+        // Create a network callback for wi-fi network
+        val wifiNetworkCallback = object : ConnectivityManager.NetworkCallback(
+            FLAG_INCLUDE_LOCATION_INFO
+        ) {
+            // This method is called when the wi-fi network is available
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+
+                // Get the connection info of the wi-fi network
+                val wifiConnectionInfo = wifiManager.connectionInfo
+
+                // Get the SSID of the wi-fi network
+                val wifiSSID = wifiConnectionInfo.ssid
+
+                // Remove the quotation marks from the SSID
+                val wifiSSIDWithoutQuotes = wifiSSID.replace("\"", "")
+
+                // Compare the SSID with the specific wi-fi network name to check
+                if (listNetwork.contains(wifiSSIDWithoutQuotes) || wifiSSID == "<unknown ssid>") {
+                    // The user is connected to the specific wi-fi network
+                    isConnected = true
+                }
+            }
+        }
+
+        // Register the network callback for wi-fi network
+        connectivityManager.registerNetworkCallback(wifiNetworkRequest, wifiNetworkCallback)
+
+        // Unregister the network callback for wi-fi network when you don't need it anymore
+        //connectivityManager.unregisterNetworkCallback(wifiNetworkCallback)
     }
 
     @SuppressLint("MissingPermission")
