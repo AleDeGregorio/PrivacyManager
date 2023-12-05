@@ -190,6 +190,8 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
     }
 
     private fun clearAll() {
+        retrievedRule = null
+
         apps = null
         packageNames = null
         timeSlot = null
@@ -342,6 +344,8 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
         // Save privacy rule in shared preferences
         PreferencesManager.savePrivacyRule(this, rule.name!!, ruleJSON)
+
+        clearAll()
 
         // Navigate back to homepage
         val intent = Intent(this@RuleDefinitionActivity, MainActivity::class.java)
