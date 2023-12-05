@@ -34,8 +34,11 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import it.polito.s294545.privacymanager.R
 import it.polito.s294545.privacymanager.customDataClasses.Rule
+import it.polito.s294545.privacymanager.customDataClasses.TimeSlot
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 // List of all currently active rules
 var activeRules: List<Rule>? = null
@@ -117,6 +120,11 @@ class MonitorManager : Service() {
 
         // For each rule, check if it is not already in the rulesToMonitor list (avoid duplicates)
         for (r in activeRules!!) {
+            // If parameter time slot is defined and we are currently in that time slot
+            if (r.timeSlot != null && monitorTimeSlot(r.timeSlot!!) && rulesToMonitor.none { it.name == r.name }) {
+                rulesToMonitor.add(r)
+            }
+
             // If parameter network is defined and device is connected to the corresponding network then we have to monitor
             if (r.networks != null && rulesToMonitor.none { it.name == r.name }) {
                 monitorNetwork(r.networks!!)
@@ -228,6 +236,33 @@ class MonitorManager : Service() {
         // Register the availability callback
         cameraManager.registerAvailabilityCallback(availabilityCallback, null)
         cameraManager.unregisterAvailabilityCallback(availabilityCallback)
+    }
+
+    private fun monitorTimeSlot(timeSlot: TimeSlot) : Boolean {
+        // Get info about current date and time
+        val currentDateTime = LocalDateTime.now()
+        val currentDay = currentDateTime.dayOfWeek.toString().lowercase()
+        val currentTime = currentDateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+
+        // Check if the current day is in the list of defined days
+        if (!timeSlot.days.contains(currentDay)) {
+            return false
+        }
+
+        // Check if the current time is within the specified time range
+        val startTime = timeSlot.time.first
+        val endTime = timeSlot.time.second
+
+        val currentTimeInMinutes = convertToMinutes(currentTime)
+        val startTimeInMinutes = convertToMinutes(startTime)
+        val endTimeInMinutes = convertToMinutes(endTime)
+
+        return currentTimeInMinutes in startTimeInMinutes..endTimeInMinutes
+    }
+
+    private fun convertToMinutes(time: String): Int {
+        val (hours, minutes) = time.split(":").map { it.toInt() }
+        return hours * 60 + minutes
     }
 
     private fun monitorNetwork(listNetwork: List<String>) {
