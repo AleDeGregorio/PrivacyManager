@@ -16,6 +16,7 @@ import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.pm.PackageManager
 import android.database.ContentObserver
 import android.hardware.camera2.CameraManager
+import android.location.Location
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
@@ -32,7 +33,11 @@ import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.customDataClasses.CustomAddress
 import it.polito.s294545.privacymanager.customDataClasses.Rule
 import it.polito.s294545.privacymanager.customDataClasses.TimeSlot
 import kotlinx.serialization.decodeFromString
@@ -60,6 +65,10 @@ class MonitorManager : Service() {
 
     private lateinit var calendarObserver: CalendarObserver
 
+    // To manage positions
+    private var isNear = false
+
+    // To manage network connection
     private var isConnected = false
 
     private val monitorRunnable = object : Runnable {
@@ -120,6 +129,14 @@ class MonitorManager : Service() {
 
         // For each rule, check if it is not already in the rulesToMonitor list (avoid duplicates)
         for (r in activeRules!!) {
+            // If parameter positions is defined and the user is in one of the corresponding positions then we have to monitor
+            if (r.positions != null && rulesToMonitor.none { it.name == r.name }) {
+                monitorPositions(r.positions!!)
+                if (isNear) {
+                    rulesToMonitor.add(r)
+                }
+            }
+
             // If parameter time slot is defined and we are currently in that time slot
             if (r.timeSlot != null && monitorTimeSlot(r.timeSlot!!) && rulesToMonitor.none { it.name == r.name }) {
                 rulesToMonitor.add(r)
@@ -132,10 +149,12 @@ class MonitorManager : Service() {
                     rulesToMonitor.add(r)
                 }
             }
+
             // If parameter bt is defined and a defined bt device is connected then we have to monitor
             if (r.bt != null && monitorBT(r.bt!!) && rulesToMonitor.none { it.name == r.name }) {
                 rulesToMonitor.add(r)
             }
+
             // If parameter battery is defined and device is in the correct level then we have to monitor
             if (r.battery != null && monitorBattery(r.battery!!) && rulesToMonitor.none { it.name == r.name }) {
                 rulesToMonitor.add(r)
@@ -236,6 +255,35 @@ class MonitorManager : Service() {
         // Register the availability callback
         cameraManager.registerAvailabilityCallback(availabilityCallback, null)
         cameraManager.unregisterAvailabilityCallback(availabilityCallback)
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun monitorPositions(listPositions: List<CustomAddress>) {
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        // Request the current location of the user
+        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    comparePositions(location, listPositions)
+                }
+            }
+    }
+
+    private fun comparePositions(currentPosition: Location, listPositions: List<CustomAddress>) {
+        // Define a constant for the distance threshold in meters
+        val threshold = 100
+
+        for (position in listPositions) {
+            val distance = FloatArray(1)
+
+            Location.distanceBetween(currentPosition.latitude, currentPosition.longitude, position.latitude!!, position.longitude!!, distance)
+
+            if (distance[0] <= threshold) {
+                isNear = true
+                return
+            }
+        }
     }
 
     private fun monitorTimeSlot(timeSlot: TimeSlot) : Boolean {
