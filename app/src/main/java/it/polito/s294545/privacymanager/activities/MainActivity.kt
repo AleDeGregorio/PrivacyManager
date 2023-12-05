@@ -103,9 +103,13 @@ class MainActivity : AppCompatActivity() {
             ContextCompat.startForegroundService(this, intent)
 
             if (activeRules.any { it.permissions!!.contains("notifications") }) {
+                // Just the first time
+                /*
                 if (!hasNotificationPermission()) {
                     requestNotificationPermission()
                 }
+
+                 */
             }
         }
         // If no active rules, stop monitoring service

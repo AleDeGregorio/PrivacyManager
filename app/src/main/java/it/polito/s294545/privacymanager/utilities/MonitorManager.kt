@@ -28,6 +28,8 @@ import it.polito.s294545.privacymanager.customDataClasses.Rule
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
+// List of all currently active rules
+var activeRules: List<Rule>? = null
 
 class MonitorManager : Service() {
     // Permissions
@@ -43,8 +45,6 @@ class MonitorManager : Service() {
 
     // Monitoring interval in milliseconds
     private val monitoringInterval = 5000
-    // List of all currently active rules
-    private lateinit var activeRules: List<Rule>
 
     private lateinit var calendarObserver: CalendarObserver
 
@@ -64,7 +64,7 @@ class MonitorManager : Service() {
         // Initiate monitoring
         handler.post(monitorRunnable)
 
-        if (activeRules.any { it.permissions!!.contains("notifications") }) {
+        if (activeRules!!.any { it.permissions!!.contains("notifications") }) {
             val notificationIntent = Intent(this, NotificationListener::class.java)
             startService(notificationIntent)
         }
@@ -97,6 +97,10 @@ class MonitorManager : Service() {
             return
         }
 
+        if (activeRules.isNullOrEmpty()) {
+            return
+        }
+
         // Your code for accessing package usage statistics goes here
         // Get a reference to the activity manager service and usage stats manager object
         val usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
@@ -116,7 +120,7 @@ class MonitorManager : Service() {
         // Iterate over each app in the list
         for (app in appList) {
             // Check if the app is defined in a monitoring rule
-            for (rule in activeRules) {
+            for (rule in activeRules!!) {
                 if (rule.packageNames!!.contains(app.packageName)) {
                     // Check if the app has a last time used value greater than or equal to the current time minus the time interval
                     if (app.lastTimeUsed >= currentTime - timeInterval) {
@@ -128,7 +132,7 @@ class MonitorManager : Service() {
         }
 
         // Check for defined permissions monitoring
-        for (rule in activeRules) {
+        for (rule in activeRules!!) {
             // Check location permission and if the rule has some running app
             if (rule.permissions!!.contains("location") && rule.packageNames!!.any { it in runningApps }) {
                 monitorLocation(rule.packageNames!!.filter { it in runningApps })
@@ -216,10 +220,12 @@ class MonitorManager : Service() {
     override fun onDestroy() {
         super.onDestroy()
 
+        activeRules = null
+
         // Stop notification service as well
-        val notificationIntent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
-        notificationIntent.addFlags(FLAG_ACTIVITY_NEW_TASK)
-        startActivity(notificationIntent)
+        //val notificationIntent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
+        //notificationIntent.addFlags(FLAG_ACTIVITY_NEW_TASK)
+        //startActivity(notificationIntent)
 
         stopForeground(STOP_FOREGROUND_REMOVE) // Stop as a foreground service
         stopSelf()
@@ -238,22 +244,39 @@ class NotificationListener : NotificationListenerService() {
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
-        // Get the notification object
-        val notification = sbn.notification
-        // Get the notification title
-        val title = notification.extras.getString(Notification.EXTRA_TITLE)
-        // Get the notification text
-        val text = notification.extras.getString(Notification.EXTRA_TEXT)
-        // Do something with the notification data
-        Log.d("myapp", "notification: ${sbn.packageName}")
+        val notificationRules = mutableListOf<Rule>()
 
-        //cancelNotification(sbn.key)
+        // Consider only rules with permission "notifications"
+        if (!activeRules.isNullOrEmpty()) {
+            for (r in activeRules!!) {
+                if (r.permissions!!.contains("notifications")) {
+                    notificationRules.add(r)
+                }
+            }
+        }
 
-        /*
-        val intent = Intent("android.service.notification.NotificationListenerService")
-        intent.putExtra("Notification Title", notification)
-        sendBroadcast(intent)
-         */
+        // If there is at least one rule
+        if (notificationRules.isNotEmpty()) {
+            // If the intercepted notification is posted by a tracked app
+            if (notificationRules.any { it.packageNames!!.contains(sbn.packageName) }) {
+                // Get the notification object
+                val notification = sbn.notification
+                // Get the notification title
+                val title = notification.extras.getString(Notification.EXTRA_TITLE)
+                // Get the notification text
+                val text = notification.extras.getString(Notification.EXTRA_TEXT)
+                // Do something with the notification data
+                Log.d("myapp", "notification: ${sbn.packageName}")
+
+                //cancelNotification(sbn.key)
+
+                /*
+                val intent = Intent("android.service.notification.NotificationListenerService")
+                intent.putExtra("Notification Title", notification)
+                sendBroadcast(intent)
+                 */
+            }
+        }
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification) {
