@@ -132,37 +132,9 @@ class MonitorManager : Service() {
             // If no parameter (position, time slot, network, bluetooth, battery) is defined, we have to monitor
             if (r.positions == null && r.timeSlot == null && r.networks == null && r.bt == null && r.battery == null) {
                 rulesToMonitor.add(r)
-                continue
             }
-
-            // If parameter positions is defined and the user is in one of the corresponding positions then we have to monitor
-            if (r.positions != null && rulesToMonitor.none { it.name == r.name }) {
-                monitorPositions(r.positions!!)
-                if (isNear) {
-                    rulesToMonitor.add(r)
-                }
-            }
-
-            // If parameter time slot is defined and we are currently in that time slot
-            if (r.timeSlot != null && monitorTimeSlot(r.timeSlot!!) && rulesToMonitor.none { it.name == r.name }) {
-                rulesToMonitor.add(r)
-            }
-
-            // If parameter network is defined and device is connected to the corresponding network then we have to monitor
-            if (r.networks != null && rulesToMonitor.none { it.name == r.name }) {
-                monitorNetwork(r.networks!!)
-                if (isConnected) {
-                    rulesToMonitor.add(r)
-                }
-            }
-
-            // If parameter bt is defined and a defined bt device is connected then we have to monitor
-            if (r.bt != null && monitorBT(r.bt!!) && rulesToMonitor.none { it.name == r.name }) {
-                rulesToMonitor.add(r)
-            }
-
-            // If parameter battery is defined and device is in the correct level then we have to monitor
-            if (r.battery != null && monitorBattery(r.battery!!) && rulesToMonitor.none { it.name == r.name }) {
+            // Otherwise, all the defined parameters have to be satisfied
+            else if (checkParameters(r)) {
                 rulesToMonitor.add(r)
             }
         }
@@ -212,6 +184,45 @@ class MonitorManager : Service() {
                 monitorCamera()
             }
         }
+    }
+
+    // Check that all the parameters that are defined (position, time slot, network, bluetooth, battery) are satisfied
+    private fun checkParameters(rule: Rule) : Boolean {
+        if (rule.positions != null) {
+            monitorPositions(rule.positions!!)
+
+            if (!isNear) {
+                return false
+            }
+        }
+
+        if (rule.timeSlot != null) {
+            if (!monitorTimeSlot(rule.timeSlot!!)) {
+                return false
+            }
+        }
+
+        if (rule.networks != null) {
+            monitorNetwork(rule.networks!!)
+
+            if (!isConnected) {
+                return false
+            }
+        }
+
+        if (rule.bt != null) {
+            if (!monitorBT(rule.bt!!)) {
+                return false
+            }
+        }
+
+        if (rule.battery != null) {
+            if (!monitorBattery(rule.battery!!)) {
+                return false
+            }
+        }
+
+        return true
     }
 
     private fun monitorLocation(listApps : List<String>) {
