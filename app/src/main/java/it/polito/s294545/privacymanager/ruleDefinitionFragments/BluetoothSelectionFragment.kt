@@ -61,6 +61,7 @@ class BluetoothSelectionFragment : Fragment() {
             if (retrievedRule!!.bt != null && !retrievedRule!!.bt.isNullOrEmpty()) {
                 savedBT.addAll(retrievedRule!!.bt!!)
                 parameterListener?.onParameterEntered("bt", savedBT.toList())
+                retrievedRule!!.bt = null
             }
         }
 

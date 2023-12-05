@@ -57,11 +57,12 @@ class AppsSelectionFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_apps_selection, container, false)
 
         // Check if we are editing a rule
-        if (retrievedRule != null) {
+        if (retrievedRule != null && retrievedRule!!.apps != null) {
             savedApps.addAll(retrievedRule!!.apps as Collection<String>)
             savedPkg.addAll(retrievedRule!!.packageNames as Collection<String>)
             parameterListener?.onParameterEntered("apps", savedApps.toList())
             parameterListener?.onParameterEntered("packageNames", savedPkg.toList())
+            retrievedRule!!.apps = null
         }
 
         // Managing recycler view
