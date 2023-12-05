@@ -1,11 +1,14 @@
 package it.polito.s294545.privacymanager.utilities
 
+import android.annotation.SuppressLint
 import android.app.AppOpsManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.app.usage.UsageStatsManager
+import android.bluetooth.BluetoothManager
+import android.bluetooth.BluetoothProfile
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
@@ -105,9 +108,14 @@ class MonitorManager : Service() {
         // Active rules with satisfied conditions
         val rulesToMonitor = mutableListOf<Rule>()
 
+        // For each rule, check if it is not already in the rulesToMonitor list (avoid duplicates)
         for (r in activeRules!!) {
+            // If parameter bt is not defined, or it is defined and a defined bt device is connected then we have to monitor
+            if ((r.bt == null || monitorBT(r.bt!!)) && rulesToMonitor.none { it.name == r.name }) {
+                rulesToMonitor.add(r)
+            }
             // If parameter battery is not defined, or it is defined and device is in the correct level then we have to monitor
-            if (r.battery == null || monitorBattery(r.battery!!)) {
+            if ((r.battery == null || monitorBattery(r.battery!!)) && rulesToMonitor.none { it.name == r.name }) {
                 rulesToMonitor.add(r)
             }
         }
@@ -206,6 +214,29 @@ class MonitorManager : Service() {
         // Register the availability callback
         cameraManager.registerAvailabilityCallback(availabilityCallback, null)
         cameraManager.unregisterAvailabilityCallback(availabilityCallback)
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun monitorBT(listBT: List<String>) : Boolean {
+        // Get the BluetoothManager
+        val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+
+        // Get the list of connected devices
+        val connectedDevices = bluetoothManager.getConnectedDevices(BluetoothProfile.GATT)
+        // Check if the list is not empty
+        if (connectedDevices.isNotEmpty()) {
+            // Loop through the list
+            for (device in connectedDevices) {
+                // Get the device name
+                val deviceName = device.name
+                // Check if the device connected is defined in the saved list
+                if (listBT.any { it == deviceName }) {
+                    return true
+                }
+            }
+        }
+
+        return false
     }
 
     private fun monitorBattery(level: Int) : Boolean {
