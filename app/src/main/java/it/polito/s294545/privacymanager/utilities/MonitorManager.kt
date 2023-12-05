@@ -129,6 +129,12 @@ class MonitorManager : Service() {
 
         // For each rule, check if it is not already in the rulesToMonitor list (avoid duplicates)
         for (r in activeRules!!) {
+            // If no parameter (position, time slot, network, bluetooth, battery) is defined, we have to monitor
+            if (r.positions == null && r.timeSlot == null && r.networks == null && r.bt == null && r.battery == null) {
+                rulesToMonitor.add(r)
+                continue
+            }
+
             // If parameter positions is defined and the user is in one of the corresponding positions then we have to monitor
             if (r.positions != null && rulesToMonitor.none { it.name == r.name }) {
                 monitorPositions(r.positions!!)
