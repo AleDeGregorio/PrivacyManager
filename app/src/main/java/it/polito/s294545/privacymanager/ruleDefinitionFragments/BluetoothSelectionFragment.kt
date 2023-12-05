@@ -1,7 +1,11 @@
 package it.polito.s294545.privacymanager.ruleDefinitionFragments
 
+import android.annotation.SuppressLint
+import android.bluetooth.BluetoothManager
+import android.bluetooth.BluetoothProfile
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +18,8 @@ import it.polito.s294545.privacymanager.utilities.ParameterListener
 import it.polito.s294545.privacymanager.R
 import it.polito.s294545.privacymanager.activities.retrievedRule
 
-val listBluetooth = listOf("Test BT 1", "Test BT 2", "Test BT 3")
+//val listBluetooth = listOf("Test BT 1", "Test BT 2", "Test BT 3")
+var listBluetooth = mutableListOf<String>()
 
 var savedBT = mutableListOf<String>()
 
@@ -59,12 +64,31 @@ class BluetoothSelectionFragment : Fragment() {
             }
         }
 
+        // Scan bt devices
+        scanBT()
+
         // Managing recycler view
         val recyclerView = v.findViewById<RecyclerView>(R.id.list_bluetooth)
         recyclerView.adapter = BluetoothSelectionAdapter(listBluetooth, parameterListener)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         return v
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun scanBT() {
+        // Get the BluetoothManager
+        val bluetoothManager = context?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        // Get the BluetoothAdapter
+        val bluetoothAdapter = bluetoothManager.adapter
+
+        // Get the set of paired devices
+        val pairedDevices = bluetoothAdapter.bondedDevices
+
+        // Loop through the paired devices
+        for (device in pairedDevices) {
+            listBluetooth.add(device.name)
+        }
     }
 
     override fun onAttach(context: Context) {

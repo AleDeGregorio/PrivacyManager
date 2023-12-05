@@ -51,6 +51,12 @@ class MainActivity : AppCompatActivity() {
         Manifest.permission.WRITE_CALENDAR
     )
     private val NOTIFICATION_PERMISSION_REQUEST = 108
+    private val BLUETOOTH_PERMISSION_REQUEST = 107
+    private val BLUETOOTH_PERMISSIONS = arrayOf(
+        Manifest.permission.BLUETOOTH_SCAN,
+        Manifest.permission.BLUETOOTH_ADVERTISE,
+        Manifest.permission.BLUETOOTH_CONNECT
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +68,9 @@ class MainActivity : AppCompatActivity() {
         }
         if (!hasCalendarPermission()) {
             requestCalendarPermission()
+        }
+        if (!hasBluetoothPermission()) {
+            requestBluetoothPermission()
         }
 
         val retrievedRules = PreferencesManager.getAllPrivacyRules(this)
@@ -162,6 +171,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun requestCalendarPermission() {
         requestPermissions(CALENDAR_PERMISSIONS, CALENDAR_PERMISSION_REQUEST)
+    }
+
+    private fun hasBluetoothPermission() : Boolean {
+        return checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(Manifest.permission.BLUETOOTH_ADVERTISE) == PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestBluetoothPermission() {
+        requestPermissions(BLUETOOTH_PERMISSIONS, BLUETOOTH_PERMISSION_REQUEST)
     }
 
     @SuppressLint("ClickableViewAccessibility")

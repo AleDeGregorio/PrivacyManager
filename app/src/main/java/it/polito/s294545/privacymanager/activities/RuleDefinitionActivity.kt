@@ -40,6 +40,7 @@ import it.polito.s294545.privacymanager.ruleDefinitionFragments.PositionsSelecti
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.TimeSlotSelectionFragment
 import it.polito.s294545.privacymanager.customDataClasses.TimeSlot
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.listApps
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.listBluetooth
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.listIcons
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.listPackageName
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedApps
@@ -185,6 +186,10 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
     override fun onDestroy() {
         super.onDestroy()
 
+        clearAll()
+    }
+
+    private fun clearAll() {
         apps = null
         packageNames = null
         timeSlot = null
@@ -194,6 +199,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         battery = null
         action = null
         name = null
+        listBluetooth.clear()
 
         savedApps.clear()
         savedPkg.clear()
@@ -357,24 +363,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
     }
 
     private fun manageBackNavigation() {
-        apps = null
-        packageNames = null
-        timeSlot = null
-        positions = null
-        networks = null
-        bt = null
-        battery = null
-        action = null
-        name = null
-
-        savedApps.clear()
-        savedPkg.clear()
-        savedSlot = TimeSlot()
-        savedPositions.clear()
-        savedNetworks.clear()
-        savedMobile.clear()
-        savedBT.clear()
-        savedBattery = null
+        clearAll()
 
         val intent = Intent(this@RuleDefinitionActivity, PermissionsSelectionActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
