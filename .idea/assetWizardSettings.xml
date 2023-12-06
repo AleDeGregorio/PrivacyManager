@@ -80,6 +80,7 @@
                                               <map>
                                                 <entry key="color" value="000000" />
                                                 <entry key="imagePath" value="$USER_HOME$/Scaricati/safety.png" />
+                                                <entry key="scalingPercent" value="86" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -115,6 +116,7 @@
                                       <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundColor" value="1e90ff" />
                                       <entry key="outputName" value="app_icon" />
+                                      <entry key="showSafeZone" value="false" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -278,6 +280,11 @@
                                           </PersistentState>
                                         </value>
                                       </entry>
+                                    </map>
+                                  </option>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="showSafeZone" value="false" />
                                     </map>
                                   </option>
                                 </PersistentState>
