@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity() {
         Manifest.permission.BLUETOOTH_ADVERTISE,
         Manifest.permission.BLUETOOTH_CONNECT
     )
+    private val KILL_PROCESS_PERMISSION_REQUEST = 105
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +72,9 @@ class MainActivity : AppCompatActivity() {
         }
         if (!hasBluetoothPermission()) {
             requestBluetoothPermission()
+        }
+        if (!hasKillProcessPermission()) {
+            requestKillProcessPermission()
         }
 
         val retrievedRules = PreferencesManager.getAllPrivacyRules(this)
@@ -181,6 +185,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun requestBluetoothPermission() {
         requestPermissions(BLUETOOTH_PERMISSIONS, BLUETOOTH_PERMISSION_REQUEST)
+    }
+
+    private fun hasKillProcessPermission() : Boolean {
+        return checkSelfPermission(Manifest.permission.KILL_BACKGROUND_PROCESSES) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestKillProcessPermission() {
+        requestPermissions(arrayOf(Manifest.permission.KILL_BACKGROUND_PROCESSES), KILL_PROCESS_PERMISSION_REQUEST)
     }
 
     @SuppressLint("ClickableViewAccessibility")

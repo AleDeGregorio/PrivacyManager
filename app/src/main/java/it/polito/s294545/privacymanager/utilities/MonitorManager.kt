@@ -1,6 +1,8 @@
 package it.polito.s294545.privacymanager.utilities
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.ActivityManager
 import android.app.AppOpsManager
 import android.app.Notification
 import android.app.NotificationChannel
@@ -59,6 +61,9 @@ var rulesToMonitor: MutableList<Rule>? = null
 lateinit var notificationManager: NotificationManager
 lateinit var signalNotification: Notification
 
+// In order to kill a process
+lateinit var activityManager: ActivityManager
+
 lateinit var context: Context
 
 class MonitorManager : Service() {
@@ -97,6 +102,9 @@ class MonitorManager : Service() {
         context = this
 
         canNotify = true
+
+        // Get the ActivityManager instance in order to kill a process
+        activityManager = getSystemService(Activity.ACTIVITY_SERVICE) as ActivityManager
 
         val retrievedRules = intent?.extras?.get("activeRules")
 
@@ -209,15 +217,15 @@ class MonitorManager : Service() {
         for (rule in rulesToMonitor!!) {
             // Check location permission and if the rule has some running app
             if (rule.permissions!!.contains("location") && rule.packageNames!!.any { it in runningApps }) {
-                monitorLocation(rule.packageNames!!.filter { it in runningApps }, rule.name!!)
+                monitorLocation(rule.packageNames!!.filter { it in runningApps }, rule.name!!, rule.action!!)
             }
             // Check calendar permission and if the rule has some running app
             if (rule.permissions!!.contains("calendar") && rule.packageNames!!.any { it in runningApps }) {
-                monitorCalendar(rule.packageNames!!.filter { it in runningApps }, rule.name!!)
+                monitorCalendar(rule.packageNames!!.filter { it in runningApps }, rule.name!!, rule.action!!)
             }
             // Check camera permission and if the rule has some running app
             if (rule.permissions!!.contains("camera") && rule.packageNames!!.any { it in runningApps }) {
-                monitorCamera(rule.packageNames!!.filter { it in runningApps }, rule.name!!)
+                monitorCamera(rule.packageNames!!.filter { it in runningApps }, rule.name!!, rule.action!!)
             }
         }
     }
@@ -261,7 +269,7 @@ class MonitorManager : Service() {
         return true
     }
 
-    private fun monitorLocation(listApps : List<String>, ruleName: String) {
+    private fun monitorLocation(listApps : List<String>, ruleName: String, ruleAction: String) {
         // Get a reference to the PackageManager
         val packageManager = packageManager
 
@@ -271,12 +279,12 @@ class MonitorManager : Service() {
             val listPermissions = packageInfo.requestedPermissions
 
             if (listPermissions!!.contains("android.permission.ACCESS_COARSE_LOCATION") || listPermissions.contains("android.permission.ACCESS_FINE_LOCATION")) {
-                signalNotification(app, ruleName)
+                signalNotification(app, ruleName, ruleAction)
             }
         }
     }
 
-    private fun monitorCalendar(listApps : List<String>, ruleName: String) {
+    private fun monitorCalendar(listApps : List<String>, ruleName: String, ruleAction: String) {
         val app = listApps[0]
 
         // creates and starts a new thread set up as a looper
@@ -288,10 +296,10 @@ class MonitorManager : Service() {
 
         calendarObserver = CalendarObserver(contentResolver, handler)
 
-        calendarObserver.startObserving(app, ruleName)
+        calendarObserver.startObserving(app, ruleName, ruleAction)
     }
 
-    private fun monitorCamera(listApps : List<String>, ruleName: String) {
+    private fun monitorCamera(listApps : List<String>, ruleName: String, ruleAction: String) {
         val app = listApps[0]
 
         // Get an instance of the CameraManager
@@ -305,7 +313,7 @@ class MonitorManager : Service() {
 
             override fun onCameraUnavailable(cameraId: String) {
                 // This is called when a camera device becomes unavailable to open
-                signalNotification(app, ruleName)
+                signalNotification(app, ruleName, ruleAction)
             }
         }
 
@@ -494,9 +502,14 @@ class MonitorManager : Service() {
     }
 }
 
-fun signalNotification(app: String, ruleName: String) {
+fun signalNotification(app: String, ruleName: String, ruleAction: String) {
     if (MonitorManager.canNotify) {
         MonitorManager.canNotify = false
+
+        if (ruleAction == "close_app") {
+            // Kill the app with the given package name
+            activityManager.killBackgroundProcesses(app)
+        }
 
         // On click reset the canNotify flag
         val broadcastIntent = Intent(context, NotificationClickReceiver::class.java)
@@ -513,6 +526,7 @@ fun signalNotification(app: String, ruleName: String) {
 
         signalIntent.putExtra("ruleName", ruleName)
         signalIntent.putExtra("pkg", app)
+        signalIntent.putExtra("action", ruleAction)
 
         val signalPendingIntent = PendingIntent.getActivity(context, timestamp, signalIntent, PendingIntent.FLAG_MUTABLE)
 
@@ -585,10 +599,11 @@ class CalendarObserver(private val contentResolver: ContentResolver, handler: Ha
 
     private lateinit var app: String
     private lateinit var ruleName: String
+    private lateinit var ruleAction: String
 
     private val observer = object : ContentObserver(handler) {
         override fun onChange(selfChange: Boolean) {
-            signalNotification(app, ruleName)
+            signalNotification(app, ruleName, ruleAction)
         }
     }
 
@@ -596,9 +611,10 @@ class CalendarObserver(private val contentResolver: ContentResolver, handler: Ha
         contentResolver.registerContentObserver(uri, true, observer)
     }
 
-    fun startObserving(app: String, ruleName: String) {
+    fun startObserving(app: String, ruleName: String, ruleAction: String) {
         this.app = app
         this.ruleName = ruleName
+        this.ruleAction = ruleAction
 
         observe()
     }

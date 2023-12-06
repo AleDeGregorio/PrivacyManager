@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.view.View.GONE
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
@@ -39,10 +40,21 @@ class ViolationActivity : AppCompatActivity() {
         }
         onBackPressedDispatcher.addCallback(this, callback)
 
+        // Get action
+        val action = intent.extras?.getString("action")
+        val isSignal = action == "signal_app"
+
         // Set name of rule violated
         val ruleName = intent.extras?.getString("ruleName")
         val infoText = findViewById<TextView>(R.id.infoTextView)
-        infoText.text = "La seguente app ha violato la regola \"$ruleName\""
+
+        val info = if (isSignal) {
+            "La seguente app ha violato la regola \"$ruleName\""
+        } else {
+            "La seguente app ha violato la regola \"$ruleName\" ed è stata chiusa"
+        }
+
+        infoText.text = info
 
         // Set app info
         val pkgName = intent.extras?.getString("pkg")
@@ -63,13 +75,18 @@ class ViolationActivity : AppCompatActivity() {
         // Manage revoke permission button
         val revokeButton = findViewById<ExtendedFloatingActionButton>(R.id.revoke_permission)
 
-        revokeButton.setOnClickListener {
-            val appSettingsIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-            appSettingsIntent.data = Uri.fromParts("package", pkgName, null)
+        if (!isSignal) {
+            revokeButton.visibility = GONE
+        }
+        else {
+            revokeButton.setOnClickListener {
+                val appSettingsIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                appSettingsIntent.data = Uri.fromParts("package", pkgName, null)
 
-            // Check if the intent can be resolved to avoid crashing on unsupported devices
-            if (appSettingsIntent.resolveActivity(packageManager) != null) {
-                ContextCompat.startActivity(this, appSettingsIntent, null)
+                // Check if the intent can be resolved to avoid crashing on unsupported devices
+                if (appSettingsIntent.resolveActivity(packageManager) != null) {
+                    ContextCompat.startActivity(this, appSettingsIntent, null)
+                }
             }
         }
     }
