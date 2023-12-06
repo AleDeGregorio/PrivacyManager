@@ -16,7 +16,7 @@
         <Button
             android:id="@+id/button_rule"
             android:layout_width="193dp"
-            android:layout_height="65dp"
+            android:layout_height="75dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_marginStart="10dp"

@@ -1,8 +1,10 @@
 package it.polito.s294545.privacymanager.activities
 
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
@@ -10,6 +12,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
 import it.polito.s294545.privacymanager.R
 
@@ -55,6 +58,19 @@ class ViolationActivity : AppCompatActivity() {
 
             val appIconImg = findViewById<ShapeableImageView>(R.id.app_icon)
             appIconImg.setImageDrawable(appIcon)
+        }
+
+        // Manage revoke permission button
+        val revokeButton = findViewById<ExtendedFloatingActionButton>(R.id.revoke_permission)
+
+        revokeButton.setOnClickListener {
+            val appSettingsIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+            appSettingsIntent.data = Uri.fromParts("package", pkgName, null)
+
+            // Check if the intent can be resolved to avoid crashing on unsupported devices
+            if (appSettingsIntent.resolveActivity(packageManager) != null) {
+                ContextCompat.startActivity(this, appSettingsIntent, null)
+            }
         }
     }
 
