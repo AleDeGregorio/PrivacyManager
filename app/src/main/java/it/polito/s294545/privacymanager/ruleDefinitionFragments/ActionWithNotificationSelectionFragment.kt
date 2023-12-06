@@ -14,7 +14,7 @@ import it.polito.s294545.privacymanager.utilities.ParameterListener
 import it.polito.s294545.privacymanager.R
 import it.polito.s294545.privacymanager.activities.retrievedRule
 
-private var savedAction = "obscure_notification"
+var savedActionWithNotification = "obscure_notification"
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -61,28 +61,28 @@ class ActionWithNotificationSelectionFragment : Fragment() {
 
         // Check if we are editing a rule
         if (retrievedRule != null) {
-            savedAction = retrievedRule!!.action!!
+            savedActionWithNotification = retrievedRule!!.action!!
 
-            if (savedAction == "block_notification") {
+            if (savedActionWithNotification == "block_notification") {
                 obscureNotificationRadio.isChecked = false
                 blockNotificationRadio.isChecked = true
             }
 
-            parameterListener?.onParameterEntered("action", savedAction)
+            parameterListener?.onParameterEntered("action", savedActionWithNotification)
         }
 
         // Pass action info as parameter
         obscureNotificationRadio.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
-                savedAction = "obscure_notification"
-                parameterListener?.onParameterEntered("action", savedAction)
+                savedActionWithNotification = "obscure_notification"
+                parameterListener?.onParameterEntered("action", savedActionWithNotification)
             }
         }
 
         blockNotificationRadio.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
-                savedAction = "block_notification"
-                parameterListener?.onParameterEntered("action", savedAction)
+                savedActionWithNotification = "block_notification"
+                parameterListener?.onParameterEntered("action", savedActionWithNotification)
             }
         }
 

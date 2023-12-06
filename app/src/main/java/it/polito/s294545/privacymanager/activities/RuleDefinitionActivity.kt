@@ -43,6 +43,8 @@ import it.polito.s294545.privacymanager.ruleDefinitionFragments.listApps
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.listBluetooth
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.listIcons
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.listPackageName
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedActionNoNotification
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedActionWithNotification
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedApps
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedBT
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedBattery
@@ -211,6 +213,8 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         savedMobile.clear()
         savedBT.clear()
         savedBattery = null
+        savedActionNoNotification = "signal_app"
+        savedActionWithNotification = "obscure_notification"
     }
 
     private fun getApps() {

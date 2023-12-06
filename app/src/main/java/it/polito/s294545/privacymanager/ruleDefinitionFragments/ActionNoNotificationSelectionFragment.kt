@@ -14,7 +14,7 @@ import it.polito.s294545.privacymanager.utilities.ParameterListener
 import it.polito.s294545.privacymanager.R
 import it.polito.s294545.privacymanager.activities.retrievedRule
 
-private var savedAction = "signal_app"
+var savedActionNoNotification = "signal_app"
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -61,28 +61,28 @@ class ActionNoNotificationSelectionFragment : Fragment() {
 
         // Check if we are editing a rule
         if (retrievedRule != null) {
-            savedAction = retrievedRule!!.action!!
+            savedActionNoNotification = retrievedRule!!.action!!
 
-            if (savedAction == "close_app") {
+            if (savedActionNoNotification == "close_app") {
                 signalAppRadio.isChecked = false
                 closeAppRadio.isChecked = true
             }
 
-            parameterListener?.onParameterEntered("action", savedAction)
+            parameterListener?.onParameterEntered("action", savedActionNoNotification)
         }
 
         // Pass action info as parameter
         signalAppRadio.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
-                savedAction = "signal_app"
-                parameterListener?.onParameterEntered("action", savedAction)
+                savedActionNoNotification = "signal_app"
+                parameterListener?.onParameterEntered("action", savedActionNoNotification)
             }
         }
 
         closeAppRadio.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
-                savedAction = "close_app"
-                parameterListener?.onParameterEntered("action", savedAction)
+                savedActionNoNotification = "close_app"
+                parameterListener?.onParameterEntered("action", savedActionNoNotification)
             }
         }
 
