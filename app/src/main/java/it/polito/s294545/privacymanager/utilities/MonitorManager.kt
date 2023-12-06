@@ -5,14 +5,16 @@ import android.app.AppOpsManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
+import android.app.TaskStackBuilder
 import android.app.usage.UsageStatsManager
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
+import android.content.BroadcastReceiver
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.pm.PackageManager
 import android.database.ContentObserver
 import android.hardware.camera2.CameraManager
@@ -33,10 +35,11 @@ import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.location.LocationRequest
+import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.activities.ViolationActivity
 import it.polito.s294545.privacymanager.customDataClasses.CustomAddress
 import it.polito.s294545.privacymanager.customDataClasses.Rule
 import it.polito.s294545.privacymanager.customDataClasses.TimeSlot
@@ -45,31 +48,41 @@ import kotlinx.serialization.json.Json
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+val NOTIFICATION_ACTION_RESET_FLAG = "it.polito.s294545.privacymanager.utilities.ACTION_RESET_FLAG"
+
 // List of all currently active rules
 var activeRules: List<Rule>? = null
 // List of currently active rules that have to be monitored (all parameters respected)
 var rulesToMonitor: MutableList<Rule>? = null
+
+// Signal violation notification
+lateinit var notificationManager: NotificationManager
+lateinit var signalNotification: Notification
+
+lateinit var context: Context
 
 class MonitorManager : Service() {
     // Permissions
     private val PACKAGE_USAGE_STATS_PERMISSION_REQUEST = 101
 
     // Service notification
-    private val NOTIFICATION_ID = 1
-    private lateinit var notificationManager: NotificationManager
+    private val NOTIFICATION_MONITOR_ID = 1
 
     // Service utilities
-    private val channelId = "MonitorServiceChannel"
+    private val monitorChannelID = "MonitorServiceChannel"
     private val handler = Handler()
 
     // Monitoring interval in milliseconds
     private val monitoringInterval = 5000
 
+    // Signal violation notification
+    private val signalChannelID = "SignalViolationChannel"
+    private lateinit var signalNotificationChannel: NotificationChannel
+
     private lateinit var calendarObserver: CalendarObserver
 
     // To manage positions
     private var isNear = false
-
     // To manage network connection
     private var isConnected = false
 
@@ -81,11 +94,15 @@ class MonitorManager : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        context = this
+
+        canNotify = true
+
         val retrievedRules = intent?.extras?.get("activeRules")
 
         activeRules = Json.decodeFromString(retrievedRules.toString())
 
-        startForeground(NOTIFICATION_ID, createNotification()) // Start as a foreground service
+        startForeground(NOTIFICATION_MONITOR_ID, createNotification()) // Start as a foreground service
         // Initiate monitoring
         handler.post(monitorRunnable)
 
@@ -94,24 +111,41 @@ class MonitorManager : Service() {
             startService(notificationIntent)
         }
 
+        // Initialize signal violation notification
+        signalNotificationChannel = NotificationChannel(
+            signalChannelID,
+            "Signal Violation Channel",
+            NotificationManager.IMPORTANCE_HIGH
+        )
+
+        notificationManager.createNotificationChannel(signalNotificationChannel)
+
+        signalNotification = NotificationCompat.Builder(this, signalChannelID)
+            .setContentTitle("Privacy manager")
+            .setContentText("Rilevata violazione di una regola")
+            .setSmallIcon(R.drawable.icon_safety)
+            .setDefaults(Notification.DEFAULT_SOUND or Notification.DEFAULT_VIBRATE)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setAutoCancel(true)
+            .build()
+
         return START_STICKY
     }
 
     private fun createNotification(): Notification {
-        notificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val notificationChannel = NotificationChannel(
-            channelId,
+            monitorChannelID,
             "Monitor Service Channel",
             NotificationManager.IMPORTANCE_LOW
         )
         notificationManager.createNotificationChannel(notificationChannel)
 
-        return Notification.Builder(this, channelId)
-            .setContentTitle("Monitoring Service")
-            .setContentText("Monitoring running apps...")
-            .setSmallIcon(R.drawable.icon_app) // Replace with your own icon
+        return Notification.Builder(this, monitorChannelID)
+            .setContentTitle("Privacy manager")
+            .setContentText("Servizio di monitoraggio attivo")
+            .setSmallIcon(R.drawable.icon_safety)
             .build()
     }
 
@@ -175,15 +209,15 @@ class MonitorManager : Service() {
         for (rule in rulesToMonitor!!) {
             // Check location permission and if the rule has some running app
             if (rule.permissions!!.contains("location") && rule.packageNames!!.any { it in runningApps }) {
-                monitorLocation(rule.packageNames!!.filter { it in runningApps })
+                monitorLocation(rule.packageNames!!.filter { it in runningApps }, rule.name!!)
             }
             // Check calendar permission and if the rule has some running app
             if (rule.permissions!!.contains("calendar") && rule.packageNames!!.any { it in runningApps }) {
-                monitorCalendar()
+                monitorCalendar(rule.packageNames!!.filter { it in runningApps }, rule.name!!)
             }
             // Check camera permission and if the rule has some running app
             if (rule.permissions!!.contains("camera") && rule.packageNames!!.any { it in runningApps }) {
-                monitorCamera()
+                monitorCamera(rule.packageNames!!.filter { it in runningApps }, rule.name!!)
             }
         }
     }
@@ -227,7 +261,7 @@ class MonitorManager : Service() {
         return true
     }
 
-    private fun monitorLocation(listApps : List<String>) {
+    private fun monitorLocation(listApps : List<String>, ruleName: String) {
         // Get a reference to the PackageManager
         val packageManager = packageManager
 
@@ -237,12 +271,14 @@ class MonitorManager : Service() {
             val listPermissions = packageInfo.requestedPermissions
 
             if (listPermissions!!.contains("android.permission.ACCESS_COARSE_LOCATION") || listPermissions.contains("android.permission.ACCESS_FINE_LOCATION")) {
-                Log.d("myapp", "location accessed")
+                signalNotification(app, ruleName)
             }
         }
     }
 
-    private fun monitorCalendar() {
+    private fun monitorCalendar(listApps : List<String>, ruleName: String) {
+        val app = listApps[0]
+
         // creates and starts a new thread set up as a looper
         val thread = HandlerThread("CalendarHandlerThread")
         thread.start()
@@ -252,10 +288,12 @@ class MonitorManager : Service() {
 
         calendarObserver = CalendarObserver(contentResolver, handler)
 
-        calendarObserver.startObserving()
+        calendarObserver.startObserving(app, ruleName)
     }
 
-    private fun monitorCamera() {
+    private fun monitorCamera(listApps : List<String>, ruleName: String) {
+        val app = listApps[0]
+
         // Get an instance of the CameraManager
         val cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
 
@@ -267,7 +305,7 @@ class MonitorManager : Service() {
 
             override fun onCameraUnavailable(cameraId: String) {
                 // This is called when a camera device becomes unavailable to open
-                Log.d("myapp", "Camera is unavailable")
+                signalNotification(app, ruleName)
             }
         }
 
@@ -450,6 +488,47 @@ class MonitorManager : Service() {
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
+
+    companion object {
+        var canNotify: Boolean = false
+    }
+}
+
+fun signalNotification(app: String, ruleName: String) {
+    if (MonitorManager.canNotify) {
+        MonitorManager.canNotify = false
+
+        // On click reset the canNotify flag
+        val broadcastIntent = Intent(context, NotificationClickReceiver::class.java)
+        broadcastIntent.action = NOTIFICATION_ACTION_RESET_FLAG
+
+        // Necessary to have a unique notification id
+        val timestamp = System.currentTimeMillis().toInt()
+
+        val broadcastPendingIntent = PendingIntent.getBroadcast(context, timestamp, broadcastIntent, PendingIntent.FLAG_MUTABLE)
+
+        // And also start the violation activity
+        val signalIntent = Intent(context, ViolationActivity::class.java)
+        signalIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+        signalIntent.putExtra("ruleName", ruleName)
+        signalIntent.putExtra("pkg", app)
+
+        val signalPendingIntent = PendingIntent.getActivity(context, timestamp, signalIntent, PendingIntent.FLAG_MUTABLE)
+
+        // Combine the two intents
+        val stackBuilder = TaskStackBuilder.create(context)
+        stackBuilder.addNextIntentWithParentStack(signalIntent)
+        stackBuilder.addNextIntent(broadcastIntent)
+
+        val intents = stackBuilder.intents
+
+        val contentIntent = PendingIntent.getActivities(context, timestamp, intents, PendingIntent.FLAG_MUTABLE)
+
+        signalNotification.contentIntent = contentIntent
+
+        notificationManager.notify(timestamp, signalNotification)
+    }
 }
 
 // Extend the NotificationListenerService class and override the methods
@@ -504,9 +583,12 @@ class CalendarObserver(private val contentResolver: ContentResolver, handler: Ha
 
     private val uri: Uri = CalendarContract.Events.CONTENT_URI
 
+    private lateinit var app: String
+    private lateinit var ruleName: String
+
     private val observer = object : ContentObserver(handler) {
         override fun onChange(selfChange: Boolean) {
-            Log.d("myapp", "calendar event changed")
+            signalNotification(app, ruleName)
         }
     }
 
@@ -514,11 +596,21 @@ class CalendarObserver(private val contentResolver: ContentResolver, handler: Ha
         contentResolver.registerContentObserver(uri, true, observer)
     }
 
-    fun startObserving() {
+    fun startObserving(app: String, ruleName: String) {
+        this.app = app
+        this.ruleName = ruleName
+
         observe()
     }
 
     fun stopObserving() {
         contentResolver.unregisterContentObserver(observer)
+    }
+}
+
+class NotificationClickReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context?, intent: Intent?) {
+        // This function will be executed when the user clicks on the notification
+        MonitorManager.canNotify = true
     }
 }
