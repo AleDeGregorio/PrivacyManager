@@ -47,6 +47,8 @@ import java.time.format.DateTimeFormatter
 
 // List of all currently active rules
 var activeRules: List<Rule>? = null
+// List of currently active rules that have to be monitored (all parameters respected)
+var rulesToMonitor: MutableList<Rule>? = null
 
 class MonitorManager : Service() {
     // Permissions
@@ -125,17 +127,17 @@ class MonitorManager : Service() {
         }
 
         // Active rules with satisfied conditions
-        val rulesToMonitor = mutableListOf<Rule>()
+        rulesToMonitor = mutableListOf()
 
         // For each rule, check if it is not already in the rulesToMonitor list (avoid duplicates)
         for (r in activeRules!!) {
             // If no parameter (position, time slot, network, bluetooth, battery) is defined, we have to monitor
             if (r.positions == null && r.timeSlot == null && r.networks == null && r.bt == null && r.battery == null) {
-                rulesToMonitor.add(r)
+                rulesToMonitor!!.add(r)
             }
             // Otherwise, all the defined parameters have to be satisfied
             else if (checkParameters(r)) {
-                rulesToMonitor.add(r)
+                rulesToMonitor!!.add(r)
             }
         }
 
@@ -158,7 +160,7 @@ class MonitorManager : Service() {
         // Iterate over each app in the list
         for (app in appList) {
             // Check if the app is defined in a monitoring rule
-            for (rule in rulesToMonitor) {
+            for (rule in rulesToMonitor!!) {
                 if (rule.packageNames!!.contains(app.packageName)) {
                     // Check if the app has a last time used value greater than or equal to the current time minus the time interval
                     if (app.lastTimeUsed >= currentTime - timeInterval) {
@@ -170,7 +172,7 @@ class MonitorManager : Service() {
         }
 
         // Check for defined permissions monitoring
-        for (rule in rulesToMonitor) {
+        for (rule in rulesToMonitor!!) {
             // Check location permission and if the rule has some running app
             if (rule.permissions!!.contains("location") && rule.packageNames!!.any { it in runningApps }) {
                 monitorLocation(rule.packageNames!!.filter { it in runningApps })
@@ -235,7 +237,7 @@ class MonitorManager : Service() {
             val listPermissions = packageInfo.requestedPermissions
 
             if (listPermissions!!.contains("android.permission.ACCESS_COARSE_LOCATION") || listPermissions.contains("android.permission.ACCESS_FINE_LOCATION")) {
-                Log.d("myapp", app)
+                Log.d("myapp", "location accessed")
             }
         }
     }
@@ -461,8 +463,8 @@ class NotificationListener : NotificationListenerService() {
         val notificationRules = mutableListOf<Rule>()
 
         // Consider only rules with permission "notifications"
-        if (!activeRules.isNullOrEmpty()) {
-            for (r in activeRules!!) {
+        if (!rulesToMonitor.isNullOrEmpty()) {
+            for (r in rulesToMonitor!!) {
                 if (r.permissions!!.contains("notifications")) {
                     notificationRules.add(r)
                 }

@@ -180,7 +180,7 @@ class SavedRuleActivity : AppCompatActivity() {
         return when (rule.action) {
             "signal_app" -> "Segnala applicazione"
             "close_app" -> "Chiudi applicazione"
-            "obscure_notification" -> "Oscura notifica"
+            "obscure_notification" -> "Segnala app e oscura notifica"
             "block_notification" -> "Chiudi app e blocca notifica"
             else -> ""
         }
