@@ -41,6 +41,7 @@ import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.activities.NotificationActivity
 import it.polito.s294545.privacymanager.activities.ViolationActivity
 import it.polito.s294545.privacymanager.customDataClasses.CustomAddress
 import it.polito.s294545.privacymanager.customDataClasses.Rule
@@ -60,6 +61,10 @@ var rulesToMonitor: MutableList<Rule>? = null
 // Signal violation notification
 lateinit var notificationManager: NotificationManager
 lateinit var signalNotification: Notification
+
+// Obscure notification
+val obscureChannelID = "ObscureNotificationChannel"
+lateinit var obscureNotification: Notification
 
 // In order to kill a process
 lateinit var activityManager: ActivityManager
@@ -115,6 +120,24 @@ class MonitorManager : Service() {
         handler.post(monitorRunnable)
 
         if (activeRules!!.any { it.permissions!!.contains("notifications") }) {
+            // Initialize obscure notification channel
+            val obscureNotificationChannel = NotificationChannel(
+                obscureChannelID,
+                "Obscure Notification Channel",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+
+            notificationManager.createNotificationChannel(obscureNotificationChannel)
+
+            obscureNotification = NotificationCompat.Builder(this, obscureChannelID)
+                .setContentTitle("Un'app ha inviato una notifica")
+                .setContentText("Clicca qui per i dettagli")
+                .setSmallIcon(R.drawable.icon_safety)
+                .setDefaults(Notification.DEFAULT_SOUND or Notification.DEFAULT_VIBRATE)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setAutoCancel(true)
+                .build()
+
             val notificationIntent = Intent(this, NotificationListener::class.java)
             startService(notificationIntent)
         }
@@ -568,22 +591,60 @@ class NotificationListener : NotificationListenerService() {
         if (notificationRules.isNotEmpty()) {
             // If the intercepted notification is posted by a tracked app
             if (notificationRules.any { it.packageNames!!.contains(sbn.packageName) }) {
+                // Get the rule
+                val rule = notificationRules.first { it.packageNames!!.contains(sbn.packageName) }
+
+                // Get the app
+                val app = sbn.packageName
                 // Get the notification object
                 val notification = sbn.notification
                 // Get the notification title
                 val title = notification.extras.getString(Notification.EXTRA_TITLE)
-                // Get the notification text
-                val text = notification.extras.getString(Notification.EXTRA_TEXT)
-                // Do something with the notification data
-                Log.d("myapp", "notification: ${sbn.packageName}")
+                // Get the notification content
+                val content = notification.extras.getString(Notification.EXTRA_TEXT)
 
-                //cancelNotification(sbn.key)
+                // Cancel the notification arrived
+                cancelNotification(sbn.key)
 
-                /*
-                val intent = Intent("android.service.notification.NotificationListenerService")
-                intent.putExtra("Notification Title", notification)
-                sendBroadcast(intent)
-                 */
+                // Signal notification received
+                if (rule.action!! == "obscure_notification") {
+                    // Start the notification activity
+                    val intent = Intent(context, NotificationActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+                    intent.putExtra("ruleName", rule.name)
+                    intent.putExtra("pkg", app)
+                    intent.putExtra("title", title)
+                    intent.putExtra("content", content)
+
+                    // Necessary to have a unique notification id
+                    val timestamp = System.currentTimeMillis().toInt()
+
+                    val pendingIntent = PendingIntent.getActivity(context, timestamp, intent, PendingIntent.FLAG_MUTABLE)
+
+                    obscureNotification.contentIntent = pendingIntent
+
+                    notificationManager.notify(timestamp, obscureNotification)
+                }
+                // Or block it
+                else {
+                    // Start the notification activity
+                    val intent = Intent(context, ViolationActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+                    intent.putExtra("action", rule.action)
+                    intent.putExtra("ruleName", rule.name)
+                    intent.putExtra("pkg", app)
+
+                    // Necessary to have a unique notification id
+                    val timestamp = System.currentTimeMillis().toInt()
+
+                    val pendingIntent = PendingIntent.getActivity(context, timestamp, intent, PendingIntent.FLAG_MUTABLE)
+
+                    obscureNotification.contentIntent = pendingIntent
+
+                    notificationManager.notify(timestamp, obscureNotification)
+                }
             }
         }
     }

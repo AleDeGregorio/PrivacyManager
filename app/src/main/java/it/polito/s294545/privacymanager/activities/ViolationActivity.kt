@@ -42,16 +42,17 @@ class ViolationActivity : AppCompatActivity() {
 
         // Get action
         val action = intent.extras?.getString("action")
-        val isSignal = action == "signal_app"
 
         // Set name of rule violated
         val ruleName = intent.extras?.getString("ruleName")
         val infoText = findViewById<TextView>(R.id.infoTextView)
 
-        val info = if (isSignal) {
-            "La seguente app ha violato la regola \"$ruleName\""
-        } else {
-            "La seguente app ha violato la regola \"$ruleName\" ed è stata chiusa"
+        val info = when (action) {
+            "signal_app" -> "La seguente app ha violato la regola \"$ruleName\""
+            "obscure_notification" -> "La seguente app ha violato la regola \"$ruleName\""
+            "close_app" -> "La seguente app ha violato la regola \"$ruleName\" ed è stata chiusa"
+            "block_notification" -> "La seguente app definita in \"$ruleName\" ha inviato una notifica che è stata bloccata"
+            else -> ""
         }
 
         infoText.text = info
@@ -75,7 +76,7 @@ class ViolationActivity : AppCompatActivity() {
         // Manage revoke permission button
         val revokeButton = findViewById<ExtendedFloatingActionButton>(R.id.revoke_permission)
 
-        if (!isSignal) {
+        if (action != "signal_app" && action != "obscure_notification") {
             revokeButton.visibility = GONE
         }
         else {

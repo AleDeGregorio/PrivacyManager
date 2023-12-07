@@ -112,4 +112,5 @@
     <string name="no_rule_saved">Nessuna regola salvata</string>
     <string name="saved_rules">Regole salvate:</string>
     <string name="active_rules">Regole attive:</string>
+    <string name="notification_title">Notification title</string>
 </resources>
