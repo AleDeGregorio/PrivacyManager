@@ -126,11 +126,11 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         permissions = intent.extras?.get("permissions") as ArrayList<String>
 
         if (permissions.contains("notifications")) {
-            action = "signal_app"
+            action = "obscure_notification"
             fragmentList.add(ActionWithNotificationSelectionFragment())
         }
         else {
-            action = "obscure_notification"
+            action = "signal_app"
             fragmentList.add(ActionNoNotificationSelectionFragment())
         }
 
