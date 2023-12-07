@@ -66,7 +66,9 @@ class BluetoothSelectionFragment : Fragment() {
         }
 
         // Scan bt devices
-        scanBT()
+        if (listBluetooth.isNullOrEmpty()) {
+            scanBT()
+        }
 
         // Managing recycler view
         val recyclerView = v.findViewById<RecyclerView>(R.id.list_bluetooth)
