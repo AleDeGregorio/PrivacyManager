@@ -8,6 +8,6 @@
     <dimen name="text_box_add_time_slot">18sp</dimen>
     <dimen name="saved_rule_card">185dp</dimen>
     <dimen name="permission_width">305dp</dimen>
-    <dimen name="permission_margin_start">50dp</dimen>
-    <dimen name="permission_margin_top">32dp</dimen>
+    <dimen name="permission_margin_start">40dp</dimen>
+    <dimen name="permission_margin_top">42dp</dimen>
 </resources>
