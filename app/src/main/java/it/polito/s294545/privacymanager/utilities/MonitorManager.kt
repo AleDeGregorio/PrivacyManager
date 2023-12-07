@@ -113,13 +113,15 @@ class MonitorManager : Service() {
 
         val retrievedRules = intent?.extras?.get("activeRules")
 
-        activeRules = Json.decodeFromString(retrievedRules.toString())
+        if (retrievedRules != null) {
+            activeRules = Json.decodeFromString(retrievedRules.toString())
+        }
 
         startForeground(NOTIFICATION_MONITOR_ID, createNotification()) // Start as a foreground service
         // Initiate monitoring
         handler.post(monitorRunnable)
 
-        if (activeRules!!.any { it.permissions!!.contains("notifications") }) {
+        if (!activeRules.isNullOrEmpty() && activeRules!!.any { it.permissions!!.contains("notifications") }) {
             // Initialize obscure notification channel
             val obscureNotificationChannel = NotificationChannel(
                 obscureChannelID,
@@ -506,6 +508,7 @@ class MonitorManager : Service() {
         super.onDestroy()
 
         activeRules = null
+        rulesToMonitor = null
 
         // Stop notification service as well
         //val notificationIntent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
