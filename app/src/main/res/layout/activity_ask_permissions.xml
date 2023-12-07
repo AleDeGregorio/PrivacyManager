@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.AskPermissionsActivity">
+
+    <include
+        android:id="@+id/toolbarLayout"
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"/>
+
+    <TextView
+        android:id="@+id/ask_permissions_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbarLayout"
+        android:text="@string/ask_permissions"
+        android:layout_marginTop="@dimen/margin_top_title"
+        android:layout_marginStart="@dimen/margin_top_title"
+        android:layout_marginEnd="@dimen/margin_top_title"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/location_permission"
+        android:layout_width="@dimen/permission_width"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/ask_permissions_info"
+        android:layout_marginTop="@dimen/permission_margin_top"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="@dimen/permission_margin_start"
+        android:layout_marginEnd="@dimen/permission_margin_start"
+        android:contentDescription="@string/location_permission"
+        android:text="@string/ask_location"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:backgroundTint="@color/dark_grey"
+        app:icon="@drawable/icon_location"
+        app:iconTint="@color/white"
+        app:tint="@color/white" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/calendar_permission"
+        android:layout_width="@dimen/permission_width"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/location_permission"
+        android:layout_marginTop="@dimen/permission_margin_top"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="@dimen/permission_margin_start"
+        android:layout_marginEnd="@dimen/permission_margin_start"
+        android:contentDescription="@string/calendar_permission"
+        android:text="@string/ask_calendar"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:backgroundTint="@color/dark_grey"
+        app:icon="@drawable/icon_calendar"
+        app:iconTint="@color/white"
+        app:tint="@color/white" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/bluetooth_permission"
+        android:layout_width="@dimen/permission_width"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/calendar_permission"
+        android:layout_marginTop="@dimen/permission_margin_top"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="@dimen/permission_margin_start"
+        android:layout_marginEnd="@dimen/permission_margin_start"
+        android:contentDescription="@string/bluetooth_permission"
+        android:text="@string/ask_bluetooth"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:backgroundTint="@color/dark_grey"
+        app:icon="@drawable/icon_bluetooth"
+        app:iconTint="@color/white"
+        app:tint="@color/white" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/notifications_permission"
+        android:layout_width="@dimen/permission_width"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/bluetooth_permission"
+        android:layout_marginTop="@dimen/permission_margin_top"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="@dimen/permission_margin_start"
+        android:layout_marginEnd="@dimen/permission_margin_start"
+        android:contentDescription="@string/notifications_permission"
+        android:text="@string/ask_notifications"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:backgroundTint="@color/dark_grey"
+        app:icon="@drawable/icon_notification"
+        app:iconTint="@color/white"
+        app:tint="@color/white" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/usage_permission"
+        android:layout_width="@dimen/permission_width"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/notifications_permission"
+        android:layout_marginTop="@dimen/permission_margin_top"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="@dimen/permission_margin_start"
+        android:layout_marginEnd="@dimen/permission_margin_start"
+        android:contentDescription="@string/usage_permission"
+        android:text="@string/ask_usage"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:backgroundTint="@color/dark_grey"
+        app:icon="@drawable/icon_app"
+        app:iconTint="@color/white"
+        app:tint="@color/white" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/confirm_permissions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:contentDescription="@string/confirm_permissions"
+        android:src="@drawable/icon_confirm"
+        app:backgroundTint="@color/dark_grey"
+        android:clickable="false"
+        android:focusable="false"
+        style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
+        app:fabCustomSize="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="37.5dp"
+        android:layout_marginBottom="21dp"
+        app:maxImageSize="30dp"
+        app:tint="@color/white" />
+
+</RelativeLayout>

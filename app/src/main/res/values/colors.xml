@@ -8,6 +8,6 @@
     <color name="grey">#E0E0E0</color>
     <color name="dark_grey">#A9A9A9</color>
     <color name="cancel">#87CEFA</color>
-    <color name="confirm">#7FFC90</color>
+    <color name="confirm">#50FF67</color>
     <color name="error">#FF1300</color>
 </resources>

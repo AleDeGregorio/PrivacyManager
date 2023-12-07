@@ -154,7 +154,7 @@ class MonitorManager : Service() {
         notificationManager.createNotificationChannel(signalNotificationChannel)
 
         signalNotification = NotificationCompat.Builder(this, signalChannelID)
-            .setContentTitle("Privacy manager")
+            .setContentTitle("Privacy Manager")
             .setContentText("Rilevata violazione di una regola")
             .setSmallIcon(R.drawable.icon_safety)
             .setDefaults(Notification.DEFAULT_SOUND or Notification.DEFAULT_VIBRATE)
@@ -185,7 +185,6 @@ class MonitorManager : Service() {
     private fun monitorRunningApps() {
         // Check if permission is granted
         if (!hasUsageStatsPermission()) {
-            requestUsageStatsPermission()
             return
         }
 
@@ -492,11 +491,6 @@ class MonitorManager : Service() {
             packageName
         )
         return mode == AppOpsManager.MODE_ALLOWED
-    }
-
-    private fun requestUsageStatsPermission() {
-        val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
-        //startActivityForResult(context as Activity, intent, PACKAGE_USAGE_STATS_PERMISSION_REQUEST, null)
     }
 
     fun stopForegroundService() {

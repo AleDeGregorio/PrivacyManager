@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PrivacyManager</string>
+    <string name="app_name">Privacy Manager</string>
     <string name="edit_rule">Edit rule</string>
     <string name="delete_rule">Delete rule</string>
     <string name="test_rule">Test rule</string>
@@ -113,4 +113,16 @@
     <string name="saved_rules">Regole salvate:</string>
     <string name="active_rules">Regole attive:</string>
     <string name="notification_title">Notification title</string>
+    <string name="ask_permissions">Per usare l\'applicazione è necessario garantire le seguenti autorizzazioni:</string>
+    <string name="location_permission">Location permission</string>
+    <string name="ask_location">Accesso alla posizione</string>
+    <string name="calendar_permission">Calendar permission</string>
+    <string name="ask_calendar">Accesso al calendario</string>
+    <string name="bluetooth_permission">Bluetooth permission</string>
+    <string name="ask_bluetooth">Accesso al bluetooth</string>
+    <string name="notifications_permission">Notifications permission</string>
+    <string name="ask_notifications">Monitoraggio notifiche</string>
+    <string name="usage_permission">Usage permission</string>
+    <string name="ask_usage">Ricerca informazioni app</string>
+    <string name="confirm_permissions">Confirm permissions</string>
 </resources>

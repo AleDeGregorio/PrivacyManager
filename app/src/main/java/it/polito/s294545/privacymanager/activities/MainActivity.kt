@@ -39,43 +39,10 @@ private lateinit var noRule : TextView
 
 class MainActivity : AppCompatActivity() {
 
-    // Permissions
-    private val LOCATION_PERMISSION_REQUEST = 106
-    private val LOCATION_PERMISSIONS = arrayOf(
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION
-    )
-    private val CALENDAR_PERMISSION_REQUEST = 102
-    private val CALENDAR_PERMISSIONS = arrayOf(
-        Manifest.permission.READ_CALENDAR,
-        Manifest.permission.WRITE_CALENDAR
-    )
-    private val NOTIFICATION_PERMISSION_REQUEST = 108
-    private val BLUETOOTH_PERMISSION_REQUEST = 107
-    private val BLUETOOTH_PERMISSIONS = arrayOf(
-        Manifest.permission.BLUETOOTH_SCAN,
-        Manifest.permission.BLUETOOTH_ADVERTISE,
-        Manifest.permission.BLUETOOTH_CONNECT
-    )
-    private val KILL_PROCESS_PERMISSION_REQUEST = 105
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         context = this.applicationContext
         setContentView(R.layout.activity_main)
-
-        if (!hasLocationPermission()) {
-            requestLocationPermission()
-        }
-        if (!hasCalendarPermission()) {
-            requestCalendarPermission()
-        }
-        if (!hasBluetoothPermission()) {
-            requestBluetoothPermission()
-        }
-        if (!hasKillProcessPermission()) {
-            requestKillProcessPermission()
-        }
 
         val retrievedRules = PreferencesManager.getAllPrivacyRules(this)
         noRule = findViewById(R.id.no_rule)
@@ -114,16 +81,6 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, MonitorManager::class.java)
             intent.putExtra("activeRules", Json.encodeToString(activeRules))
             ContextCompat.startForegroundService(this, intent)
-
-            if (activeRules.any { it.permissions!!.contains("notifications") }) {
-                // Just the first time
-                /*
-                if (!hasNotificationPermission()) {
-                    requestNotificationPermission()
-                }
-
-                 */
-            }
         }
         // If no active rules, stop monitoring service
         else {
@@ -145,54 +102,6 @@ class MainActivity : AppCompatActivity() {
 
         savedRules.clear()
         activeRules.clear()
-    }
-
-    private fun hasNotificationPermission() : Boolean {
-        return checkSelfPermission(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun requestNotificationPermission() {
-        // It has to be granted manually by the user
-        val notificationIntent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
-        startActivity(notificationIntent)
-
-        requestPermissions(arrayOf(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE), NOTIFICATION_PERMISSION_REQUEST)
-    }
-
-    private fun hasLocationPermission() : Boolean {
-        return checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun requestLocationPermission() {
-        requestPermissions(LOCATION_PERMISSIONS, LOCATION_PERMISSION_REQUEST)
-    }
-
-    private fun hasCalendarPermission() : Boolean {
-        return checkSelfPermission(Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED &&
-                checkSelfPermission(Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun requestCalendarPermission() {
-        requestPermissions(CALENDAR_PERMISSIONS, CALENDAR_PERMISSION_REQUEST)
-    }
-
-    private fun hasBluetoothPermission() : Boolean {
-        return checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED &&
-                checkSelfPermission(Manifest.permission.BLUETOOTH_ADVERTISE) == PackageManager.PERMISSION_GRANTED &&
-                checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun requestBluetoothPermission() {
-        requestPermissions(BLUETOOTH_PERMISSIONS, BLUETOOTH_PERMISSION_REQUEST)
-    }
-
-    private fun hasKillProcessPermission() : Boolean {
-        return checkSelfPermission(Manifest.permission.KILL_BACKGROUND_PROCESSES) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun requestKillProcessPermission() {
-        requestPermissions(arrayOf(Manifest.permission.KILL_BACKGROUND_PROCESSES), KILL_PROCESS_PERMISSION_REQUEST)
     }
 
     @SuppressLint("ClickableViewAccessibility")
