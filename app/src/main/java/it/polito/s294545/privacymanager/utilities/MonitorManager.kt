@@ -526,7 +526,7 @@ fun signalNotification(app: String, ruleName: String, ruleAction: String) {
     if (MonitorManager.canNotify) {
         MonitorManager.canNotify = false
 
-        if (ruleAction == "close_app") {
+        if (ruleAction == "close_app" || ruleAction == "block_notification") {
             // Kill the app with the given package name
             activityManager.killBackgroundProcesses(app)
         }
@@ -630,6 +630,7 @@ class NotificationListener : NotificationListenerService() {
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
                     intent.putExtra("action", rule.action)
+                    intent.putExtra("isNotification", true)
                     intent.putExtra("ruleName", rule.name)
                     intent.putExtra("pkg", app)
 

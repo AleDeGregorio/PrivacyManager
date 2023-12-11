@@ -51,7 +51,16 @@ class ViolationActivity : AppCompatActivity() {
             "signal_app" -> "La seguente app ha violato la regola \"$ruleName\""
             "obscure_notification" -> "La seguente app ha violato la regola \"$ruleName\""
             "close_app" -> "La seguente app ha violato la regola \"$ruleName\" ed è stata chiusa"
-            "block_notification" -> "La seguente app definita in \"$ruleName\" ha inviato una notifica che è stata bloccata"
+            "block_notification" -> {
+                val isNotification = intent.extras?.getBoolean("isNotification")
+
+                if (isNotification == true) {
+                    "La seguente app definita in \"$ruleName\" ha inviato una notifica che è stata bloccata"
+                }
+                else {
+                    "La seguente app ha violato la regola \"$ruleName\" ed è stata chiusa"
+                }
+            }
             else -> ""
         }
 
