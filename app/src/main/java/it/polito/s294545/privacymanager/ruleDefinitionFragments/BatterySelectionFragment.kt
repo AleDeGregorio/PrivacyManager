@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.SeekBar
+import android.widget.TextView
 import androidx.core.widget.doOnTextChanged
 import com.google.android.material.textfield.TextInputEditText
 import it.polito.s294545.privacymanager.utilities.ParameterListener
@@ -87,6 +89,24 @@ class BatterySelectionFragment : Fragment() {
                 checkBox.isChecked = false
             }
         }
+
+        val batterySlider = v.findViewById<SeekBar>(R.id.battery_slider)
+        val batteryInfo = v.findViewById<TextView>(R.id.battery_info)
+
+        batterySlider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                // Update the text view with the selected value
+                batteryInfo.text = "$progress%"
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                // Called when the user starts moving the slider
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                // Called when the user stops moving the slider
+            }
+        })
 
         return v
     }

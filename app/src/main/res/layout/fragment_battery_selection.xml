@@ -53,6 +53,30 @@
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <SeekBar
+            android:id="@+id/battery_slider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text_input_battery"
+            android:layout_toStartOf="@+id/checkBox"
+            android:layout_marginTop="16dp"
+            android:progressDrawable="@drawable/seekbar"
+            android:thumb="@drawable/seekbar_thumb"
+            android:max="100"
+            android:progress="50" />
+
+        <TextView
+            android:id="@+id/battery_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="50%"
+            android:textSize="18sp"
+            android:layout_below="@+id/battery_slider"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/checkBox"
+            android:layout_marginStart="120dp"
+            android:layout_marginTop="@dimen/margin_top_title"/>
+
         <CheckBox
             android:id="@+id/checkBox"
             android:layout_width="70dp"
@@ -60,7 +84,7 @@
             android:layout_below="@+id/infoTextView"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="@dimen/margin_top_title"
-            android:layout_marginTop="57dp"
+            android:layout_marginTop="110dp"
             android:background="?android:attr/listChoiceIndicatorMultiple"
             android:backgroundTint="@color/secondary"
             android:button="@null" />
