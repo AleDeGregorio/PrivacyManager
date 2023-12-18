@@ -338,7 +338,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         rule.apps = apps
         rule.packageNames = packageNames
         rule.timeSlot = timeSlot
-        rule.positions = positions
+        rule.positions = positions?.filter { it.latitude != null }
         rule.networks = networks
         rule.bt = bt
         rule.battery = battery
