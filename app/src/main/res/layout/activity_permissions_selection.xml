@@ -162,11 +162,11 @@
         <Button
             android:id="@+id/cancel_button"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/button_width"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="@color/cancel"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="5dp"
             android:textSize="18sp"
             android:text="@string/cancel_button"
             android:textColor="@color/white" />
@@ -174,8 +174,10 @@
         <Button
             android:id="@+id/forward_button"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/button_width"
             android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="10dp"
             android:layout_weight="1"
             android:text="@string/forward_button"
             android:backgroundTint="@color/dark_grey"
