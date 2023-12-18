@@ -160,6 +160,18 @@
         android:weightSum="2">
 
         <Button
+            android:id="@+id/cancel_button"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/cancel"
+            android:layout_marginEnd="10dp"
+            android:textSize="18sp"
+            android:text="@string/cancel_button"
+            android:textColor="@color/white" />
+
+        <Button
             android:id="@+id/forward_button"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
@@ -171,16 +183,5 @@
             android:textColor="@color/white"
             android:textSize="18sp" />
 
-        <Button
-            android:id="@+id/cancel_button"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/cancel"
-            android:layout_marginEnd="10dp"
-            android:textSize="18sp"
-            android:text="@string/cancel_button"
-            android:textColor="@color/white" />
     </LinearLayout>
 </RelativeLayout>
