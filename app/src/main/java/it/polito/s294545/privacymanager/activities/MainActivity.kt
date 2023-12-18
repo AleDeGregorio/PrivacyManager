@@ -36,6 +36,7 @@ private var activeRules = mutableListOf<Rule>()
 
 private lateinit var context : Context
 private lateinit var noRule : TextView
+private lateinit var noActiveRule : TextView
 
 class MainActivity : AppCompatActivity() {
 
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
 
         val retrievedRules = PreferencesManager.getAllPrivacyRules(this)
         noRule = findViewById(R.id.no_rule)
+        noActiveRule = findViewById(R.id.no_active_rule)
 
         if (!retrievedRules.isNullOrEmpty()) {
             for (r in retrievedRules.keys) {
@@ -59,14 +61,13 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        else {
+
+        // Check if there are any rule
+        if (savedRules.isEmpty()) {
             noRule.visibility = VISIBLE
         }
-
-        // Managing saved rules recycler view
-        if (savedRules.isEmpty() && activeRules.isNotEmpty()) {
-            val containerSavedRules = findViewById<LinearLayout>(R.id.list_rules_container)
-            containerSavedRules.visibility = GONE
+        if (activeRules.isEmpty()) {
+            noActiveRule.visibility = VISIBLE
         }
 
         val savedRulesRecyclerView = findViewById<RecyclerView>(R.id.list_rules)
