@@ -155,7 +155,7 @@ class PermissionsSelectionActivity : AppCompatActivity() {
     private fun togglePermissionSelection(permission: View, text: String) {
         if (!permission.isSelected) {
             permission.isSelected = true
-            permission.setBackgroundColor(resources.getColor(R.color.secondary))
+            permission.setBackgroundColor(resources.getColor(R.color.primary))
 
             if (savedPermissions.isEmpty()) {
                 forwardButton.setBackgroundColor(resources.getColor(R.color.primary))
