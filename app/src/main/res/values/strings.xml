@@ -103,7 +103,7 @@
     <string name="confirm_position_info">Confirm position</string>
     <string name="confirm_slot">Conferma slot:</string>
     <string name="error_app">Selezionare almeno un\'app per proseguire</string>
-    <string name="error_time">Verificare l\'orario inserito</string>
+    <string name="error_time">Verificare la correttezza dello slot orario inserito</string>
     <string name="permissions_icon">Permissions icon</string>
     <string name="action_icon">Action icon</string>
     <string name="location_icon">Location icon</string>
@@ -126,4 +126,6 @@
     <string name="ask_usage">Ricerca informazioni app</string>
     <string name="confirm_permissions">Confirm permissions</string>
     <string name="no_active_rule">Nessuna regola attiva</string>
+    <string name="reset_time_slot_info">Reset</string>
+    <string name="reset_time_slot">Reset orario</string>
 </resources>

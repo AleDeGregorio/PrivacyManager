@@ -280,6 +280,46 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
             return
         }
+        // Check if inserted time slot is correct
+        // Signal error on time slot if one of this condition is verified (considering a defined time slot):
+        // - no day defined
+        // - "from" is null
+        // - "to" is null
+        // - "from" (hour) is later than "to" (hour)
+        // - "from" and "to" have the same hour, but "from" (minutes) is later than "to" (minutes)
+        var timeSlotError = false
+
+        if (timeSlot != null) {
+            if (timeSlot!!.days.isEmpty() && timeSlot!!.time.first == "" && timeSlot!!.time.second == "") {
+                timeSlotError = false
+            }
+            else if (timeSlot!!.days.isEmpty() || timeSlot!!.time.first == "" || timeSlot!!.time.second == "") {
+                timeSlotError = true
+            }
+            else {
+                val from = timeSlot!!.time.first
+                val to = timeSlot!!.time.second
+
+                val fromHour = from.split(":")[0].toInt()
+                val toHour = to.split(":")[0].toInt()
+
+                val fromMinutes = from.split(":")[1].toInt()
+                val toMinutes = to.split(":")[1].toInt()
+
+                if (fromHour > toHour || (fromHour == toHour && fromMinutes >= toMinutes)) {
+                    timeSlotError = true
+                }
+            }
+        }
+
+        if (timeSlotError) {
+            viewPager.currentItem = 1
+
+            error.text = resources.getString(R.string.error_time)
+            error.visibility = VISIBLE
+
+            return
+        }
 
         val (popupView, popupWindow) = managePopup(view, R.layout.popup_save_rule)
 
@@ -400,6 +440,10 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
             }
             "time_slot" -> {
                 timeSlot = data as TimeSlot?
+
+                if (error.isVisible) {
+                    error.visibility = GONE
+                }
             }
             "positions" -> {
                 positions = data as List<CustomAddress>

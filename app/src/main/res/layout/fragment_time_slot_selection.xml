@@ -166,7 +166,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/saturday"
-                android:layout_marginTop="26dp"
+                android:layout_marginTop="33dp"
                 android:text="@string/from_time_text"
                 android:textSize="@dimen/text_box_add_time_slot" />
 
@@ -192,7 +192,7 @@
                 android:layout_toStartOf="@+id/select_to_time_slot"
                 android:layout_below="@+id/saturday"
                 android:layout_marginEnd="@dimen/margin_top_title"
-                android:layout_marginTop="26dp"
+                android:layout_marginTop="33dp"
                 android:text="@string/to_time_text"
                 android:textSize="@dimen/text_box_add_time_slot" />
 
@@ -210,50 +210,24 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_box_add_time_slot" />
 
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_alignParentEnd="true"
-                android:layout_below="@+id/select_to_time_slot"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="0dp"
-                android:layout_marginBottom="12dp"
-                android:background="?android:attr/listDivider" />
-
-            <TextView
-                android:id="@+id/confirm_text"
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/reset_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/divider"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="@dimen/margin_top_title"
-                android:text="@string/confirm_slot"
-                android:textSize="20sp" />
+                android:layout_below="@+id/select_from_time_slot"
+                android:layout_marginTop="32dp"
+                android:contentDescription="@string/reset_time_slot_info"
+                android:text="@string/reset_time_slot"
+                android:textAlignment="textStart"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:backgroundTint="@color/primary"
+                app:icon="@drawable/icon_trash_bin"
+                app:iconTint="@color/white"
+                app:tint="@color/white" />
 
-            <CheckBox
-                android:id="@+id/checkBox"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_below="@+id/divider"
-                android:layout_alignParentEnd="true"
-                android:background="?android:attr/listChoiceIndicatorMultiple"
-                android:backgroundTint="@color/secondary"
-                android:button="@null" />
         </RelativeLayout>
-
-        <TextView
-            android:id="@+id/error_time_slot"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textColor="@color/error"
-            android:textSize="20sp"
-            android:text="@string/error_time"
-            android:visibility="gone"
-            android:layout_marginTop="@dimen/margin_top_title"
-            android:layout_below="@+id/time_slot_container"
-            android:layout_centerHorizontal="true"/>
     </RelativeLayout>
 
 </FrameLayout>

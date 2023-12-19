@@ -38,9 +38,6 @@ class TimeSlotSelectionFragment : Fragment() {
     private lateinit var context: Context
     private var parameterListener : ParameterListener? = null
 
-    private lateinit var checkBox: CheckBox
-    private lateinit var errorTimeSlot: TextView
-
     // Time picker variables initialization
     private lateinit var fromTimePicker: TimePickerDialog
     private lateinit var fromTimeSlot: String
@@ -64,19 +61,14 @@ class TimeSlotSelectionFragment : Fragment() {
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_time_slot_selection, container, false)
 
-        checkBox = v.findViewById(R.id.checkBox)
-
         // Check if we are editing a rule
         if (retrievedRule != null) {
             // Check if in the saved rule has been defined a time slot
             if (retrievedRule!!.timeSlot != null && !retrievedRule!!.timeSlot?.days.isNullOrEmpty()) {
                 savedSlot = retrievedRule!!.timeSlot!!
-                checkBox.isChecked = true
                 parameterListener?.onParameterEntered("time_slot", savedSlot)
             }
         }
-
-        errorTimeSlot = v.findViewById(R.id.error_time_slot)
 
         handleTimeSlot(v)
 
@@ -163,7 +155,7 @@ class TimeSlotSelectionFragment : Fragment() {
                     fromHour = hourOfDay
                     fromMinutes = minute
                     savedSlot.time = Pair(selectFromTimeSlot.text.toString(), savedSlot.time.second)
-                    checkBox.isChecked = false
+                    parameterListener?.onParameterEntered("time_slot", savedSlot)
                 }, hour, minutes, true)
 
             fromTimePicker.show()
@@ -206,7 +198,7 @@ class TimeSlotSelectionFragment : Fragment() {
                     toHour = hourOfDay
                     toMinutes = minute
                     savedSlot.time = Pair(savedSlot.time.first, selectToTimeSlot.text.toString())
-                    checkBox.isChecked = false
+                    parameterListener?.onParameterEntered("time_slot", savedSlot)
                 }, hour, minutes, true)
 
             toTimePicker.show()
@@ -214,58 +206,40 @@ class TimeSlotSelectionFragment : Fragment() {
 
         // ----- End time slot time management -----
 
-        // Confirm or delete inserted time slot
-        checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                // Check if inserted time slot is correct
-                // Signal error on time slot (time) if one of this condition is verified:
-                // - time slot has not been saved yet
-                // - no day defined
-                // - "from" is null
-                // - "to" is null
-                // - "from" (hour) is later than "to" (hour)
-                // - "from" and "to" have the same hour, but "from" (minutes) is later than "to" (minutes)
-                if (!(savedSlot.days.isNotEmpty() && savedSlot.time.first != "" && savedSlot.time.second != "")) {
-                    if (savedSlot.days.isEmpty() || fromHour == null || toHour == null || fromHour!! > toHour!! ||
-                        (fromHour == toHour && fromMinutes!! >= toMinutes!!)) {
-                        checkBox.isChecked = false
-                        errorTimeSlot.visibility = VISIBLE
-                    }
-                }
-                else {
-                    errorTimeSlot.visibility = GONE
-                    parameterListener?.onParameterEntered("time_slot", savedSlot)
-                }
-            }
-            else {
-                errorTimeSlot.visibility = GONE
-                parameterListener?.onParameterEntered("time_slot", null)
-            }
+        // Reset time
+        val reset = v.findViewById<ExtendedFloatingActionButton>(R.id.reset_button)
+
+        reset.setOnClickListener {
+            selectFromTimeSlot.text = ""
+            selectToTimeSlot.text = ""
+
+            savedSlot.time = Pair("", "")
+            parameterListener?.onParameterEntered("time_slot", savedSlot)
         }
     }
 
     // Manage day selection/deselection
     private fun toggleDaySelection(day: View, dayText: String) {
-        checkBox.isChecked = false
-
         if (!day.isSelected) {
             day.isSelected = true
-            day.setBackgroundColor(resources.getColor(R.color.secondary))
+            day.setBackgroundColor(resources.getColor(R.color.primary))
 
             savedSlot.days.add(dayText)
+            parameterListener?.onParameterEntered("time_slot", savedSlot)
         }
         else {
             day.isSelected = false
             day.setBackgroundColor(resources.getColor(R.color.grey))
 
             savedSlot.days.remove(dayText)
+            parameterListener?.onParameterEntered("time_slot", savedSlot)
         }
     }
 
     private fun initializeDay(day: String, dayButton: ExtendedFloatingActionButton) {
         if (savedSlot.days.contains(day)) {
             dayButton.isSelected = true
-            dayButton.setBackgroundColor(resources.getColor(R.color.secondary))
+            dayButton.setBackgroundColor(resources.getColor(R.color.primary))
         }
     }
 
