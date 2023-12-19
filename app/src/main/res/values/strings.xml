@@ -128,4 +128,5 @@
     <string name="no_active_rule">Nessuna regola attiva</string>
     <string name="reset_time_slot_info">Reset</string>
     <string name="reset_time_slot">Reset orario</string>
+    <string name="filter_app">Cerca applicazione</string>
 </resources>

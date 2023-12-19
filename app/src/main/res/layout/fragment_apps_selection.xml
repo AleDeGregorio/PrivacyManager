@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -37,7 +38,7 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_below="@+id/infoTextView"
-            android:layout_alignParentBottom="true"
+            android:layout_above="@+id/filter_app"
             android:layout_marginTop="@dimen/margin_top_title">
 
             <LinearLayout
@@ -53,6 +54,27 @@
                     android:orientation="vertical" />
             </LinearLayout>
         </ScrollView>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/filter_app"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            app:boxBackgroundMode="filled"
+            app:boxStrokeWidth="0dp"
+            tools:ignore="RelativeOverlap">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/filter_app_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text"
+                android:hint="@string/filter_app"
+                android:inputType="textAutoCorrect|text"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
     </RelativeLayout>
 
 </FrameLayout>

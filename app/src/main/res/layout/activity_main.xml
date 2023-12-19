@@ -32,7 +32,6 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/textView"
         android:layout_marginTop="@dimen/margin_top_title"
-        android:layout_marginBottom="@dimen/margin_top_title"
         android:orientation="vertical">
 
         <TextView

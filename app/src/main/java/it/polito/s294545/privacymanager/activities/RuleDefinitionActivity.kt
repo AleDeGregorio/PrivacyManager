@@ -5,15 +5,14 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -25,11 +24,10 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputEditText
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
-import it.polito.s294545.privacymanager.customDataClasses.CustomAddress
-import it.polito.s294545.privacymanager.utilities.ParameterListener
-import it.polito.s294545.privacymanager.utilities.PreferencesManager
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.customDataClasses.CustomAddress
 import it.polito.s294545.privacymanager.customDataClasses.Rule
+import it.polito.s294545.privacymanager.customDataClasses.TimeSlot
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.ActionNoNotificationSelectionFragment
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.ActionWithNotificationSelectionFragment
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.AppsSelectionFragment
@@ -38,11 +36,8 @@ import it.polito.s294545.privacymanager.ruleDefinitionFragments.BluetoothSelecti
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.NetworkSelectionFragment
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.PositionsSelectionFragment
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.TimeSlotSelectionFragment
-import it.polito.s294545.privacymanager.customDataClasses.TimeSlot
-import it.polito.s294545.privacymanager.ruleDefinitionFragments.listApps
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.listAppsInfo
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.listBluetooth
-import it.polito.s294545.privacymanager.ruleDefinitionFragments.listIcons
-import it.polito.s294545.privacymanager.ruleDefinitionFragments.listPackageName
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedActionNoNotification
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedActionWithNotification
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedApps
@@ -53,6 +48,8 @@ import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedNetworks
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedPkg
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedPositions
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedSlot
+import it.polito.s294545.privacymanager.utilities.ParameterListener
+import it.polito.s294545.privacymanager.utilities.PreferencesManager
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -265,9 +262,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
         val orderedAppsAndIcons = appsAndIcons.toSortedMap()
 
-        listApps = orderedAppsAndIcons.keys.toList()
-        listIcons = orderedAppsAndIcons.values.map { it.first }
-        listPackageName = orderedAppsAndIcons.values.map { it.second }
+        listAppsInfo = orderedAppsAndIcons
     }
 
     @SuppressLint("ClickableViewAccessibility")
