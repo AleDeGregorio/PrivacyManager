@@ -106,7 +106,7 @@ class MonitorManager : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         context = this
 
-        canNotify = true
+        pendingViolationsInfo.clear()
 
         // Get the ActivityManager instance in order to kill a process
         activityManager = getSystemService(Activity.ACTIVITY_SERVICE) as ActivityManager
@@ -154,9 +154,10 @@ class MonitorManager : Service() {
         notificationManager.createNotificationChannel(signalNotificationChannel)
 
         signalNotification = NotificationCompat.Builder(this, signalChannelID)
-            .setContentTitle("Privacy Manager")
-            .setContentText("Rilevata violazione di una regola")
+            .setContentTitle("Rilevata violazione di una regola")
+            .setContentText("Un\'app potrebbe avere avuto accesso ad un\'autorizzazione definita in una regola")
             .setSmallIcon(R.drawable.icon_safety)
+            .setOngoing(true)
             .setDefaults(Notification.DEFAULT_SOUND or Notification.DEFAULT_VIBRATE)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setAutoCancel(true)
@@ -304,7 +305,7 @@ class MonitorManager : Service() {
             val listPermissions = packageInfo.requestedPermissions
 
             if (listPermissions!!.contains("android.permission.ACCESS_COARSE_LOCATION") || listPermissions.contains("android.permission.ACCESS_FINE_LOCATION")) {
-                signalNotification(app, ruleName, ruleAction)
+                signalNotification(app, ruleName, ruleAction, "location")
             }
         }
     }
@@ -338,7 +339,7 @@ class MonitorManager : Service() {
 
             override fun onCameraUnavailable(cameraId: String) {
                 // This is called when a camera device becomes unavailable to open
-                signalNotification(app, ruleName, ruleAction)
+                signalNotification(app, ruleName, ruleAction, "camera")
             }
         }
 
@@ -519,13 +520,17 @@ class MonitorManager : Service() {
     }
 
     companion object {
-        var canNotify: Boolean = false
+        //var canNotify: Boolean = false
+        // Save info about violation revealed
+        // If a violation has already bean signaled, then don't send the notification
+        // A violation is identified by the pair (app, permission)
+        var pendingViolationsInfo = mutableListOf<Pair<String, String>>()
     }
 }
 
-fun signalNotification(app: String, ruleName: String, ruleAction: String) {
-    if (MonitorManager.canNotify) {
-        MonitorManager.canNotify = false
+fun signalNotification(app: String, ruleName: String, ruleAction: String, permission: String) {
+    if (!MonitorManager.pendingViolationsInfo.contains(Pair(app, permission))) {
+        MonitorManager.pendingViolationsInfo.add(Pair(app, permission))
 
         if (ruleAction == "close_app" || ruleAction == "block_notification") {
             // Kill the app with the given package name
@@ -663,7 +668,7 @@ class CalendarObserver(private val contentResolver: ContentResolver, handler: Ha
 
     private val observer = object : ContentObserver(handler) {
         override fun onChange(selfChange: Boolean) {
-            signalNotification(app, ruleName, ruleAction)
+            signalNotification(app, ruleName, ruleAction, "calendar")
         }
     }
 
@@ -687,6 +692,6 @@ class CalendarObserver(private val contentResolver: ContentResolver, handler: Ha
 class NotificationClickReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         // This function will be executed when the user clicks on the notification
-        MonitorManager.canNotify = true
+        MonitorManager.pendingViolationsInfo.clear()
     }
 }
