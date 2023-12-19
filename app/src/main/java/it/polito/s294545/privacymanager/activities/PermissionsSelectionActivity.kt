@@ -86,28 +86,28 @@ class PermissionsSelectionActivity : AppCompatActivity() {
                 when (p) {
                     "notifications" -> {
                         notificationsButton.isSelected = true
-                        notificationsButton.setBackgroundColor(resources.getColor(R.color.secondary))
+                        notificationsButton.setBackgroundColor(resources.getColor(R.color.primary))
                     }
 
                     "location" -> {
                         locationButton.isSelected = true
-                        locationButton.setBackgroundColor(resources.getColor(R.color.secondary))
+                        locationButton.setBackgroundColor(resources.getColor(R.color.primary))
                     }
 
                     "calendar" -> {
                         calendarButton.isSelected = true
-                        calendarButton.setBackgroundColor(resources.getColor(R.color.secondary))
+                        calendarButton.setBackgroundColor(resources.getColor(R.color.primary))
                     }
 
                     "camera" -> {
                         cameraButton.isSelected = true
-                        cameraButton.setBackgroundColor(resources.getColor(R.color.secondary))
+                        cameraButton.setBackgroundColor(resources.getColor(R.color.primary))
                     }
 
                     /*
                     "sms" -> {
                         smsButton.isSelected = true
-                        smsButton.setBackgroundColor(resources.getColor(R.color.secondary))
+                        smsButton.setBackgroundColor(resources.getColor(R.color.primary))
                     }
 
                      */
