@@ -133,6 +133,7 @@ class PositionsSelectionFragment : Fragment() {
 class PositionsSelectionViewHolder(v: View) : RecyclerView.ViewHolder(v) {
     val positionName = v.findViewById<TextInputEditText>(R.id.edit_position)
     val confirmPosition = v.findViewById<FloatingActionButton>(R.id.confirm_position_button)
+    val editPosition = v.findViewById<FloatingActionButton>(R.id.edit_position_button)
     val deletePositionButton = v.findViewById<FloatingActionButton>(R.id.delete_position_button)
 }
 
@@ -157,6 +158,9 @@ class PositionsSelectionAdapter(
         // Check if a position has already been saved
         if (savedPositions[position].address != null) {
             holder.positionName.setText(savedPositions[position].address)
+
+            holder.positionName.isEnabled = false
+            holder.editPosition.visibility = VISIBLE
             holder.confirmPosition.visibility = GONE
         }
         else {
@@ -211,7 +215,28 @@ class PositionsSelectionAdapter(
                 holder.confirmPosition.visibility = GONE
                 addPositionButton.isClickable = true
                 addPositionButton.setBackgroundColor(resources.getColor(R.color.primary))
+
+                // It is also shown the edit position button
+                holder.editPosition.visibility = VISIBLE
+
+                // The text input is now not editable
+                holder.positionName.isEnabled = false
             }
+        }
+
+        // Edit inserted position
+        holder.editPosition.setOnClickListener {
+            // Make the text input available again
+            holder.positionName.isEnabled = true
+
+            holder.editPosition.visibility = GONE
+            holder.confirmPosition.visibility = VISIBLE
+            holder.confirmPosition.backgroundTintList = ColorStateList.valueOf(resources.getColor(
+                R.color.primary
+            ))
+
+            addPositionButton.isClickable = false
+            addPositionButton.setBackgroundColor(resources.getColor(R.color.dark_grey))
         }
 
         // Delete inserted position
