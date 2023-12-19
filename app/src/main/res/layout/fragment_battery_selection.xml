@@ -31,35 +31,14 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="@dimen/margin_top_title"/>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/text_input_battery"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="@dimen/margin_top_title"
-            android:layout_marginTop="64dp"
-            android:layout_below="@id/infoTextView"
-            app:boxBackgroundMode="filled"
-            app:boxStrokeWidth="0dp"
-            tools:ignore="RelativeOverlap">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_battery"
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/edit_text"
-                android:hint="@string/battery_level_hint"
-                android:inputType="number"
-                android:textSize="16sp" />
-        </com.google.android.material.textfield.TextInputLayout>
 
         <SeekBar
             android:id="@+id/battery_slider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/text_input_battery"
+            android:layout_below="@+id/infoTextView"
             android:layout_toStartOf="@+id/checkBox"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="64dp"
             android:progressDrawable="@drawable/seekbar"
             android:thumb="@drawable/seekbar_thumb"
             android:max="100"
@@ -84,7 +63,7 @@
             android:layout_below="@+id/infoTextView"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="@dimen/margin_top_title"
-            android:layout_marginTop="110dp"
+            android:layout_marginTop="40dp"
             android:background="?android:attr/listChoiceIndicatorMultiple"
             android:backgroundTint="@color/secondary"
             android:button="@null" />

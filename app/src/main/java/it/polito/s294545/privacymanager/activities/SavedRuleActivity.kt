@@ -244,7 +244,7 @@ class SavedRuleActivity : AppCompatActivity() {
     }
 
     private fun getBatteryString() : String {
-        return "<${rule.battery}%"
+        return "< ${rule.battery}%"
     }
 
     @SuppressLint("ClickableViewAccessibility")

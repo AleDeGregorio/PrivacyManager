@@ -50,53 +50,22 @@ class BatterySelectionFragment : Fragment() {
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_battery_selection, container, false)
 
-        val battery = v.findViewById<TextInputEditText>(R.id.edit_battery)
-        val checkBox = v.findViewById<CheckBox>(R.id.checkBox)
-
-        // Check if we are editing a rule
-        if (retrievedRule != null) {
-            // Check if in the saved rule has been defined battery
-            if (retrievedRule!!.battery != null) {
-                savedBattery = retrievedRule!!.battery!!
-                checkBox.isChecked = true
-                battery.text = Editable.Factory.getInstance().newEditable(savedBattery.toString())
-                parameterListener?.onParameterEntered("battery", savedBattery)
-            }
-        }
-
-        // Pass battery info as parameter
-        battery.doOnTextChanged { text, start, before, count ->
-            if (checkBox.isChecked && !battery.text.isNullOrEmpty()) {
-                savedBattery = battery.text.toString().toInt()
-            }
-            else if (!checkBox.isChecked) {
-                savedBattery = null
-            }
-
-            parameterListener?.onParameterEntered("battery", savedBattery)
-        }
-
-        checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked && !battery.text.isNullOrEmpty()) {
-                savedBattery = battery.text.toString().toInt()
-                parameterListener?.onParameterEntered("battery", savedBattery)
-            }
-            else if (!isChecked) {
-                savedBattery = null
-                parameterListener?.onParameterEntered("battery", savedBattery)
-            }
-            else if (isChecked && battery.text.isNullOrEmpty()) {
-                checkBox.isChecked = false
-            }
-        }
-
         val batterySlider = v.findViewById<SeekBar>(R.id.battery_slider)
         val batteryInfo = v.findViewById<TextView>(R.id.battery_info)
+        val checkBox = v.findViewById<CheckBox>(R.id.checkBox)
 
         batterySlider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 // Update the text view with the selected value
                 batteryInfo.text = "$progress%"
+
+                // Save the inserted value
+                if (checkBox.isChecked) {
+                    savedBattery = progress
+                }
+                else {
+                    savedBattery = null
+                }
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -105,8 +74,33 @@ class BatterySelectionFragment : Fragment() {
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 // Called when the user stops moving the slider
+                parameterListener?.onParameterEntered("battery", savedBattery)
             }
         })
+
+        // Check if we are editing a rule
+        if (retrievedRule != null) {
+            // Check if in the saved rule has been defined battery
+            if (retrievedRule!!.battery != null) {
+                savedBattery = retrievedRule!!.battery!!
+                checkBox.isChecked = true
+                //battery.text = Editable.Factory.getInstance().newEditable(savedBattery.toString())
+                batterySlider.progress = savedBattery!!
+                batteryInfo.text = "$savedBattery%"
+                parameterListener?.onParameterEntered("battery", savedBattery)
+            }
+        }
+
+        checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                savedBattery = batterySlider.progress
+                parameterListener?.onParameterEntered("battery", savedBattery)
+            }
+            else {
+                savedBattery = null
+                parameterListener?.onParameterEntered("battery", savedBattery)
+            }
+        }
 
         return v
     }
