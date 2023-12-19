@@ -27,7 +27,7 @@
     <LinearLayout
         android:id="@+id/list_rules_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="250dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/textView"
@@ -58,7 +58,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_rules"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:orientation="vertical" />
     </LinearLayout>
 
