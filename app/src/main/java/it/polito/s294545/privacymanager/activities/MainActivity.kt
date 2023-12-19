@@ -8,10 +8,12 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
@@ -19,6 +21,7 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.marginEnd
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -53,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             for (r in retrievedRules.keys) {
                 val decodedRule = Json.decodeFromString<Rule>(retrievedRules[r].toString())
 
-                if (decodedRule.active) {
+                if (decodedRule.active && !activeRules.contains(decodedRule)) {
                     activeRules.add(decodedRule)
                 }
                 else {
@@ -157,6 +160,7 @@ fun managePopup(view: View, layout: Int) : Pair<View, PopupWindow> {
 // Define recycler view for saved rules
 class SavedRulesViewHolder(v: View) : RecyclerView.ViewHolder(v){
     val buttonRule = v.findViewById<Button>(R.id.button_rule)
+    val startRuleButton = v.findViewById<FloatingActionButton>(R.id.start_rule)
     val editRuleButton = v.findViewById<FloatingActionButton>(R.id.edit_rule)
     val deleteRuleButton = v.findViewById<FloatingActionButton>(R.id.delete_rule)
 }
@@ -185,6 +189,9 @@ class SavedRulesAdapter(private val listRules: MutableList<Rule>, context: Conte
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
         }
+
+        // Manage start rule
+        holder.startRuleButton.setOnClickListener { v -> showPopupActiveRule(v, rule) }
 
         // Manage edit rule
         holder.editRuleButton.setOnClickListener {
@@ -238,7 +245,8 @@ class SavedRulesAdapter(private val listRules: MutableList<Rule>, context: Conte
 // Define recycler view for active rules
 class ActiveRulesViewHolder(v: View) : RecyclerView.ViewHolder(v){
     val buttonRule = v.findViewById<Button>(R.id.button_rule)
-    val editRuleButton = v.findViewById<FloatingActionButton>(R.id.edit_rule)
+    val stopRuleButton = v.findViewById<FloatingActionButton>(R.id.edit_rule)
+    val editRuleButton = v.findViewById<FloatingActionButton>(R.id.start_rule)
     val deleteRuleButton = v.findViewById<FloatingActionButton>(R.id.delete_rule)
 }
 
@@ -260,8 +268,13 @@ class ActiveRulesAdapter(private val listRules: MutableList<Rule>, context: Cont
         holder.buttonRule.text = ruleName
         holder.buttonRule.setBackgroundColor(resources.getColor(R.color.primary))
 
-        holder.editRuleButton.visibility = GONE
-        holder.deleteRuleButton.visibility = GONE
+        holder.editRuleButton.visibility = INVISIBLE
+        holder.deleteRuleButton.visibility = INVISIBLE
+
+        holder.stopRuleButton.setImageDrawable(resources.getDrawable(R.drawable.icon_stop))
+
+        // Manage stop active rule
+        holder.stopRuleButton.setOnClickListener { v -> showPopupActiveRule(v, rule) }
 
         // Manage saved rule
         holder.buttonRule.setOnClickListener {
@@ -270,5 +283,50 @@ class ActiveRulesAdapter(private val listRules: MutableList<Rule>, context: Cont
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
         }
+    }
+}
+
+fun showPopupActiveRule(view: View, rule: Rule) {
+    val (popupView, popupWindow) = managePopup(view, R.layout.popup_start_rule)
+
+    // Initialize the elements of our window, install the handler
+    val title = popupView.findViewById<TextView>(R.id.title)
+    val buttonStartStopRule = popupView.findViewById<Button>(R.id.start_rule_button)
+    val buttonCancel = popupView.findViewById<Button>(R.id.cancel_button)
+
+    if (rule.active) {
+        title.text = "Disattivare la regola?"
+        buttonStartStopRule.text = "Disattiva"
+    }
+
+    buttonStartStopRule.setOnClickListener {
+        // Change rule state
+        rule.active = !rule.active
+
+        // Update rule in shared preferences
+        // Convert rule object to JSON string
+        val ruleJSON = Json.encodeToString(Rule.serializer(), rule)
+
+        // Save privacy rule in shared preferences
+        PreferencesManager.savePrivacyRule(context, rule.name!!, ruleJSON)
+
+        savedRules.clear()
+        activeRules.clear()
+
+        // Reload homepage
+        val intent = Intent(context, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    }
+
+    buttonCancel.setOnClickListener {
+        popupWindow.dismiss()
+    }
+
+
+    // Handler for clicking on the inactive zone of the window
+    popupView.setOnTouchListener { v, event -> // Close the window when clicked
+        popupWindow.dismiss()
+        true
     }
 }
