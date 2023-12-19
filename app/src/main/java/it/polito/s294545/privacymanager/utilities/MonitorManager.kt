@@ -256,7 +256,8 @@ class MonitorManager : Service() {
 
     // Check that all the parameters that are defined (position, time slot, network, bluetooth, battery) are satisfied
     private fun checkParameters(rule: Rule) : Boolean {
-        if (rule.positions != null) {
+
+        if (!rule.positions.isNullOrEmpty()) {
             monitorPositions(rule.positions!!)
 
             if (!isNear) {
@@ -264,13 +265,13 @@ class MonitorManager : Service() {
             }
         }
 
-        if (rule.timeSlot != null) {
+        if (rule.timeSlot != null && rule.timeSlot!!.time.first != "") {
             if (!monitorTimeSlot(rule.timeSlot!!)) {
                 return false
             }
         }
 
-        if (rule.networks != null) {
+        if (!rule.networks.isNullOrEmpty()) {
             monitorNetwork(rule.networks!!)
 
             if (!isConnected) {
@@ -278,7 +279,7 @@ class MonitorManager : Service() {
             }
         }
 
-        if (rule.bt != null) {
+        if (!rule.bt.isNullOrEmpty()) {
             if (!monitorBT(rule.bt!!)) {
                 return false
             }
