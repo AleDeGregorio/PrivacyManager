@@ -116,7 +116,7 @@ class MainActivity : AppCompatActivity() {
         val buttonCreate = popupView.findViewById<Button>(R.id.create_button)
         buttonCreate.setOnClickListener {
             // Create new rule
-            val intent = Intent(this, PermissionsSelectionActivity::class.java)
+            val intent = Intent(this, ParametersDefinitionActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             startActivity(intent)
             finish()

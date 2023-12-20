@@ -38,17 +38,20 @@
         android:layout_marginEnd="@dimen/margin_top_title"/>
 
     <com.google.android.material.card.MaterialCardView
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         android:id="@+id/permissions_card"
         android:layout_width="match_parent"
         android:layout_height="@dimen/parameters_cards_height"
         android:layout_below="@id/infoTextView"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         app:cardCornerRadius="50dp"
         app:cardElevation="10dp"
         app:cardMaxElevation="12dp"
         app:cardPreventCornerOverlap="false"
+        android:backgroundTint="@color/light_grey"
         app:cardUseCompatPadding="false"
         app:strokeColor="@color/primary"
         app:strokeWidth="2dp">
@@ -76,14 +79,14 @@
                 android:layout_toEndOf="@+id/permissions_title"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="6dp"
                 android:layout_marginEnd="16dp"
                 android:contentDescription="@string/permissions_button"
                 android:text="@string/permissions"
                 android:textAlignment="center"
                 android:textColor="@color/black"
-                android:textSize="20sp"
-                app:backgroundTint="@color/secondary"
+                android:textSize="16sp"
+                app:backgroundTint="@color/cancel"
                 app:icon="@drawable/icon_permissions"
                 app:iconTint="@color/black"
                 app:tint="@color/black" />
@@ -94,22 +97,25 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="32dp"
+        android:layout_height="42dp"
         android:contentDescription="@string/arrow"
         android:layout_below="@+id/permissions_card"
         app:srcCompat="@drawable/icon_arrow" />
 
     <com.google.android.material.card.MaterialCardView
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         android:id="@+id/apps_card"
         android:layout_width="match_parent"
         android:layout_height="@dimen/parameters_cards_height"
         android:layout_below="@id/permissions_card"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="42dp"
         app:cardCornerRadius="50dp"
         app:cardElevation="10dp"
         app:cardMaxElevation="12dp"
+        android:backgroundTint="@color/light_grey"
         app:cardPreventCornerOverlap="false"
         app:cardUseCompatPadding="false"
         app:strokeColor="@color/primary"
@@ -132,13 +138,15 @@
                 android:textSize="20sp"/>
 
             <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:clickable="false"
+                android:focusable="false"
                 android:id="@+id/apps_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@+id/apps_title"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="26dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:contentDescription="@string/apps_button"
                 android:text="@string/apps"
@@ -156,22 +164,25 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="32dp"
+        android:layout_height="42dp"
         android:contentDescription="@string/arrow"
         android:layout_below="@+id/apps_card"
         app:srcCompat="@drawable/icon_arrow" />
 
     <com.google.android.material.card.MaterialCardView
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         android:id="@+id/conditions_card"
         android:layout_width="match_parent"
         android:layout_height="@dimen/parameters_cards_height"
         android:layout_below="@id/apps_card"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="42dp"
         app:cardCornerRadius="50dp"
         app:cardElevation="10dp"
         app:cardMaxElevation="12dp"
+        android:backgroundTint="@color/light_grey"
         app:cardPreventCornerOverlap="false"
         app:cardUseCompatPadding="false"
         app:strokeColor="@color/primary"
@@ -203,13 +214,15 @@
                 android:textSize="20sp"/>
 
             <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:clickable="false"
+                android:focusable="false"
                 android:id="@+id/conditions_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@+id/conditions_title"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="6dp"
                 android:layout_marginEnd="16dp"
                 android:contentDescription="@string/conditions_button"
                 android:text="@string/conditions"
@@ -227,19 +240,22 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="32dp"
+        android:layout_height="42dp"
         android:contentDescription="@string/arrow"
         android:layout_below="@+id/conditions_card"
         app:srcCompat="@drawable/icon_arrow" />
 
     <com.google.android.material.card.MaterialCardView
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         android:id="@+id/action_card"
         android:layout_width="match_parent"
         android:layout_height="@dimen/parameters_cards_height"
         android:layout_below="@id/conditions_card"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="32dp"
+        android:backgroundTint="@color/light_grey"
+        android:layout_marginTop="42dp"
         app:cardCornerRadius="50dp"
         app:cardElevation="10dp"
         app:cardMaxElevation="12dp"
@@ -265,13 +281,15 @@
                 android:textSize="20sp"/>
 
             <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:clickable="false"
+                android:focusable="false"
                 android:id="@+id/action_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@+id/action_title"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="46dp"
+                android:layout_marginStart="36dp"
                 android:layout_marginEnd="16dp"
                 android:contentDescription="@string/action_button"
                 android:text="@string/action"
@@ -313,6 +331,8 @@
         <Button
             android:id="@+id/save_button"
             style="?android:attr/buttonBarButtonStyle"
+            android:clickable="false"
+            android:focusable="false"
             android:layout_width="@dimen/button_width"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
