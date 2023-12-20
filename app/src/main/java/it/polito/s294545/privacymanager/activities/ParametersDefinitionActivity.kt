@@ -1,6 +1,8 @@
 package it.polito.s294545.privacymanager.activities
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -11,10 +13,13 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.ruleDefinitionFragments.listAppsInfo
 
 class ParametersDefinitionActivity : AppCompatActivity() {
 
     private lateinit var savedPermissions: ArrayList<String>
+    private lateinit var savedApps: ArrayList<String>
+    private lateinit var savedPkgs: ArrayList<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,10 +59,6 @@ class ParametersDefinitionActivity : AppCompatActivity() {
         if (permissionsIntent != null) {
             savedPermissions = permissionsIntent as ArrayList<String>
 
-            Log.d("myapp", "$savedPermissions")
-        }
-
-        if (permissionsIntent != null) {
             permissionsButton.setBackgroundColor(resources.getColor(R.color.primary))
 
             appsButton.setBackgroundColor(resources.getColor(R.color.cancel))
@@ -71,6 +72,31 @@ class ParametersDefinitionActivity : AppCompatActivity() {
 
             if (permissionsIntent != null) {
                 intent.putExtra("permissions", ArrayList(savedPermissions))
+            }
+
+            startActivity(intent)
+            finish()
+        }
+
+        // Apps
+        val appsIntent = intent.extras?.get("apps")
+        val pkgsIntent = intent.extras?.get("pkgs")
+
+        if (appsIntent != null && pkgsIntent != null) {
+            savedApps = appsIntent as ArrayList<String>
+            savedPkgs = pkgsIntent as ArrayList<String>
+
+            appsButton.setBackgroundColor(resources.getColor(R.color.primary))
+        }
+
+        appsButton.setOnClickListener {
+            val intent = Intent(this, AppsSelectionActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            intent.putExtra("permissions", ArrayList(savedPermissions))
+
+            if (appsIntent != null) {
+                intent.putExtra("apps", savedApps)
+                intent.putExtra("pkgs", savedPkgs)
             }
 
             startActivity(intent)

@@ -136,7 +136,7 @@ class AppsSelectionViewHolder(v: View) : RecyclerView.ViewHolder(v){
     val checkBox = v.findViewById<CheckBox>(R.id.checkBox)
 }
 
-class AppsSelectionAdapter(
+private class AppsSelectionAdapter(
     private val listAppsInfo: Map<String, Pair<Drawable, String>>,
     private val parameterListener: ParameterListener?
 ): RecyclerView.Adapter<AppsSelectionViewHolder>(), Filterable {
