@@ -17,6 +17,13 @@ import kotlinx.serialization.json.Json
 
 class PermissionsSelectionActivity : AppCompatActivity() {
 
+    private lateinit var notificationsButton: ExtendedFloatingActionButton
+    private lateinit var locationButton: ExtendedFloatingActionButton
+    private lateinit var calendarButton: ExtendedFloatingActionButton
+    private lateinit var cameraButton: ExtendedFloatingActionButton
+
+    private var permissionsIntent: Any? = null
+
     private val savedPermissions = mutableListOf<String>()
     private lateinit var forwardButton : Button
 
@@ -29,7 +36,7 @@ class PermissionsSelectionActivity : AppCompatActivity() {
         val toolbar = toolbarLayout.findViewById<MaterialToolbar>(R.id.toolbar)
 
         // Set the navigation icon
-        toolbar.navigationIcon = ContextCompat.getDrawable(this, R.drawable.icon_cross)
+        toolbar.navigationIcon = ContextCompat.getDrawable(this, R.drawable.icon_left_arrow)
         toolbar.setNavigationIconTint(resources.getColor(R.color.white))
 
         toolbar.setNavigationOnClickListener { manageBackNavigation() }
@@ -49,19 +56,19 @@ class PermissionsSelectionActivity : AppCompatActivity() {
         // ----- Manage permission buttons -----
 
         // Notifications
-        val notificationsButton = findViewById<ExtendedFloatingActionButton>(R.id.notification_permission)
+        notificationsButton = findViewById(R.id.notification_permission)
         notificationsButton.setOnClickListener { togglePermissionSelection(it, "notifications") }
 
         // Location
-        val locationButton = findViewById<ExtendedFloatingActionButton>(R.id.location_permission)
+        locationButton = findViewById(R.id.location_permission)
         locationButton.setOnClickListener { togglePermissionSelection(it, "location") }
 
         // Calendar
-        val calendarButton = findViewById<ExtendedFloatingActionButton>(R.id.calendar_permission)
+        calendarButton = findViewById(R.id.calendar_permission)
         calendarButton.setOnClickListener { togglePermissionSelection(it, "calendar") }
 
         // Camera
-        val cameraButton = findViewById<ExtendedFloatingActionButton>(R.id.camera_permission)
+        cameraButton = findViewById(R.id.camera_permission)
         cameraButton.setOnClickListener { togglePermissionSelection(it, "camera") }
 
         /*
@@ -80,49 +87,20 @@ class PermissionsSelectionActivity : AppCompatActivity() {
         if (editRule != null) {
             val retrievedRule = Json.decodeFromString<Rule>(editRule.toString())
 
-            for (p in retrievedRule.permissions!!) {
-                savedPermissions.add(p)
+            setSavedPermissions(retrievedRule.permissions!!)
+        }
 
-                when (p) {
-                    "notifications" -> {
-                        notificationsButton.isSelected = true
-                        notificationsButton.setBackgroundColor(resources.getColor(R.color.primary))
-                    }
+        permissionsIntent = intent.extras?.get("permissions")
 
-                    "location" -> {
-                        locationButton.isSelected = true
-                        locationButton.setBackgroundColor(resources.getColor(R.color.primary))
-                    }
-
-                    "calendar" -> {
-                        calendarButton.isSelected = true
-                        calendarButton.setBackgroundColor(resources.getColor(R.color.primary))
-                    }
-
-                    "camera" -> {
-                        cameraButton.isSelected = true
-                        cameraButton.setBackgroundColor(resources.getColor(R.color.primary))
-                    }
-
-                    /*
-                    "sms" -> {
-                        smsButton.isSelected = true
-                        smsButton.setBackgroundColor(resources.getColor(R.color.primary))
-                    }
-
-                     */
-                }
-            }
-
-            forwardButton.setBackgroundColor(resources.getColor(R.color.primary))
-            forwardButton.isClickable = true
+        if (permissionsIntent != null) {
+            setSavedPermissions(permissionsIntent as ArrayList<String>)
         }
 
         // Manage forward button
         // Go to rule definition only if at least one permission has been selected
         forwardButton.setOnClickListener {
             if (savedPermissions.isNotEmpty()) {
-                val intent = Intent(this, RuleDefinitionActivity::class.java)
+                val intent = Intent(this, ParametersDefinitionActivity::class.java)
 
                 if (editRule != null) {
                     intent.putExtra("rule", editRule.toString())
@@ -136,6 +114,45 @@ class PermissionsSelectionActivity : AppCompatActivity() {
         }
     }
 
+    private fun setSavedPermissions(permissions: List<String>) {
+        for (p in permissions) {
+            savedPermissions.add(p)
+
+            when (p) {
+                "notifications" -> {
+                    notificationsButton.isSelected = true
+                    notificationsButton.setBackgroundColor(resources.getColor(R.color.primary))
+                }
+
+                "location" -> {
+                    locationButton.isSelected = true
+                    locationButton.setBackgroundColor(resources.getColor(R.color.primary))
+                }
+
+                "calendar" -> {
+                    calendarButton.isSelected = true
+                    calendarButton.setBackgroundColor(resources.getColor(R.color.primary))
+                }
+
+                "camera" -> {
+                    cameraButton.isSelected = true
+                    cameraButton.setBackgroundColor(resources.getColor(R.color.primary))
+                }
+
+                /*
+                "sms" -> {
+                    smsButton.isSelected = true
+                    smsButton.setBackgroundColor(resources.getColor(R.color.primary))
+                }
+
+                 */
+            }
+        }
+
+        forwardButton.setBackgroundColor(resources.getColor(R.color.primary))
+        forwardButton.isClickable = true
+    }
+
     override fun onDestroy() {
         super.onDestroy()
 
@@ -143,10 +160,15 @@ class PermissionsSelectionActivity : AppCompatActivity() {
     }
 
     private fun manageBackNavigation() {
+        val intent = Intent(this@PermissionsSelectionActivity, ParametersDefinitionActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+
+        if (permissionsIntent != null) {
+            intent.putExtra("permissions", ArrayList(savedPermissions))
+        }
+
         savedPermissions.clear()
 
-        val intent = Intent(this@PermissionsSelectionActivity, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(intent)
         finish()
     }
