@@ -129,4 +129,20 @@
     <string name="reset_time_slot_info">Reset</string>
     <string name="reset_time_slot">Reset orario</string>
     <string name="filter_app">Cerca applicazione</string>
+    <string name="rule_definition">Definizione regola</string>
+    <string name="rule_definition_info">Per definire la regola è necessario specificare i seguenti parametri</string>
+    <string name="permissions_title">Cosa monitorare?</string>
+    <string name="permissions_button">Permissions button</string>
+    <string name="permissions">Autorizzazioni</string>
+    <string name="apps_title">Utilizzate da chi?</string>
+    <string name="apps_button">Apps button</string>
+    <string name="apps">App</string>
+    <string name="conditions_title">In che condizioni?</string>
+    <string name="conditions_button">Conditions button</string>
+    <string name="conditions">Condizioni</string>
+    <string name="optional">(Opzionale)</string>
+    <string name="action_title">Come reagire?</string>
+    <string name="action_button">Action button</string>
+    <string name="action">Azione</string>
+    <string name="arrow">Arrow</string>
 </resources>
