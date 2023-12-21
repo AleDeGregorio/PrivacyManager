@@ -39,6 +39,8 @@ class AppsSelectionActivity : AppCompatActivity() {
 
     private var listAppsInfo = mapOf<String, Pair<Drawable, String>>()
 
+    private lateinit var saveButton: Button
+
     companion object {
         var savedApps = mutableListOf<String>()
         var savedPkg = mutableListOf<String>()
@@ -70,6 +72,8 @@ class AppsSelectionActivity : AppCompatActivity() {
         }
         onBackPressedDispatcher.addCallback(this, callback)
 
+        saveButton = findViewById(R.id.save_button)
+
         // Initialize list of apps
         val permissionsIntent = intent.extras?.get("permissions")
 
@@ -89,13 +93,15 @@ class AppsSelectionActivity : AppCompatActivity() {
         pkgsIntent = intent.extras?.get("pkgs")
 
         if (appsIntent != null && pkgsIntent != null) {
-            savedApps = appsIntent as ArrayList<String>
-            savedPkg = pkgsIntent as ArrayList<String>
+            savedApps.addAll(appsIntent as ArrayList<String>)
+            savedPkg.addAll(pkgsIntent as ArrayList<String>)
+
+            saveButton.isClickable = true
+            saveButton.isFocusable = true
+            saveButton.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.primary))
         }
 
         // Managing recycler view
-        val saveButton = findViewById<Button>(R.id.save_button)
-
         val recyclerView = findViewById<RecyclerView>(R.id.list_apps)
         val adapter = AppsSelectionAdapter(listAppsInfo, saveButton, resources)
         recyclerView.adapter = adapter
@@ -120,15 +126,17 @@ class AppsSelectionActivity : AppCompatActivity() {
 
         // Managing save button
         saveButton.setOnClickListener {
-            val intent = Intent(this, ParametersDefinitionActivity::class.java)
+            if (savedApps.isNotEmpty()) {
+                val intent = Intent(this, ParametersDefinitionActivity::class.java)
 
-            intent.putExtra("permissions", listPermissions)
-            intent.putExtra("apps", ArrayList(savedApps))
-            intent.putExtra("pkgs", ArrayList(savedPkg))
+                intent.putExtra("permissions", listPermissions)
+                intent.putExtra("apps", ArrayList(savedApps))
+                intent.putExtra("pkgs", ArrayList(savedPkg))
 
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            startActivity(intent)
-            finish()
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                startActivity(intent)
+                finish()
+            }
         }
     }
 
@@ -196,8 +204,11 @@ class AppsSelectionActivity : AppCompatActivity() {
         val intent = Intent(this, ParametersDefinitionActivity::class.java)
 
         intent.putExtra("permissions", ArrayList(listPermissions!!))
-        intent.putExtra("apps", ArrayList(appsIntent as ArrayList<String>))
-        intent.putExtra("pkgs", ArrayList(pkgsIntent as ArrayList<String>))
+
+        if (appsIntent != null) {
+            intent.putExtra("apps", ArrayList(appsIntent as ArrayList<String>))
+            intent.putExtra("pkgs", ArrayList(pkgsIntent as ArrayList<String>))
+        }
 
         listPermissions!!.clear()
         savedApps.clear()
@@ -251,14 +262,14 @@ class AppsSelectionAdapter(private val listAppsInfo: Map<String, Pair<Drawable, 
         holder.checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
             // Save new app
             if (isChecked && !AppsSelectionActivity.savedApps.contains(appName)) {
-                AppsSelectionActivity.savedApps.add(appName)
-                AppsSelectionActivity.savedPkg.add(pkg)
-
-                if (!saveButton.isClickable) {
+                if (AppsSelectionActivity.savedApps.isEmpty()) {
                     saveButton.isClickable = true
                     saveButton.isFocusable = true
                     saveButton.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.primary))
                 }
+
+                AppsSelectionActivity.savedApps.add(appName)
+                AppsSelectionActivity.savedPkg.add(pkg)
             }
             // Remove inserted app
             else if (!isChecked && AppsSelectionActivity.savedApps.contains(appName)) {

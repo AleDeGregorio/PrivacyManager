@@ -47,12 +47,12 @@ class ParametersDefinitionActivity : AppCompatActivity() {
         }
         onBackPressedDispatcher.addCallback(this, callback)
 
-        // ----- Manage parameters buttons -----
         val permissionsButton = findViewById<ExtendedFloatingActionButton>(R.id.permissions_button)
         val appsButton = findViewById<ExtendedFloatingActionButton>(R.id.apps_button)
         val conditionsButton = findViewById<ExtendedFloatingActionButton>(R.id.conditions_button)
         val actionButton = findViewById<ExtendedFloatingActionButton>(R.id.action_button)
 
+        // ----- Manage all intents -----
         // Permissions
         val permissionsIntent = intent.extras?.get("permissions")
 
@@ -66,18 +66,6 @@ class ParametersDefinitionActivity : AppCompatActivity() {
             appsButton.isFocusable = true
         }
 
-        permissionsButton.setOnClickListener {
-            val intent = Intent(this, PermissionsSelectionActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-
-            if (permissionsIntent != null) {
-                intent.putExtra("permissions", ArrayList(savedPermissions))
-            }
-
-            startActivity(intent)
-            finish()
-        }
-
         // Apps
         val appsIntent = intent.extras?.get("apps")
         val pkgsIntent = intent.extras?.get("pkgs")
@@ -89,11 +77,15 @@ class ParametersDefinitionActivity : AppCompatActivity() {
             appsButton.setBackgroundColor(resources.getColor(R.color.primary))
         }
 
-        appsButton.setOnClickListener {
-            val intent = Intent(this, AppsSelectionActivity::class.java)
+        // ----- Manage parameters buttons -----
+        // Permissions
+        permissionsButton.setOnClickListener {
+            val intent = Intent(this, PermissionsSelectionActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            intent.putExtra("permissions", ArrayList(savedPermissions))
 
+            if (permissionsIntent != null) {
+                intent.putExtra("permissions", ArrayList(savedPermissions))
+            }
             if (appsIntent != null) {
                 intent.putExtra("apps", savedApps)
                 intent.putExtra("pkgs", savedPkgs)
@@ -101,6 +93,23 @@ class ParametersDefinitionActivity : AppCompatActivity() {
 
             startActivity(intent)
             finish()
+        }
+
+        // Apps
+        if (permissionsIntent != null) {
+            appsButton.setOnClickListener {
+                val intent = Intent(this, AppsSelectionActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                intent.putExtra("permissions", ArrayList(savedPermissions))
+
+                if (appsIntent != null) {
+                    intent.putExtra("apps", savedApps)
+                    intent.putExtra("pkgs", savedPkgs)
+                }
+
+                startActivity(intent)
+                finish()
+            }
         }
     }
 

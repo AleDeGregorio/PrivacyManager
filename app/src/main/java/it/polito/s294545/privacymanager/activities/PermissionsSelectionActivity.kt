@@ -3,6 +3,7 @@ package it.polito.s294545.privacymanager.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import androidx.activity.OnBackPressedCallback
@@ -23,6 +24,8 @@ class PermissionsSelectionActivity : AppCompatActivity() {
     private lateinit var cameraButton: ExtendedFloatingActionButton
 
     private var permissionsIntent: Any? = null
+    private var appsIntent: Any? = null
+    private var pkgsIntent: Any? = null
 
     private val savedPermissions = mutableListOf<String>()
     private lateinit var forwardButton : Button
@@ -91,12 +94,14 @@ class PermissionsSelectionActivity : AppCompatActivity() {
         }
 
         permissionsIntent = intent.extras?.get("permissions")
+        appsIntent = intent.extras?.get("apps")
+        pkgsIntent = intent.extras?.get("pkgs")
 
         if (permissionsIntent != null) {
             setSavedPermissions(permissionsIntent as ArrayList<String>)
         }
 
-        // Manage forward button
+        // Manage save button
         // Go to rule definition only if at least one permission has been selected
         forwardButton.setOnClickListener {
             if (savedPermissions.isNotEmpty()) {
@@ -107,6 +112,14 @@ class PermissionsSelectionActivity : AppCompatActivity() {
                 }
 
                 intent.putExtra("permissions", ArrayList(savedPermissions))
+
+                if (permissionsIntent != null) {
+                    if (appsIntent != null && pkgsIntent != null && savedPermissions == permissionsIntent as ArrayList<String>) {
+                        intent.putExtra("apps", ArrayList(appsIntent as ArrayList<String>))
+                        intent.putExtra("pkgs", ArrayList(pkgsIntent as ArrayList<String>))
+                    }
+                }
+
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 startActivity(intent)
                 finish()
@@ -157,6 +170,8 @@ class PermissionsSelectionActivity : AppCompatActivity() {
         super.onDestroy()
 
         savedPermissions.clear()
+        appsIntent = null
+        pkgsIntent = null
     }
 
     private fun manageBackNavigation() {
@@ -166,8 +181,14 @@ class PermissionsSelectionActivity : AppCompatActivity() {
         if (permissionsIntent != null) {
             intent.putExtra("permissions", ArrayList(savedPermissions))
         }
+        if (appsIntent != null && pkgsIntent != null) {
+            intent.putExtra("apps", ArrayList(appsIntent as ArrayList<String>))
+            intent.putExtra("pkgs", ArrayList(pkgsIntent as ArrayList<String>))
+        }
 
         savedPermissions.clear()
+        appsIntent = null
+        pkgsIntent = null
 
         startActivity(intent)
         finish()
