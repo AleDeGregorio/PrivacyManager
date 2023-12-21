@@ -64,6 +64,8 @@ class ParametersDefinitionActivity : AppCompatActivity() {
             appsButton.setBackgroundColor(resources.getColor(R.color.cancel))
             appsButton.isClickable = true
             appsButton.isFocusable = true
+            appsButton.setTextColor(resources.getColor(R.color.white))
+            appsButton.setIconTintResource(R.color.white)
         }
 
         // Apps
@@ -75,6 +77,18 @@ class ParametersDefinitionActivity : AppCompatActivity() {
             savedPkgs = pkgsIntent as ArrayList<String>
 
             appsButton.setBackgroundColor(resources.getColor(R.color.primary))
+
+            conditionsButton.setBackgroundColor(resources.getColor(R.color.cancel))
+            conditionsButton.isClickable = true
+            conditionsButton.isFocusable = true
+            conditionsButton.setTextColor(resources.getColor(R.color.white))
+            conditionsButton.setIconTintResource(R.color.white)
+
+            actionButton.setBackgroundColor(resources.getColor(R.color.cancel))
+            actionButton.isClickable = true
+            actionButton.isFocusable = true
+            actionButton.setTextColor(resources.getColor(R.color.white))
+            actionButton.setIconTintResource(R.color.white)
         }
 
         // ----- Manage parameters buttons -----
@@ -109,6 +123,13 @@ class ParametersDefinitionActivity : AppCompatActivity() {
 
                 startActivity(intent)
                 finish()
+            }
+        }
+
+        // Action
+        if (appsIntent != null) {
+            actionButton.setOnClickListener {
+                //do nothing
             }
         }
     }

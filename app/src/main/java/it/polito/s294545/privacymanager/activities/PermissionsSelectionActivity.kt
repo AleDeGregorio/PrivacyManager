@@ -60,19 +60,19 @@ class PermissionsSelectionActivity : AppCompatActivity() {
 
         // Notifications
         notificationsButton = findViewById(R.id.notification_permission)
-        notificationsButton.setOnClickListener { togglePermissionSelection(it, "notifications") }
+        notificationsButton.setOnClickListener { togglePermissionSelection(notificationsButton, "notifications") }
 
         // Location
         locationButton = findViewById(R.id.location_permission)
-        locationButton.setOnClickListener { togglePermissionSelection(it, "location") }
+        locationButton.setOnClickListener { togglePermissionSelection(locationButton, "location") }
 
         // Calendar
         calendarButton = findViewById(R.id.calendar_permission)
-        calendarButton.setOnClickListener { togglePermissionSelection(it, "calendar") }
+        calendarButton.setOnClickListener { togglePermissionSelection(calendarButton, "calendar") }
 
         // Camera
         cameraButton = findViewById(R.id.camera_permission)
-        cameraButton.setOnClickListener { togglePermissionSelection(it, "camera") }
+        cameraButton.setOnClickListener { togglePermissionSelection(cameraButton, "camera") }
 
         /*
         // SMS
@@ -135,21 +135,29 @@ class PermissionsSelectionActivity : AppCompatActivity() {
                 "notifications" -> {
                     notificationsButton.isSelected = true
                     notificationsButton.setBackgroundColor(resources.getColor(R.color.primary))
+                    notificationsButton.setTextColor(resources.getColor(R.color.white))
+                    notificationsButton.setIconTintResource(R.color.white)
                 }
 
                 "location" -> {
                     locationButton.isSelected = true
                     locationButton.setBackgroundColor(resources.getColor(R.color.primary))
+                    locationButton.setTextColor(resources.getColor(R.color.white))
+                    locationButton.setIconTintResource(R.color.white)
                 }
 
                 "calendar" -> {
                     calendarButton.isSelected = true
                     calendarButton.setBackgroundColor(resources.getColor(R.color.primary))
+                    calendarButton.setTextColor(resources.getColor(R.color.white))
+                    calendarButton.setIconTintResource(R.color.white)
                 }
 
                 "camera" -> {
                     cameraButton.isSelected = true
                     cameraButton.setBackgroundColor(resources.getColor(R.color.primary))
+                    cameraButton.setTextColor(resources.getColor(R.color.white))
+                    cameraButton.setIconTintResource(R.color.white)
                 }
 
                 /*
@@ -195,10 +203,12 @@ class PermissionsSelectionActivity : AppCompatActivity() {
     }
 
     // Manage permission selection/deselection
-    private fun togglePermissionSelection(permission: View, text: String) {
+    private fun togglePermissionSelection(permission: ExtendedFloatingActionButton, text: String) {
         if (!permission.isSelected) {
             permission.isSelected = true
             permission.setBackgroundColor(resources.getColor(R.color.primary))
+            permission.setTextColor(resources.getColor(R.color.white))
+            permission.setIconTintResource(R.color.white)
 
             if (savedPermissions.isEmpty()) {
                 forwardButton.setBackgroundColor(resources.getColor(R.color.primary))
@@ -210,6 +220,8 @@ class PermissionsSelectionActivity : AppCompatActivity() {
         else {
             permission.isSelected = false
             permission.setBackgroundColor(resources.getColor(R.color.grey))
+            permission.setTextColor(resources.getColor(R.color.black))
+            permission.setIconTintResource(R.color.black)
             savedPermissions.remove(text)
 
             if (savedPermissions.isEmpty()) {
