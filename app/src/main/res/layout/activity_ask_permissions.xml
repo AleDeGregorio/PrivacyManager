@@ -38,12 +38,12 @@
         android:contentDescription="@string/location_permission"
         android:text="@string/ask_location"
         android:textAlignment="center"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="20sp"
         app:backgroundTint="@color/dark_grey"
         app:icon="@drawable/icon_location"
-        app:iconTint="@color/white"
-        app:tint="@color/white" />
+        app:iconTint="@color/black"
+        app:tint="@color/black" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/calendar_permission"
@@ -58,12 +58,12 @@
         android:contentDescription="@string/calendar_permission"
         android:text="@string/ask_calendar"
         android:textAlignment="center"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="20sp"
         app:backgroundTint="@color/dark_grey"
         app:icon="@drawable/icon_calendar"
-        app:iconTint="@color/white"
-        app:tint="@color/white" />
+        app:iconTint="@color/black"
+        app:tint="@color/black" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/bluetooth_permission"
@@ -78,12 +78,12 @@
         android:contentDescription="@string/bluetooth_permission"
         android:text="@string/ask_bluetooth"
         android:textAlignment="center"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="20sp"
         app:backgroundTint="@color/dark_grey"
         app:icon="@drawable/icon_bluetooth"
-        app:iconTint="@color/white"
-        app:tint="@color/white" />
+        app:iconTint="@color/black"
+        app:tint="@color/black" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/notifications_permission"
@@ -98,12 +98,12 @@
         android:contentDescription="@string/notifications_permission"
         android:text="@string/ask_notifications"
         android:textAlignment="center"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="20sp"
         app:backgroundTint="@color/dark_grey"
         app:icon="@drawable/icon_notification"
-        app:iconTint="@color/white"
-        app:tint="@color/white" />
+        app:iconTint="@color/black"
+        app:tint="@color/black" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/usage_permission"
@@ -118,12 +118,12 @@
         android:contentDescription="@string/usage_permission"
         android:text="@string/ask_usage"
         android:textAlignment="center"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="20sp"
         app:backgroundTint="@color/dark_grey"
         app:icon="@drawable/icon_app"
-        app:iconTint="@color/white"
-        app:tint="@color/white" />
+        app:iconTint="@color/black"
+        app:tint="@color/black" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/confirm_permissions"

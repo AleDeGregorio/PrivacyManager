@@ -158,6 +158,8 @@ class AskPermissionsActivity : AppCompatActivity() {
         }
 
         button.setBackgroundColor(resources.getColor(R.color.primary))
+        button.setTextColor(resources.getColor(R.color.white))
+        button.setIconTintResource(R.color.white)
     }
 
     // ----- Check if permission has been granted -----
