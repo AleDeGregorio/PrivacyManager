@@ -20,6 +20,7 @@ class ParametersDefinitionActivity : AppCompatActivity() {
     private lateinit var savedPermissions: ArrayList<String>
     private lateinit var savedApps: ArrayList<String>
     private lateinit var savedPkgs: ArrayList<String>
+    private lateinit var savedAction: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +52,8 @@ class ParametersDefinitionActivity : AppCompatActivity() {
         val appsButton = findViewById<ExtendedFloatingActionButton>(R.id.apps_button)
         val conditionsButton = findViewById<ExtendedFloatingActionButton>(R.id.conditions_button)
         val actionButton = findViewById<ExtendedFloatingActionButton>(R.id.action_button)
+
+        val saveButton = findViewById<Button>(R.id.save_button)
 
         // ----- Manage all intents -----
         // Permissions
@@ -91,6 +94,20 @@ class ParametersDefinitionActivity : AppCompatActivity() {
             actionButton.setIconTintResource(R.color.white)
         }
 
+        // Action
+        val actionIntent = intent.extras?.getString("action")
+
+        if (actionIntent != null) {
+            savedAction = actionIntent
+            actionButton.setBackgroundColor(resources.getColor(R.color.primary))
+
+            if (appsIntent != null) {
+                saveButton.setBackgroundColor(resources.getColor(R.color.primary))
+                saveButton.isClickable = true
+                saveButton.isFocusable = true
+            }
+        }
+
         // ----- Manage parameters buttons -----
         // Permissions
         permissionsButton.setOnClickListener {
@@ -103,6 +120,9 @@ class ParametersDefinitionActivity : AppCompatActivity() {
             if (appsIntent != null) {
                 intent.putExtra("apps", savedApps)
                 intent.putExtra("pkgs", savedPkgs)
+            }
+            if (actionIntent != null) {
+                intent.putExtra("action", savedAction)
             }
 
             startActivity(intent)
@@ -120,6 +140,9 @@ class ParametersDefinitionActivity : AppCompatActivity() {
                     intent.putExtra("apps", savedApps)
                     intent.putExtra("pkgs", savedPkgs)
                 }
+                if (actionIntent != null) {
+                    intent.putExtra("action", savedAction)
+                }
 
                 startActivity(intent)
                 finish()
@@ -129,7 +152,20 @@ class ParametersDefinitionActivity : AppCompatActivity() {
         // Action
         if (appsIntent != null) {
             actionButton.setOnClickListener {
-                //do nothing
+                val intent = Intent(this, ActionSelectionActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                intent.putExtra("permissions", ArrayList(savedPermissions))
+
+                if (appsIntent != null) {
+                    intent.putExtra("apps", savedApps)
+                    intent.putExtra("pkgs", savedPkgs)
+                }
+                if (actionIntent != null) {
+                    intent.putExtra("action", savedAction)
+                }
+
+                startActivity(intent)
+                finish()
             }
         }
     }

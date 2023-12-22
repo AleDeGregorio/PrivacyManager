@@ -26,6 +26,7 @@ class PermissionsSelectionActivity : AppCompatActivity() {
     private var permissionsIntent: Any? = null
     private var appsIntent: Any? = null
     private var pkgsIntent: Any? = null
+    private var actionIntent: String? = null
 
     private val savedPermissions = mutableListOf<String>()
     private lateinit var forwardButton : Button
@@ -96,6 +97,7 @@ class PermissionsSelectionActivity : AppCompatActivity() {
         permissionsIntent = intent.extras?.get("permissions")
         appsIntent = intent.extras?.get("apps")
         pkgsIntent = intent.extras?.get("pkgs")
+        actionIntent = intent.extras?.getString("action")
 
         if (permissionsIntent != null) {
             setSavedPermissions(permissionsIntent as ArrayList<String>)
@@ -180,6 +182,7 @@ class PermissionsSelectionActivity : AppCompatActivity() {
         savedPermissions.clear()
         appsIntent = null
         pkgsIntent = null
+        actionIntent = null
     }
 
     private fun manageBackNavigation() {
@@ -193,10 +196,14 @@ class PermissionsSelectionActivity : AppCompatActivity() {
             intent.putExtra("apps", ArrayList(appsIntent as ArrayList<String>))
             intent.putExtra("pkgs", ArrayList(pkgsIntent as ArrayList<String>))
         }
+        if (actionIntent != null) {
+            intent.putExtra("action", actionIntent)
+        }
 
         savedPermissions.clear()
         appsIntent = null
         pkgsIntent = null
+        actionIntent = null
 
         startActivity(intent)
         finish()

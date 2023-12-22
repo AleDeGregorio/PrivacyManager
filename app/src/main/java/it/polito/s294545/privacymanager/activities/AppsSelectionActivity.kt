@@ -36,6 +36,7 @@ class AppsSelectionActivity : AppCompatActivity() {
 
     private var appsIntent: Any? = null
     private var pkgsIntent: Any? = null
+    private var actionIntent: String? = null
 
     private var listAppsInfo = mapOf<String, Pair<Drawable, String>>()
 
@@ -91,6 +92,7 @@ class AppsSelectionActivity : AppCompatActivity() {
 
         appsIntent = intent.extras?.get("apps")
         pkgsIntent = intent.extras?.get("pkgs")
+        actionIntent = intent.extras?.getString("action")
 
         if (appsIntent != null && pkgsIntent != null) {
             savedApps.addAll(appsIntent as ArrayList<String>)
@@ -132,6 +134,10 @@ class AppsSelectionActivity : AppCompatActivity() {
                 intent.putExtra("permissions", listPermissions)
                 intent.putExtra("apps", ArrayList(savedApps))
                 intent.putExtra("pkgs", ArrayList(savedPkg))
+
+                if (actionIntent != null) {
+                    intent.putExtra("action", actionIntent)
+                }
 
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 startActivity(intent)
@@ -198,6 +204,7 @@ class AppsSelectionActivity : AppCompatActivity() {
         savedPkg.clear()
         appsIntent = null
         pkgsIntent = null
+        actionIntent = null
     }
 
     private fun manageBackNavigation() {
@@ -209,12 +216,16 @@ class AppsSelectionActivity : AppCompatActivity() {
             intent.putExtra("apps", ArrayList(appsIntent as ArrayList<String>))
             intent.putExtra("pkgs", ArrayList(pkgsIntent as ArrayList<String>))
         }
+        if (actionIntent != null) {
+            intent.putExtra("action", actionIntent)
+        }
 
         listPermissions!!.clear()
         savedApps.clear()
         savedPkg.clear()
         appsIntent = null
         pkgsIntent = null
+        actionIntent = null
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(intent)
