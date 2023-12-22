@@ -26,6 +26,7 @@ class PermissionsSelectionActivity : AppCompatActivity() {
     private var permissionsIntent: Any? = null
     private var appsIntent: Any? = null
     private var pkgsIntent: Any? = null
+    private var conditionsIntent: String? = null
     private var actionIntent: String? = null
 
     private val savedPermissions = mutableListOf<String>()
@@ -98,6 +99,7 @@ class PermissionsSelectionActivity : AppCompatActivity() {
         appsIntent = intent.extras?.get("apps")
         pkgsIntent = intent.extras?.get("pkgs")
         actionIntent = intent.extras?.getString("action")
+        conditionsIntent = intent.extras?.getString("rule")
 
         if (permissionsIntent != null) {
             setSavedPermissions(permissionsIntent as ArrayList<String>)
@@ -182,6 +184,7 @@ class PermissionsSelectionActivity : AppCompatActivity() {
         savedPermissions.clear()
         appsIntent = null
         pkgsIntent = null
+        conditionsIntent = null
         actionIntent = null
     }
 
@@ -196,6 +199,9 @@ class PermissionsSelectionActivity : AppCompatActivity() {
             intent.putExtra("apps", ArrayList(appsIntent as ArrayList<String>))
             intent.putExtra("pkgs", ArrayList(pkgsIntent as ArrayList<String>))
         }
+        if (conditionsIntent != null) {
+            intent.putExtra("rule", conditionsIntent)
+        }
         if (actionIntent != null) {
             intent.putExtra("action", actionIntent)
         }
@@ -203,6 +209,7 @@ class PermissionsSelectionActivity : AppCompatActivity() {
         savedPermissions.clear()
         appsIntent = null
         pkgsIntent = null
+        conditionsIntent = null
         actionIntent = null
 
         startActivity(intent)

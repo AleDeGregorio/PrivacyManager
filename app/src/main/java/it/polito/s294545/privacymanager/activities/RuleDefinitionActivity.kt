@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -63,17 +64,23 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
     private lateinit var error : TextView
 
+    private var permissionsIntent: Any? = null
+    private var permissions: ArrayList<String>? = null
+    private var appsIntent: Any? = null
+    private var pkgsIntent: Any? = null
+    private var actionIntent: String? = null
+
     // Rule parameters
-    private lateinit var permissions : ArrayList<String>
-    private var apps : List<String>? = null
-    private var packageNames : List<String>? = null
+    //private lateinit var permissions : ArrayList<String>
+    //private var apps : List<String>? = null
+    //private var packageNames : List<String>? = null
     private var timeSlot : TimeSlot? = null
     private var positions : List<CustomAddress>? = null
     private var networks : List<String>? = null
     private var bt : List<String>? = null
     private var battery : Int? = null
-    private var action : String? = null
-    private var name : String? = null
+    //private var action : String? = null
+    //private var name : String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,8 +115,16 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         if (editRule != null) {
             retrievedRule = Json.decodeFromString(editRule.toString())
 
-            name = retrievedRule!!.name
+            //name = retrievedRule!!.name
         }
+
+        permissionsIntent = intent.extras?.get("permissions")
+        permissions = permissionsIntent as ArrayList<String>
+
+        appsIntent = intent.extras?.get("apps")
+        pkgsIntent = intent.extras?.get("pkgs")
+
+        actionIntent = intent.extras?.getString("action")
 
         // Define rule parameters fragments
         viewPager = findViewById(R.id.view_pager)
@@ -117,41 +132,41 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         val dotsIndicator = findViewById<DotsIndicator>(R.id.dots_indicator)
 
         fragmentList = mutableListOf(
-            AppsSelectionFragment(), TimeSlotSelectionFragment(), PositionsSelectionFragment(),
+            TimeSlotSelectionFragment(), PositionsSelectionFragment(),
             NetworkSelectionFragment(), BluetoothSelectionFragment(), BatterySelectionFragment()
         )
-
-        permissions = intent.extras?.get("permissions") as ArrayList<String>
-
-        if (permissions.contains("notifications")) {
-            action = "obscure_notification"
-            fragmentList.add(ActionWithNotificationSelectionFragment())
-        }
-        else {
-            action = "signal_app"
-            fragmentList.add(ActionNoNotificationSelectionFragment())
-        }
 
         val adapter = FormPagerAdapter(this, fragmentList)
 
         viewPager.adapter = adapter
         dotsIndicator.attachTo(viewPager)
 
-        // Initialize list of apps
-        getApps()
-
         // Manage forward button
         val forwardButton = findViewById<Button>(R.id.forward_button)
+        val backButton = findViewById<Button>(R.id.back_button)
+        // First fragment -> go back
+        // Manage back button
+        backButton.text = resources.getString(R.string.cancel_button)
+        backButton.setOnClickListener { manageBackNavigation() }
+
         // Change button based on current fragment
         // Register a callback to listen for page changes
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 // Update button based on the current Fragment
+                // First fragment -> go back
+                if (position == 0) {
+                    backButton.text = resources.getString(R.string.cancel_button)
+                    backButton.setOnClickListener { manageBackNavigation() }
+                }
                 // Last fragment -> save rule
-                if (position == fragmentList.lastIndex) {
+                else if (position == fragmentList.lastIndex) {
                     forwardButton.text = resources.getString(R.string.save)
+                    backButton.text = resources.getString(R.string.back_button)
+                    backButton.setOnClickListener { navigateToPreviousFragment() }
 
                     // Check if we are editing a rule
+                    /*
                     if (editRule != null) {
                         forwardButton.setOnClickListener {
                             if (apps.isNullOrEmpty()) {
@@ -165,22 +180,24 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
                             }
                         }
                     }
+
                     // Or it is a new rule
                     else {
-                        forwardButton.setOnClickListener { v -> showPopupSaveRule(v) }
+
                     }
+
+                     */
+                    forwardButton.setOnClickListener { v -> showPopupSaveRule(v) }
                 }
                 // Other fragments -> go to next fragment
                 else {
                     forwardButton.text = resources.getString(R.string.forward_button)
                     forwardButton.setOnClickListener { navigateToNextFragment() }
+                    backButton.text = resources.getString(R.string.back_button)
+                    backButton.setOnClickListener { navigateToPreviousFragment() }
                 }
             }
         })
-
-        // Manage back button
-        val backButton = findViewById<Button>(R.id.back_button)
-        backButton.setOnClickListener { navigateToPreviousFragment() }
     }
 
     override fun onDestroy() {
@@ -190,17 +207,23 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
     }
 
     private fun clearAll() {
+        permissionsIntent = null
+        appsIntent = null
+        pkgsIntent = null
+        permissions!!.clear()
+        actionIntent = null
+
         retrievedRule = null
 
-        apps = null
-        packageNames = null
+        //apps = null
+        //packageNames = null
         timeSlot = null
         positions = null
         networks = null
         bt = null
         battery = null
-        action = null
-        name = null
+        //action = null
+        //name = null
         listBluetooth.clear()
 
         savedApps.clear()
@@ -215,66 +238,8 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         savedActionWithNotification = "obscure_notification"
     }
 
-    private fun getApps() {
-        // Specify the permissions to check
-        val permissionsToCheck = mutableListOf<String>()
-
-        for (p in permissions) {
-            when (p) {
-                "notifications" -> permissionsToCheck.add("android.permission.POST_NOTIFICATIONS")
-                "location" -> permissionsToCheck.addAll(listOf("android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"))
-                "calendar" -> permissionsToCheck.add("android.permission.WRITE_CALENDAR")
-                "camera" -> permissionsToCheck.add("android.permission.CAMERA")
-                //"sms" -> permissionsToCheck.add("android.permission.SEND_SMS")
-            }
-        }
-
-        // Get a reference to the PackageManager
-        val packageManager = packageManager
-
-        // Get a list of all installed apps
-        val installedApps = packageManager.getInstalledPackages(PackageManager.GET_PERMISSIONS)
-
-        // Key = app name, value = icon, package name
-        val appsAndIcons = mutableMapOf<String, Pair<Drawable, String>>()
-
-        // Iterate through the installed apps
-        for (packageInfo in installedApps) {
-            val requestedPermissions = packageInfo.requestedPermissions
-            val packageName = packageInfo.packageName
-
-            // Check if the app has the specific permission (excluding system apps and this app)
-            if (requestedPermissions != null &&
-                !(packageName.startsWith("com.android", true) ||
-                        //packageName.startsWith("com.google.android") ||
-                        packageName.startsWith("it.polito.s294545"))) {
-                for (permission in requestedPermissions) {
-                    if (permissionsToCheck.contains(permission)) {
-                        val tmpName = packageInfo.applicationInfo.loadLabel(packageManager).toString()
-                        val appName = tmpName.substring(0, 1).uppercase() + tmpName.substring(1)
-                        val appIcon = packageInfo.applicationInfo.loadIcon(packageManager)
-
-                        appsAndIcons[appName] = Pair(appIcon, packageName)
-                    }
-                }
-            }
-        }
-
-        val orderedAppsAndIcons = appsAndIcons.toSortedMap()
-
-        listAppsInfo = orderedAppsAndIcons
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     private fun showPopupSaveRule(view: View) {
-        if (apps.isNullOrEmpty()) {
-            viewPager.currentItem = fragmentList.indexOf(AppsSelectionFragment())
-
-            error.text = resources.getString(R.string.error_app)
-            error.visibility = VISIBLE
-
-            return
-        }
         // Check if inserted time slot is correct
         // Signal error on time slot if one of this condition is verified (considering a defined time slot):
         // - no day defined
@@ -316,6 +281,32 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
             return
         }
 
+        // NAVIGATE TO PARAMETERS DEFINITION
+        val intent = Intent(this, ParametersDefinitionActivity::class.java)
+
+        intent.putExtra("permissions", permissions)
+        intent.putExtra("action", actionIntent)
+        intent.putExtra("apps", ArrayList(appsIntent as ArrayList<String>))
+        intent.putExtra("pkgs", ArrayList(pkgsIntent as ArrayList<String>))
+
+        // Save the inserted conditions in a Rule object
+        val rule = Rule()
+        rule.timeSlot = timeSlot
+        rule.positions = positions?.filter { it.latitude != null }
+        rule.networks = networks
+        rule.bt = bt
+        rule.battery = battery
+
+        // Convert rule object to JSON string
+        val ruleJSON = Json.encodeToString(Rule.serializer(), rule)
+
+        intent.putExtra("rule", ruleJSON)
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
+        finish()
+
+        /*
         val (popupView, popupWindow) = managePopup(view, R.layout.popup_save_rule)
 
         // Initialize the elements of our window, install the handler
@@ -363,21 +354,22 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
             popupWindow.dismiss()
             true
         }
+        */
     }
 
     private fun saveRule() {
         // Save the inserted rule in a Rule object
         val rule = Rule()
-        rule.name = name
+        //rule.name = name
         rule.permissions = permissions
-        rule.apps = apps
-        rule.packageNames = packageNames
+        //rule.apps = apps
+        //rule.packageNames = packageNames
         rule.timeSlot = timeSlot
         rule.positions = positions?.filter { it.latitude != null }
         rule.networks = networks
         rule.bt = bt
         rule.battery = battery
-        rule.action = action
+        //rule.action = action
 
         // Convert rule object to JSON string
         val ruleJSON = Json.encodeToString(Rule.serializer(), rule)
@@ -407,14 +399,26 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
     }
 
     private fun manageBackNavigation() {
-        clearAll()
 
-        val intent = Intent(this@RuleDefinitionActivity, PermissionsSelectionActivity::class.java)
+        val intent = Intent(this, ParametersDefinitionActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+
+        intent.putExtra("permissions", ArrayList(permissions!!))
+
+        if (appsIntent != null) {
+            intent.putExtra("apps", ArrayList(appsIntent as ArrayList<String>))
+            intent.putExtra("pkgs", ArrayList(pkgsIntent as ArrayList<String>))
+        }
+
+        if (actionIntent != null) {
+            intent.putExtra("action", actionIntent)
+        }
 
         if (retrievedRule != null) {
             intent.putExtra("rule", Json.encodeToString(retrievedRule))
         }
+
+        clearAll()
 
         startActivity(intent)
         finish()
@@ -423,16 +427,6 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
     // When entering data in fragments, save them in activity
     override fun onParameterEntered(parameter: String, data: Any?) {
         when (parameter) {
-            "apps" -> {
-                apps = data as List<String>
-
-                if (error.isVisible) {
-                    error.visibility = GONE
-                }
-            }
-            "packageNames" -> {
-                packageNames = data as List<String>
-            }
             "time_slot" -> {
                 timeSlot = data as TimeSlot?
 
@@ -451,9 +445,6 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
             }
             "battery" -> {
                 battery = data as Int?
-            }
-            "action" -> {
-                action = data as String
             }
         }
     }

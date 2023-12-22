@@ -13,13 +13,17 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.customDataClasses.Rule
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.listAppsInfo
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 class ParametersDefinitionActivity : AppCompatActivity() {
 
     private lateinit var savedPermissions: ArrayList<String>
     private lateinit var savedApps: ArrayList<String>
     private lateinit var savedPkgs: ArrayList<String>
+    private lateinit var savedConditions: Rule
     private lateinit var savedAction: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,6 +98,15 @@ class ParametersDefinitionActivity : AppCompatActivity() {
             actionButton.setIconTintResource(R.color.white)
         }
 
+        // Conditions
+        val conditionsIntent = intent.extras?.get("rule")
+
+        if (conditionsIntent != null) {
+            savedConditions = Json.decodeFromString(conditionsIntent.toString())
+
+            conditionsButton.setBackgroundColor(resources.getColor(R.color.primary))
+        }
+
         // Action
         val actionIntent = intent.extras?.getString("action")
 
@@ -121,6 +134,9 @@ class ParametersDefinitionActivity : AppCompatActivity() {
                 intent.putExtra("apps", savedApps)
                 intent.putExtra("pkgs", savedPkgs)
             }
+            if (conditionsIntent != null) {
+                intent.putExtra("rule", conditionsIntent.toString())
+            }
             if (actionIntent != null) {
                 intent.putExtra("action", savedAction)
             }
@@ -140,6 +156,31 @@ class ParametersDefinitionActivity : AppCompatActivity() {
                     intent.putExtra("apps", savedApps)
                     intent.putExtra("pkgs", savedPkgs)
                 }
+                if (conditionsIntent != null) {
+                    intent.putExtra("rule", conditionsIntent.toString())
+                }
+                if (actionIntent != null) {
+                    intent.putExtra("action", savedAction)
+                }
+
+                startActivity(intent)
+                finish()
+            }
+        }
+
+        // Conditions
+        if (appsIntent != null) {
+            conditionsButton.setOnClickListener {
+                val intent = Intent(this, RuleDefinitionActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+
+                intent.putExtra("permissions", ArrayList(savedPermissions))
+                intent.putExtra("apps", savedApps)
+                intent.putExtra("pkgs", savedPkgs)
+
+                if (conditionsIntent != null) {
+                    intent.putExtra("rule", conditionsIntent.toString())
+                }
                 if (actionIntent != null) {
                     intent.putExtra("action", savedAction)
                 }
@@ -154,11 +195,13 @@ class ParametersDefinitionActivity : AppCompatActivity() {
             actionButton.setOnClickListener {
                 val intent = Intent(this, ActionSelectionActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                intent.putExtra("permissions", ArrayList(savedPermissions))
 
-                if (appsIntent != null) {
-                    intent.putExtra("apps", savedApps)
-                    intent.putExtra("pkgs", savedPkgs)
+                intent.putExtra("permissions", ArrayList(savedPermissions))
+                intent.putExtra("apps", savedApps)
+                intent.putExtra("pkgs", savedPkgs)
+
+                if (conditionsIntent != null) {
+                    intent.putExtra("rule", conditionsIntent.toString())
                 }
                 if (actionIntent != null) {
                     intent.putExtra("action", savedAction)

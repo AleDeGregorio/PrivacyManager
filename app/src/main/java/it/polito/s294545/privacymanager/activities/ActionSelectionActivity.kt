@@ -21,6 +21,8 @@ class ActionSelectionActivity : AppCompatActivity() {
     private var appsIntent: Any? = null
     private var pkgsIntent: Any? = null
 
+    private var conditionsIntent: String? = null
+
     private var actionIntent: String? = null
 
     private var savedAction = "signal_app"
@@ -61,6 +63,7 @@ class ActionSelectionActivity : AppCompatActivity() {
 
         appsIntent = intent.extras?.get("apps")
         pkgsIntent = intent.extras?.get("pkgs")
+        conditionsIntent = intent.extras?.getString("rule")
 
         if (permissions!!.contains("notifications")) {
             title.text = resources.getText(R.string.info_action_notification_selection)
@@ -142,6 +145,10 @@ class ActionSelectionActivity : AppCompatActivity() {
             intent.putExtra("apps", ArrayList(appsIntent as ArrayList<String>))
             intent.putExtra("pkgs", ArrayList(pkgsIntent as ArrayList<String>))
 
+            if (conditionsIntent != null) {
+                intent.putExtra("rule", conditionsIntent)
+            }
+
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             startActivity(intent)
             finish()
@@ -154,6 +161,7 @@ class ActionSelectionActivity : AppCompatActivity() {
         permissionsIntent = null
         appsIntent = null
         pkgsIntent = null
+        conditionsIntent = null
         permissions!!.clear()
         actionIntent = null
         savedAction = "signal_app"
@@ -169,7 +177,9 @@ class ActionSelectionActivity : AppCompatActivity() {
             intent.putExtra("apps", ArrayList(appsIntent as ArrayList<String>))
             intent.putExtra("pkgs", ArrayList(pkgsIntent as ArrayList<String>))
         }
-
+        if (conditionsIntent != null) {
+            intent.putExtra("rule", conditionsIntent)
+        }
         if (actionIntent != null) {
             intent.putExtra("action", actionIntent)
         }
@@ -177,6 +187,7 @@ class ActionSelectionActivity : AppCompatActivity() {
         permissionsIntent = null
         appsIntent = null
         pkgsIntent = null
+        conditionsIntent = null
         permissions!!.clear()
         actionIntent = null
         savedAction = "signal_app"
