@@ -187,7 +187,7 @@ class PermissionsSelectionActivity : AppCompatActivity() {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
         if (permissionsIntent != null) {
-            intent.putExtra("permissions", ArrayList(savedPermissions))
+            intent.putExtra("permissions", ArrayList(permissionsIntent as ArrayList<String>))
         }
         if (appsIntent != null && pkgsIntent != null) {
             intent.putExtra("apps", ArrayList(appsIntent as ArrayList<String>))
