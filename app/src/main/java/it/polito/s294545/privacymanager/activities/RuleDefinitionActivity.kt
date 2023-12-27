@@ -71,16 +71,11 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
     private var actionIntent: String? = null
 
     // Rule parameters
-    //private lateinit var permissions : ArrayList<String>
-    //private var apps : List<String>? = null
-    //private var packageNames : List<String>? = null
     private var timeSlot : TimeSlot? = null
     private var positions : List<CustomAddress>? = null
     private var networks : List<String>? = null
     private var bt : List<String>? = null
     private var battery : Int? = null
-    //private var action : String? = null
-    //private var name : String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,8 +109,6 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         // Check if we are editing a rule
         if (editRule != null) {
             retrievedRule = Json.decodeFromString(editRule.toString())
-
-            //name = retrievedRule!!.name
         }
 
         permissionsIntent = intent.extras?.get("permissions")
@@ -167,28 +160,6 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
                     backButton.text = resources.getString(R.string.back_button)
                     backButton.setOnClickListener { navigateToPreviousFragment() }
 
-                    // Check if we are editing a rule
-                    /*
-                    if (editRule != null) {
-                        forwardButton.setOnClickListener {
-                            if (apps.isNullOrEmpty()) {
-                                viewPager.currentItem = fragmentList.indexOf(AppsSelectionFragment())
-
-                                error.text = resources.getString(R.string.error_app)
-                                error.visibility = VISIBLE
-                            }
-                            else {
-                                saveRule()
-                            }
-                        }
-                    }
-
-                    // Or it is a new rule
-                    else {
-
-                    }
-
-                     */
                     forwardButton.setOnClickListener { v -> showPopupSaveRule(v) }
                 }
                 // Other fragments -> go to next fragment
@@ -240,6 +211,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         savedActionWithNotification = "obscure_notification"
     }
 
+    // It is no longer a popup, it just navigates back to parameters definition activity
     @SuppressLint("ClickableViewAccessibility")
     private fun showPopupSaveRule(view: View) {
         // Check if inserted time slot is correct
@@ -304,85 +276,6 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
         intent.putExtra("rule", ruleJSON)
 
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        startActivity(intent)
-        finish()
-
-        /*
-        val (popupView, popupWindow) = managePopup(view, R.layout.popup_save_rule)
-
-        // Initialize the elements of our window, install the handler
-        val ruleName = popupView.findViewById<TextInputEditText>(R.id.edit_rule_name)
-        val buttonConfirm = popupView.findViewById<Button>(R.id.confirm_save_button)
-        val buttonCancel = popupView.findViewById<Button>(R.id.cancel_save_button)
-        val errorName = popupView.findViewById<TextView>(R.id.error_name)
-
-        // Rule name
-        ruleName.doOnTextChanged { text, start, before, count ->
-            errorName.visibility = GONE
-
-            if (!text.isNullOrEmpty()) {
-                buttonConfirm.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.primary))
-                buttonConfirm.isClickable = true
-            }
-            else {
-                buttonConfirm.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.dark_grey))
-                buttonConfirm.isClickable = false
-            }
-        }
-
-        // Save rule
-        buttonConfirm.setOnClickListener {
-            if (!ruleName.text.isNullOrEmpty()) {
-                name = ruleName.text.toString().trim()
-
-                if (PreferencesManager.ruleNameAlreadyExists(this, name!!)) {
-                    errorName.visibility = VISIBLE
-                }
-                else {
-                    saveRule()
-                }
-            }
-        }
-
-        // Dismiss window
-        buttonCancel.setOnClickListener {
-            popupWindow.dismiss()
-        }
-
-
-        // Handler for clicking on the inactive zone of the window
-        popupView.setOnTouchListener { v, event -> // Close the window when clicked
-            popupWindow.dismiss()
-            true
-        }
-        */
-    }
-
-    private fun saveRule() {
-        // Save the inserted rule in a Rule object
-        val rule = Rule()
-        //rule.name = name
-        rule.permissions = permissions
-        //rule.apps = apps
-        //rule.packageNames = packageNames
-        rule.timeSlot = timeSlot
-        rule.positions = positions?.filter { it.latitude != null }
-        rule.networks = networks
-        rule.bt = bt
-        rule.battery = battery
-        //rule.action = action
-
-        // Convert rule object to JSON string
-        val ruleJSON = Json.encodeToString(Rule.serializer(), rule)
-
-        // Save privacy rule in shared preferences
-        PreferencesManager.savePrivacyRule(this, rule.name!!, ruleJSON)
-
-        clearAll()
-
-        // Navigate back to homepage
-        val intent = Intent(this@RuleDefinitionActivity, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(intent)
         finish()

@@ -1,30 +1,47 @@
 package it.polito.s294545.privacymanager.activities
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.Button
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doOnTextChanged
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.google.android.material.textfield.TextInputEditText
 import it.polito.s294545.privacymanager.R
 import it.polito.s294545.privacymanager.customDataClasses.Rule
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.listAppsInfo
+import it.polito.s294545.privacymanager.utilities.PreferencesManager
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 class ParametersDefinitionActivity : AppCompatActivity() {
+
+    private var permissionsIntent: Any? = null
+    private var appsIntent: Any? = null
+    private var pkgsIntent: Any? = null
+    private var conditionsIntent: Any? = null
+    private var actionIntent: String? = null
 
     private lateinit var savedPermissions: ArrayList<String>
     private lateinit var savedApps: ArrayList<String>
     private lateinit var savedPkgs: ArrayList<String>
     private lateinit var savedConditions: Rule
     private lateinit var savedAction: String
+
+    private var name: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +78,7 @@ class ParametersDefinitionActivity : AppCompatActivity() {
 
         // ----- Manage all intents -----
         // Permissions
-        val permissionsIntent = intent.extras?.get("permissions")
+        permissionsIntent = intent.extras?.get("permissions")
 
         if (permissionsIntent != null) {
             savedPermissions = permissionsIntent as ArrayList<String>
@@ -76,8 +93,8 @@ class ParametersDefinitionActivity : AppCompatActivity() {
         }
 
         // Apps
-        val appsIntent = intent.extras?.get("apps")
-        val pkgsIntent = intent.extras?.get("pkgs")
+        appsIntent = intent.extras?.get("apps")
+        pkgsIntent = intent.extras?.get("pkgs")
 
         if (appsIntent != null && pkgsIntent != null) {
             savedApps = appsIntent as ArrayList<String>
@@ -99,7 +116,7 @@ class ParametersDefinitionActivity : AppCompatActivity() {
         }
 
         // Conditions
-        val conditionsIntent = intent.extras?.get("rule")
+        conditionsIntent = intent.extras?.get("rule")
 
         if (conditionsIntent != null) {
             savedConditions = Json.decodeFromString(conditionsIntent.toString())
@@ -108,10 +125,10 @@ class ParametersDefinitionActivity : AppCompatActivity() {
         }
 
         // Action
-        val actionIntent = intent.extras?.getString("action")
+        actionIntent = intent.extras?.getString("action")
 
         if (actionIntent != null) {
-            savedAction = actionIntent
+            savedAction = actionIntent as String
             actionButton.setBackgroundColor(resources.getColor(R.color.primary))
 
             if (appsIntent != null) {
@@ -211,16 +228,115 @@ class ParametersDefinitionActivity : AppCompatActivity() {
                 finish()
             }
         }
+
+        // ----- Save the rule -----
+        if (actionIntent != null) {
+            saveButton.setOnClickListener { v -> showPopupSaveRule(v) }
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun showPopupSaveRule(view: View) {
+        val (popupView, popupWindow) = managePopup(view, R.layout.popup_save_rule)
+
+        // Initialize the elements of our window, install the handler
+        val ruleName = popupView.findViewById<TextInputEditText>(R.id.edit_rule_name)
+        val buttonConfirm = popupView.findViewById<Button>(R.id.confirm_save_button)
+        val buttonCancel = popupView.findViewById<Button>(R.id.cancel_save_button)
+        val errorName = popupView.findViewById<TextView>(R.id.error_name)
+
+        // Rule name
+        ruleName.doOnTextChanged { text, start, before, count ->
+            errorName.visibility = GONE
+
+            if (!text.isNullOrEmpty()) {
+                buttonConfirm.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.primary))
+                buttonConfirm.isClickable = true
+            }
+            else {
+                buttonConfirm.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.dark_grey))
+                buttonConfirm.isClickable = false
+            }
+        }
+
+        // Save rule
+        buttonConfirm.setOnClickListener {
+            if (!ruleName.text.isNullOrEmpty()) {
+                name = ruleName.text.toString().trim()
+
+                if (PreferencesManager.ruleNameAlreadyExists(this, name!!)) {
+                    errorName.visibility = VISIBLE
+                }
+                else {
+                    saveRule()
+                }
+            }
+        }
+
+        // Dismiss window
+        buttonCancel.setOnClickListener {
+            popupWindow.dismiss()
+        }
+
+
+        // Handler for clicking on the inactive zone of the window
+        popupView.setOnTouchListener { v, event -> // Close the window when clicked
+            popupWindow.dismiss()
+            true
+        }
+    }
+
+    private fun saveRule() {
+        // Save the inserted rule in a Rule object
+        val rule = Rule()
+
+        rule.name = name
+        rule.permissions = savedPermissions
+        rule.apps = savedApps
+        rule.packageNames = savedApps
+
+        if (conditionsIntent != null) {
+            rule.timeSlot = savedConditions.timeSlot
+            rule.positions = savedConditions.positions?.filter { it.latitude != null }
+            rule.networks = savedConditions.networks
+            rule.bt = savedConditions.bt
+            rule.battery = savedConditions.battery
+        }
+
+        rule.action = savedAction
+
+        // Convert rule object to JSON string
+        val ruleJSON = Json.encodeToString(Rule.serializer(), rule)
+
+        // Save privacy rule in shared preferences
+        PreferencesManager.savePrivacyRule(this, rule.name!!, ruleJSON)
+
+        clearAll()
+
+        // Navigate back to homepage
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
+        finish()
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
-        //savedPermissions.clear()
+        clearAll()
+    }
+
+    private fun clearAll() {
+        permissionsIntent = null
+        appsIntent = null
+        pkgsIntent = null
+        conditionsIntent = null
+        actionIntent = null
+        name = null
     }
 
     private fun manageBackNavigation() {
-        //savedPermissions.clear()
+        clearAll()
 
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
