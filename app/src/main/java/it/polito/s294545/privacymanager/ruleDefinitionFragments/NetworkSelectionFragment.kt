@@ -153,6 +153,7 @@ class NetworkSelectionFragment : Fragment() {
 class NetworksSelectionViewHolder(v: View) : RecyclerView.ViewHolder(v) {
     val networkName = v.findViewById<TextInputEditText>(R.id.edit_network)
     val confirmNetwork = v.findViewById<FloatingActionButton>(R.id.confirm_network_button)
+    val editNetwork = v.findViewById<FloatingActionButton>(R.id.edit_network_button)
     val deleteNetworkButton = v.findViewById<FloatingActionButton>(R.id.delete_network_button)
 }
 
@@ -177,6 +178,9 @@ class NetworksSelectionAdapter(
         // Check if a network has already been saved
         if (savedNetworks[position] != "") {
             holder.networkName.setText(savedNetworks[position])
+
+            holder.networkName.isEnabled = false
+            holder.editNetwork.visibility = View.VISIBLE
             holder.confirmNetwork.visibility = GONE
         }
         else {
@@ -218,11 +222,35 @@ class NetworksSelectionAdapter(
                 holder.confirmNetwork.visibility = GONE
                 addNetworkButton.isClickable = true
                 addNetworkButton.setBackgroundColor(resources.getColor(R.color.primary))
+
+                // It is also shown the edit position button
+                holder.editNetwork.visibility = View.VISIBLE
+
+                // The text input is now not editable
+                holder.networkName.isEnabled = false
             }
+        }
+
+        // Edit inserted network
+        holder.editNetwork.setOnClickListener {
+            // Make the text input available again
+            holder.networkName.isEnabled = true
+
+            holder.editNetwork.visibility = GONE
+            holder.confirmNetwork.visibility = View.VISIBLE
+            holder.confirmNetwork.backgroundTintList = ColorStateList.valueOf(resources.getColor(
+                R.color.primary
+            ))
+
+            addNetworkButton.isClickable = false
+            addNetworkButton.setBackgroundColor(resources.getColor(R.color.dark_grey))
         }
 
         // Delete inserted position
         holder.deleteNetworkButton.setOnClickListener {
+            holder.networkName.isEnabled = true
+            holder.editNetwork.visibility = GONE
+
             savedNetworks.removeAt(holder.adapterPosition)
             parameterListener?.onParameterEntered("networks", savedNetworks + savedMobile)
             notifyItemRemoved(position)

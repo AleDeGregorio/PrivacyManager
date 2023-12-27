@@ -241,6 +241,9 @@ class PositionsSelectionAdapter(
 
         // Delete inserted position
         holder.deletePositionButton.setOnClickListener {
+            holder.positionName.isEnabled = true
+            holder.editPosition.visibility = GONE
+
             savedPositions.removeAt(holder.adapterPosition)
             parameterListener?.onParameterEntered("positions", savedPositions)
             notifyItemRemoved(position)
