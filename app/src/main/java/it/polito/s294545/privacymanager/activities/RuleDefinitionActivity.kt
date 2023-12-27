@@ -156,6 +156,8 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
                 // Update button based on the current Fragment
                 // First fragment -> go back
                 if (position == 0) {
+                    forwardButton.text = resources.getString(R.string.forward_button)
+                    forwardButton.setOnClickListener { navigateToNextFragment() }
                     backButton.text = resources.getString(R.string.cancel_button)
                     backButton.setOnClickListener { manageBackNavigation() }
                 }
