@@ -88,12 +88,15 @@ class PermissionsSelectionActivity : AppCompatActivity() {
         forwardButton = findViewById(R.id.forward_button)
 
         // Check if we are editing a rule
+        /*
         val editRule = intent.extras?.get("rule")
         if (editRule != null) {
             val retrievedRule = Json.decodeFromString<Rule>(editRule.toString())
 
             setSavedPermissions(retrievedRule.permissions!!)
         }
+
+         */
 
         permissionsIntent = intent.extras?.get("permissions")
         appsIntent = intent.extras?.get("apps")
@@ -111,9 +114,12 @@ class PermissionsSelectionActivity : AppCompatActivity() {
             if (savedPermissions.isNotEmpty()) {
                 val intent = Intent(this, ParametersDefinitionActivity::class.java)
 
+                /*
                 if (editRule != null) {
                     intent.putExtra("rule", editRule.toString())
                 }
+
+                 */
 
                 intent.putExtra("permissions", ArrayList(savedPermissions))
 
