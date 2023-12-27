@@ -15,6 +15,8 @@ import it.polito.s294545.privacymanager.R
 
 class ActionSelectionActivity : AppCompatActivity() {
 
+    private var nameIntent: String? = null
+
     private var permissionsIntent: Any? = null
     private var permissions: ArrayList<String>? = null
 
@@ -57,6 +59,8 @@ class ActionSelectionActivity : AppCompatActivity() {
         val title = findViewById<TextView>(R.id.infoTextView)
         val signalAppRadio = findViewById<RadioButton>(R.id.signal_app)
         val closeAppRadio = findViewById<RadioButton>(R.id.close_app)
+
+        nameIntent = intent.extras?.getString("name")
 
         permissionsIntent = intent.extras?.get("permissions")
         permissions = permissionsIntent as ArrayList<String>
@@ -133,12 +137,9 @@ class ActionSelectionActivity : AppCompatActivity() {
         saveButton.setOnClickListener {
             val intent = Intent(this, ParametersDefinitionActivity::class.java)
 
-            /*
-            if (editRule != null) {
-                intent.putExtra("rule", editRule.toString())
+            if (nameIntent != null) {
+                intent.putExtra("name", nameIntent)
             }
-
-             */
 
             intent.putExtra("permissions", permissions)
             intent.putExtra("action", savedAction)
@@ -158,6 +159,7 @@ class ActionSelectionActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
 
+        nameIntent = null
         permissionsIntent = null
         appsIntent = null
         pkgsIntent = null
@@ -170,6 +172,10 @@ class ActionSelectionActivity : AppCompatActivity() {
     private fun manageBackNavigation() {
         val intent = Intent(this, ParametersDefinitionActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+
+        if (nameIntent != null) {
+            intent.putExtra("name", nameIntent)
+        }
 
         intent.putExtra("permissions", ArrayList(permissions!!))
 
@@ -184,6 +190,7 @@ class ActionSelectionActivity : AppCompatActivity() {
             intent.putExtra("action", actionIntent)
         }
 
+        nameIntent = null
         permissionsIntent = null
         appsIntent = null
         pkgsIntent = null

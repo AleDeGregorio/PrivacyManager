@@ -32,6 +32,8 @@ import it.polito.s294545.privacymanager.ruleDefinitionFragments.savedPkg
 
 class AppsSelectionActivity : AppCompatActivity() {
 
+    private var nameIntent: String? = null
+
     private var listPermissions: ArrayList<String>? = null
 
     private var appsIntent: Any? = null
@@ -91,6 +93,7 @@ class AppsSelectionActivity : AppCompatActivity() {
             retrievedRule!!.apps = null
         }
 
+        nameIntent = intent.extras?.getString("name")
         appsIntent = intent.extras?.get("apps")
         pkgsIntent = intent.extras?.get("pkgs")
         conditionsIntent = intent.extras?.getString("rule")
@@ -132,6 +135,10 @@ class AppsSelectionActivity : AppCompatActivity() {
         saveButton.setOnClickListener {
             if (savedApps.isNotEmpty()) {
                 val intent = Intent(this, ParametersDefinitionActivity::class.java)
+
+                if (nameIntent != null) {
+                    intent.putExtra("name", nameIntent)
+                }
 
                 intent.putExtra("permissions", listPermissions)
                 intent.putExtra("apps", ArrayList(savedApps))
@@ -204,6 +211,7 @@ class AppsSelectionActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
 
+        nameIntent = null
         listPermissions!!.clear()
         savedApps.clear()
         savedPkg.clear()
@@ -215,6 +223,10 @@ class AppsSelectionActivity : AppCompatActivity() {
 
     private fun manageBackNavigation() {
         val intent = Intent(this, ParametersDefinitionActivity::class.java)
+
+        if (nameIntent != null) {
+            intent.putExtra("name", nameIntent)
+        }
 
         intent.putExtra("permissions", ArrayList(listPermissions!!))
 
@@ -229,6 +241,7 @@ class AppsSelectionActivity : AppCompatActivity() {
             intent.putExtra("action", actionIntent)
         }
 
+        nameIntent = null
         listPermissions!!.clear()
         savedApps.clear()
         savedPkg.clear()

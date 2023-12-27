@@ -195,8 +195,27 @@ class SavedRulesAdapter(private val listRules: MutableList<Rule>, context: Conte
 
         // Manage edit rule
         holder.editRuleButton.setOnClickListener {
-            val intent = Intent(context, PermissionsSelectionActivity::class.java)
-            intent.putExtra("rule", Json.encodeToString(rule))
+            val intent = Intent(context, ParametersDefinitionActivity::class.java)
+
+            intent.putExtra("permissions", ArrayList(rule.permissions!!))
+            intent.putExtra("apps", ArrayList(rule.apps!!))
+            intent.putExtra("pkgs", ArrayList(rule.packageNames!!))
+
+            val conditions = Rule()
+
+            conditions.timeSlot = rule.timeSlot
+            conditions.positions = rule.positions
+            conditions.networks = rule.networks
+            conditions.bt = rule.bt
+            conditions.battery = rule.battery
+
+            val conditionsJSON = Json.encodeToString(Rule.serializer(), rule)
+            intent.putExtra("rule", conditionsJSON)
+
+            intent.putExtra("action", rule.action)
+
+            intent.putExtra("name", rule.name)
+
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
         }

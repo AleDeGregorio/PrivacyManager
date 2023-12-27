@@ -23,6 +23,7 @@ class PermissionsSelectionActivity : AppCompatActivity() {
     private lateinit var calendarButton: ExtendedFloatingActionButton
     private lateinit var cameraButton: ExtendedFloatingActionButton
 
+    private var nameIntent: String? = null
     private var permissionsIntent: Any? = null
     private var appsIntent: Any? = null
     private var pkgsIntent: Any? = null
@@ -98,6 +99,7 @@ class PermissionsSelectionActivity : AppCompatActivity() {
 
          */
 
+        nameIntent = intent.extras?.getString("name")
         permissionsIntent = intent.extras?.get("permissions")
         appsIntent = intent.extras?.get("apps")
         pkgsIntent = intent.extras?.get("pkgs")
@@ -187,6 +189,7 @@ class PermissionsSelectionActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
 
+        nameIntent = null
         savedPermissions.clear()
         appsIntent = null
         pkgsIntent = null
@@ -198,6 +201,9 @@ class PermissionsSelectionActivity : AppCompatActivity() {
         val intent = Intent(this@PermissionsSelectionActivity, ParametersDefinitionActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
+        if (nameIntent != null) {
+            intent.putExtra("name", nameIntent)
+        }
         if (permissionsIntent != null) {
             intent.putExtra("permissions", ArrayList(permissionsIntent as ArrayList<String>))
         }
@@ -212,6 +218,7 @@ class PermissionsSelectionActivity : AppCompatActivity() {
             intent.putExtra("action", actionIntent)
         }
 
+        nameIntent = null
         savedPermissions.clear()
         appsIntent = null
         pkgsIntent = null

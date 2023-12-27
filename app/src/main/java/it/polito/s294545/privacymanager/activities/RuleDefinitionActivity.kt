@@ -64,6 +64,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
     private lateinit var error : TextView
 
+    private var nameIntent: String? = null
     private var permissionsIntent: Any? = null
     private var permissions: ArrayList<String>? = null
     private var appsIntent: Any? = null
@@ -110,6 +111,8 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         if (editRule != null) {
             retrievedRule = Json.decodeFromString(editRule.toString())
         }
+
+        nameIntent = intent.extras?.getString("name")
 
         permissionsIntent = intent.extras?.get("permissions")
         permissions = permissionsIntent as ArrayList<String>
@@ -180,6 +183,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
     }
 
     private fun clearAll() {
+        nameIntent = null
         permissionsIntent = null
         appsIntent = null
         pkgsIntent = null
@@ -258,6 +262,10 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         // NAVIGATE TO PARAMETERS DEFINITION
         val intent = Intent(this, ParametersDefinitionActivity::class.java)
 
+        if (nameIntent != null) {
+            intent.putExtra("name", nameIntent)
+        }
+
         intent.putExtra("permissions", permissions)
         intent.putExtra("action", actionIntent)
         intent.putExtra("apps", ArrayList(appsIntent as ArrayList<String>))
@@ -297,6 +305,10 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
 
         val intent = Intent(this, ParametersDefinitionActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+
+        if (nameIntent != null) {
+            intent.putExtra("name", nameIntent)
+        }
 
         intent.putExtra("permissions", ArrayList(permissions!!))
 

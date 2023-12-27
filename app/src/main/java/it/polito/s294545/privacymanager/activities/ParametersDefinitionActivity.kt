@@ -34,6 +34,7 @@ class ParametersDefinitionActivity : AppCompatActivity() {
     private var pkgsIntent: Any? = null
     private var conditionsIntent: Any? = null
     private var actionIntent: String? = null
+    private var nameIntent: String? = null
 
     private lateinit var savedPermissions: ArrayList<String>
     private lateinit var savedApps: ArrayList<String>
@@ -77,6 +78,13 @@ class ParametersDefinitionActivity : AppCompatActivity() {
         val saveButton = findViewById<Button>(R.id.save_button)
 
         // ----- Manage all intents -----
+        // Name
+        nameIntent = intent.extras?.getString("name")
+
+        if (nameIntent != null) {
+            name = nameIntent as String
+        }
+
         // Permissions
         permissionsIntent = intent.extras?.get("permissions")
 
@@ -144,6 +152,9 @@ class ParametersDefinitionActivity : AppCompatActivity() {
             val intent = Intent(this, PermissionsSelectionActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
+            if (nameIntent != null) {
+                intent.putExtra("name", name)
+            }
             if (permissionsIntent != null) {
                 intent.putExtra("permissions", ArrayList(savedPermissions))
             }
@@ -169,6 +180,9 @@ class ParametersDefinitionActivity : AppCompatActivity() {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 intent.putExtra("permissions", ArrayList(savedPermissions))
 
+                if (nameIntent != null) {
+                    intent.putExtra("name", name)
+                }
                 if (appsIntent != null) {
                     intent.putExtra("apps", savedApps)
                     intent.putExtra("pkgs", savedPkgs)
@@ -191,6 +205,9 @@ class ParametersDefinitionActivity : AppCompatActivity() {
                 val intent = Intent(this, RuleDefinitionActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
+                if (nameIntent != null) {
+                    intent.putExtra("name", name)
+                }
                 intent.putExtra("permissions", ArrayList(savedPermissions))
                 intent.putExtra("apps", savedApps)
                 intent.putExtra("pkgs", savedPkgs)
@@ -213,6 +230,9 @@ class ParametersDefinitionActivity : AppCompatActivity() {
                 val intent = Intent(this, ActionSelectionActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
+                if (nameIntent != null) {
+                    intent.putExtra("name", name)
+                }
                 intent.putExtra("permissions", ArrayList(savedPermissions))
                 intent.putExtra("apps", savedApps)
                 intent.putExtra("pkgs", savedPkgs)
@@ -231,7 +251,15 @@ class ParametersDefinitionActivity : AppCompatActivity() {
 
         // ----- Save the rule -----
         if (actionIntent != null) {
-            saveButton.setOnClickListener { v -> showPopupSaveRule(v) }
+
+            // It is a new rule that has to be saved
+            if (nameIntent == null) {
+                saveButton.setOnClickListener { v -> showPopupSaveRule(v) }
+            }
+            // It is an edited rule
+            else {
+                saveButton.setOnClickListener { saveRule() }
+            }
         }
     }
 
@@ -332,6 +360,7 @@ class ParametersDefinitionActivity : AppCompatActivity() {
         pkgsIntent = null
         conditionsIntent = null
         actionIntent = null
+        nameIntent = null
         name = null
     }
 
