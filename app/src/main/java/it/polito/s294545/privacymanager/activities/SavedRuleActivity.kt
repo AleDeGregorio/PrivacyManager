@@ -188,7 +188,10 @@ class SavedRuleActivity : AppCompatActivity() {
         val positionsStr = StringBuilder("")
 
         for (p in rule.positions!!) {
-            positionsStr.append("- ${p.address}.\n")
+            if (rule.positions!!.size > 1) {
+                positionsStr.append("- ")
+            }
+            positionsStr.append("${p.address}.\n")
         }
 
         val tmp = positionsStr.toString()
@@ -196,7 +199,7 @@ class SavedRuleActivity : AppCompatActivity() {
     }
 
     private fun getTimeSlotString() : String {
-        val daysStr = StringBuilder("Giorni: ")
+        val daysStr = StringBuilder("")
 
         for (d in rule.timeSlot!!.days) {
             when (d) {
@@ -211,7 +214,7 @@ class SavedRuleActivity : AppCompatActivity() {
         }
 
         val tempDays = daysStr.removeRange(daysStr.lastIndex - 1, daysStr.lastIndex)
-        return "$tempDays\nOra: ${rule.timeSlot!!.time.first}-${rule.timeSlot!!.time.second}"
+        return "$tempDays\n${rule.timeSlot!!.time.first}-${rule.timeSlot!!.time.second}"
     }
 
     private fun getNetworkString() : String {
