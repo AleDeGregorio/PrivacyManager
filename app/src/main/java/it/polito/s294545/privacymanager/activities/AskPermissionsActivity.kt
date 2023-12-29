@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.provider.Settings
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -21,7 +22,7 @@ import uk.co.deanwild.materialshowcaseview.ShowcaseTooltip
 
 class AskPermissionsActivity : AppCompatActivity() {
 
-    private val TUTORIAL_ID = "3"
+    private val TUTORIAL_ID = "Tutorial"
 
     private val NUMBER_OF_PERMISSIONS = 5
     // Count the permissions granted. If there are NUMBER_OF_PERMISSIONS of them, then ok
@@ -138,6 +139,7 @@ class AskPermissionsActivity : AppCompatActivity() {
             goToMainApplication()
         }
 
+        MaterialShowcaseView.resetAll(this)
         showTutorial()
     }
 
@@ -145,6 +147,53 @@ class AskPermissionsActivity : AppCompatActivity() {
         val config = ShowcaseConfig()
         config.delay = 500
 
+        val sequence = MaterialShowcaseSequence(this, TUTORIAL_ID)
+
+        sequence.addSequenceItem(
+            MaterialShowcaseView.Builder(this)
+                .setTarget(notificationsButton)
+                .withoutShape()
+                .setTitleText("Benvenuto!")
+                .setContentText("Lo scopo di questa applicazione è permetterti di gestire la privacy e la sicurezza dei tuoi dati, creando delle regole personalizzate per monitorare il comportamento delle applicazioni che utilizzi")
+                .setContentTextColor(resources.getColor(R.color.white))
+                .setDismissText("Tocca per continuare")
+                .setDismissOnTouch(true)
+                .setMaskColour(resources.getColor(R.color.primary))
+                .build()
+        )
+
+        sequence.start()
+
+        /*
+        MaterialShowcaseView.Builder(this)
+            .setTarget(notificationsButton)
+            .withoutShape()
+            .setTitleText("Benvenuto!")
+            .setContentText("Lo scopo di questa applicazione è permetterti di gestire la privacy e la sicurezza dei tuoi dati, creando delle regole personalizzate per monitorare il comportamento delle applicazioni che utilizzi")
+            .setContentTextColor(resources.getColor(R.color.white))
+            .setDismissText("Tocca per continuare")
+            .setDismissOnTouch(true)
+            .setMaskColour(resources.getColor(R.color.primary))
+            .setDelay(500)
+            .singleUse(TUTORIAL_ID)
+            .show()
+
+        MaterialShowcaseView.Builder(this)
+            .setTarget(notificationsButton)
+            .withoutShape()
+            .setTitleText("Prima di cominiciare")
+            .setContentText("È necessario accedere ad alcune funzionalità del tuo dispositivo")
+            .setContentTextColor(resources.getColor(R.color.white))
+            .setDismissText("Tocca per continuare")
+            .setDismissOnTouch(true)
+            .setMaskColour(resources.getColor(R.color.primary))
+            .setDelay(500)
+            .singleUse(TUTORIAL_ID)
+            .show()
+
+         */
+
+        /*
         val sequence = MaterialShowcaseSequence(this, TUTORIAL_ID)
 
         val toolTip1 = ShowcaseTooltip.build(this)
@@ -181,6 +230,8 @@ class AskPermissionsActivity : AppCompatActivity() {
         )
 
         sequence.start()
+
+         */
     }
 
     private fun goToMainApplication() {
