@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import it.polito.s294545.privacymanager.utilities.ParameterListener
 import it.polito.s294545.privacymanager.R
 import it.polito.s294545.privacymanager.activities.retrievedRule
@@ -155,6 +156,9 @@ class NetworksSelectionViewHolder(v: View) : RecyclerView.ViewHolder(v) {
     val confirmNetwork = v.findViewById<FloatingActionButton>(R.id.confirm_network_button)
     val editNetwork = v.findViewById<FloatingActionButton>(R.id.edit_network_button)
     val deleteNetworkButton = v.findViewById<FloatingActionButton>(R.id.delete_network_button)
+
+    val networkTextInput = v.findViewById<TextInputLayout>(R.id.text_input_network)
+    val defaultColor = networkTextInput.defaultHintTextColor
 }
 
 class NetworksSelectionAdapter(
@@ -228,6 +232,7 @@ class NetworksSelectionAdapter(
 
                 // The text input is now not editable
                 holder.networkName.isEnabled = false
+                holder.networkTextInput.defaultHintTextColor = ColorStateList.valueOf(resources.getColor(R.color.primary))
             }
         }
 
@@ -257,6 +262,8 @@ class NetworksSelectionAdapter(
 
             addNetworkButton.isClickable = true
             addNetworkButton.setBackgroundColor(resources.getColor(R.color.primary))
+
+            holder.networkTextInput.defaultHintTextColor = holder.defaultColor
         }
     }
 }

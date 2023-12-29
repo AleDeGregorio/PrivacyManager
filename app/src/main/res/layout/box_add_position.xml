@@ -20,15 +20,18 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
-            app:boxBackgroundMode="filled"
-            app:boxStrokeWidth="0dp"
+            app:hintEnabled="true"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeWidth="2dp"
+            app:boxStrokeColor="@color/primary"
+            app:hintTextColor="@color/primary"
+            app:cursorColor="@color/primary"
             tools:ignore="RelativeOverlap">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_position"
                 android:layout_width="205dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/edit_text"
                 android:hint="@string/insert_position_hint"
                 android:inputType="textAutoCorrect|text"
                 android:textSize="16sp" />

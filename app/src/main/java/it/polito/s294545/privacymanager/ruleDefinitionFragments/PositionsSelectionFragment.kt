@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import it.polito.s294545.privacymanager.customDataClasses.CustomAddress
 import it.polito.s294545.privacymanager.utilities.ParameterListener
 import it.polito.s294545.privacymanager.R
@@ -135,6 +136,9 @@ class PositionsSelectionViewHolder(v: View) : RecyclerView.ViewHolder(v) {
     val confirmPosition = v.findViewById<FloatingActionButton>(R.id.confirm_position_button)
     val editPosition = v.findViewById<FloatingActionButton>(R.id.edit_position_button)
     val deletePositionButton = v.findViewById<FloatingActionButton>(R.id.delete_position_button)
+
+    val positionTextInput = v.findViewById<TextInputLayout>(R.id.text_input_position)
+    val defaultColor = positionTextInput.defaultHintTextColor
 }
 
 class PositionsSelectionAdapter(
@@ -221,6 +225,7 @@ class PositionsSelectionAdapter(
 
                 // The text input is now not editable
                 holder.positionName.isEnabled = false
+                holder.positionTextInput.defaultHintTextColor = ColorStateList.valueOf(resources.getColor(R.color.primary))
             }
         }
 
@@ -250,6 +255,8 @@ class PositionsSelectionAdapter(
 
             addPositionButton.isClickable = true
             addPositionButton.setBackgroundColor(resources.getColor(R.color.primary))
+
+            holder.positionTextInput.defaultHintTextColor = holder.defaultColor
         }
     }
 }
