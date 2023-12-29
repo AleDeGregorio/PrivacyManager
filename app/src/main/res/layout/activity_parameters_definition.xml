@@ -37,273 +37,287 @@
         android:layout_marginStart="@dimen/margin_top_title"
         android:layout_marginEnd="@dimen/margin_top_title"/>
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:id="@+id/permissions_card"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/parameters_cards_height"
-        android:layout_below="@id/infoTextView"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="32dp"
-        app:cardCornerRadius="50dp"
-        app:cardElevation="10dp"
-        app:cardMaxElevation="12dp"
-        app:cardPreventCornerOverlap="false"
-        android:backgroundTint="@color/light_grey"
-        app:cardUseCompatPadding="false"
-        app:strokeColor="@color/primary"
-        app:strokeWidth="2dp">
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/infoTextView"
+        android:layout_above="@+id/buttons_container"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="16dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/permissions_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
+            <com.google.android.material.card.MaterialCardView
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:id="@+id/permissions_card"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/parameters_cards_height"
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:text="@string/permissions_title"
-                android:textSize="20sp"/>
-
-            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                android:id="@+id/permissions_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/permissions_title"
                 android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="6dp"
-                android:layout_marginEnd="16dp"
-                android:contentDescription="@string/permissions_button"
-                android:text="@string/permissions"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                app:backgroundTint="@color/cancel"
-                app:icon="@drawable/icon_permissions"
-                app:iconTint="@color/white"
-                app:tint="@color/white" />
+                android:layout_marginTop="32dp"
+                app:cardCornerRadius="50dp"
+                app:cardElevation="10dp"
+                app:cardMaxElevation="12dp"
+                app:cardPreventCornerOverlap="false"
+                android:backgroundTint="@color/light_grey"
+                app:cardUseCompatPadding="false"
+                app:strokeColor="@color/primary"
+                app:strokeWidth="2dp">
 
-        </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-    </com.google.android.material.card.MaterialCardView>
+                    <TextView
+                        android:id="@+id/permissions_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:text="@string/permissions_title"
+                        android:textSize="20sp"/>
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="42dp"
-        android:contentDescription="@string/arrow"
-        android:layout_below="@+id/permissions_card"
-        app:srcCompat="@drawable/icon_arrow" />
+                    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                        android:id="@+id/permissions_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@+id/permissions_title"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginEnd="16dp"
+                        android:contentDescription="@string/permissions_button"
+                        android:text="@string/permissions"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        app:backgroundTint="@color/cancel"
+                        app:icon="@drawable/icon_permissions"
+                        app:iconTint="@color/white"
+                        app:tint="@color/white" />
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:id="@+id/apps_card"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/parameters_cards_height"
-        android:layout_below="@id/permissions_card"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="42dp"
-        app:cardCornerRadius="50dp"
-        app:cardElevation="10dp"
-        app:cardMaxElevation="12dp"
-        android:backgroundTint="@color/light_grey"
-        app:cardPreventCornerOverlap="false"
-        app:cardUseCompatPadding="false"
-        app:strokeColor="@color/primary"
-        app:strokeWidth="2dp">
+                </RelativeLayout>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            </com.google.android.material.card.MaterialCardView>
 
-            <TextView
-                android:id="@+id/apps_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:contentDescription="@string/arrow"
+                android:layout_below="@+id/permissions_card"
+                app:srcCompat="@drawable/icon_arrow" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:id="@+id/apps_card"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/parameters_cards_height"
+                android:layout_below="@id/permissions_card"
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:text="@string/apps_title"
-                android:textSize="20sp"/>
-
-            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                android:clickable="false"
-                android:focusable="false"
-                android:id="@+id/apps_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/apps_title"
                 android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:contentDescription="@string/apps_button"
-                android:text="@string/apps"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                app:backgroundTint="@color/dark_grey"
-                app:icon="@drawable/icon_app"
-                app:iconTint="@color/black"
-                app:tint="@color/black" />
+                android:layout_marginTop="42dp"
+                app:cardCornerRadius="50dp"
+                app:cardElevation="10dp"
+                app:cardMaxElevation="12dp"
+                android:backgroundTint="@color/light_grey"
+                app:cardPreventCornerOverlap="false"
+                app:cardUseCompatPadding="false"
+                app:strokeColor="@color/primary"
+                app:strokeWidth="2dp">
 
-        </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-    </com.google.android.material.card.MaterialCardView>
+                    <TextView
+                        android:id="@+id/apps_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:text="@string/apps_title"
+                        android:textSize="20sp"/>
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="42dp"
-        android:contentDescription="@string/arrow"
-        android:layout_below="@+id/apps_card"
-        app:srcCompat="@drawable/icon_arrow" />
+                    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:id="@+id/apps_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@+id/apps_title"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:contentDescription="@string/apps_button"
+                        android:text="@string/apps"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        app:backgroundTint="@color/dark_grey"
+                        app:icon="@drawable/icon_app"
+                        app:iconTint="@color/black"
+                        app:tint="@color/black" />
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:id="@+id/conditions_card"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/parameters_cards_height"
-        android:layout_below="@id/apps_card"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="42dp"
-        app:cardCornerRadius="50dp"
-        app:cardElevation="10dp"
-        app:cardMaxElevation="12dp"
-        android:backgroundTint="@color/light_grey"
-        app:cardPreventCornerOverlap="false"
-        app:cardUseCompatPadding="false"
-        app:strokeColor="@color/primary"
-        app:strokeWidth="2dp">
+                </RelativeLayout>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            </com.google.android.material.card.MaterialCardView>
 
-            <TextView
-                android:id="@+id/optional"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/conditions_title"
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:contentDescription="@string/arrow"
+                android:layout_below="@+id/apps_card"
+                app:srcCompat="@drawable/icon_arrow" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:id="@+id/conditions_card"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/parameters_cards_height"
+                android:layout_below="@id/apps_card"
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="16dp"
-                android:text="@string/optional"
-                android:textSize="20sp"/>
-
-            <TextView
-                android:id="@+id/conditions_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="16dp"
-                android:layout_marginBottom="16dp"
-                android:text="@string/conditions_title"
-                android:textSize="20sp"/>
-
-            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                android:clickable="false"
-                android:focusable="false"
-                android:id="@+id/conditions_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/conditions_title"
                 android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="6dp"
-                android:layout_marginEnd="16dp"
-                android:contentDescription="@string/conditions_button"
-                android:text="@string/conditions"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                app:backgroundTint="@color/dark_grey"
-                app:icon="@drawable/icon_parameters"
-                app:iconTint="@color/black"
-                app:tint="@color/black" />
+                android:layout_marginTop="42dp"
+                app:cardCornerRadius="50dp"
+                app:cardElevation="10dp"
+                app:cardMaxElevation="12dp"
+                android:backgroundTint="@color/light_grey"
+                app:cardPreventCornerOverlap="false"
+                app:cardUseCompatPadding="false"
+                app:strokeColor="@color/primary"
+                app:strokeWidth="2dp">
 
-        </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-    </com.google.android.material.card.MaterialCardView>
+                    <TextView
+                        android:id="@+id/optional"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@+id/conditions_title"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginStart="16dp"
+                        android:text="@string/optional"
+                        android:textSize="20sp"/>
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="42dp"
-        android:contentDescription="@string/arrow"
-        android:layout_below="@+id/conditions_card"
-        app:srcCompat="@drawable/icon_arrow" />
+                    <TextView
+                        android:id="@+id/conditions_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:text="@string/conditions_title"
+                        android:textSize="20sp"/>
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:id="@+id/action_card"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/parameters_cards_height"
-        android:layout_below="@id/conditions_card"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:backgroundTint="@color/light_grey"
-        android:layout_marginTop="42dp"
-        app:cardCornerRadius="50dp"
-        app:cardElevation="10dp"
-        app:cardMaxElevation="12dp"
-        app:cardPreventCornerOverlap="false"
-        app:cardUseCompatPadding="false"
-        app:strokeColor="@color/primary"
-        app:strokeWidth="2dp">
+                    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:id="@+id/conditions_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@+id/conditions_title"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginEnd="16dp"
+                        android:contentDescription="@string/conditions_button"
+                        android:text="@string/conditions"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        app:backgroundTint="@color/dark_grey"
+                        app:icon="@drawable/icon_parameters"
+                        app:iconTint="@color/black"
+                        app:tint="@color/black" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+                </RelativeLayout>
 
-            <TextView
-                android:id="@+id/action_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
+            </com.google.android.material.card.MaterialCardView>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:contentDescription="@string/arrow"
+                android:layout_below="@+id/conditions_card"
+                app:srcCompat="@drawable/icon_arrow" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:id="@+id/action_card"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/parameters_cards_height"
+                android:layout_below="@id/conditions_card"
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:text="@string/action_title"
-                android:textSize="20sp"/>
-
-            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                android:clickable="false"
-                android:focusable="false"
-                android:id="@+id/action_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/action_title"
                 android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="36dp"
-                android:layout_marginEnd="16dp"
-                android:contentDescription="@string/action_button"
-                android:text="@string/action"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                app:backgroundTint="@color/dark_grey"
-                app:icon="@drawable/icon_block"
-                app:iconTint="@color/black"
-                app:tint="@color/black" />
+                android:backgroundTint="@color/light_grey"
+                android:layout_marginTop="42dp"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="50dp"
+                app:cardElevation="10dp"
+                app:cardMaxElevation="12dp"
+                app:cardPreventCornerOverlap="false"
+                app:cardUseCompatPadding="false"
+                app:strokeColor="@color/primary"
+                app:strokeWidth="2dp">
 
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/action_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:text="@string/action_title"
+                        android:textSize="20sp"/>
+
+                    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:id="@+id/action_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@+id/action_title"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="36dp"
+                        android:layout_marginEnd="16dp"
+                        android:contentDescription="@string/action_button"
+                        android:text="@string/action"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        app:backgroundTint="@color/dark_grey"
+                        app:icon="@drawable/icon_block"
+                        app:iconTint="@color/black"
+                        app:tint="@color/black" />
+
+                </RelativeLayout>
+
+            </com.google.android.material.card.MaterialCardView>
         </RelativeLayout>
-
-    </com.google.android.material.card.MaterialCardView>
+    </ScrollView>
 
     <LinearLayout
         android:id="@+id/buttons_container"
