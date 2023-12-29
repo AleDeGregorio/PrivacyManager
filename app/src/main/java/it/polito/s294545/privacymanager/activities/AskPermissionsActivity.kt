@@ -14,8 +14,14 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import it.polito.s294545.privacymanager.R
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
+import uk.co.deanwild.materialshowcaseview.ShowcaseTooltip
 
 class AskPermissionsActivity : AppCompatActivity() {
+
+    private val TUTORIAL_ID = "3"
 
     private val NUMBER_OF_PERMISSIONS = 5
     // Count the permissions granted. If there are NUMBER_OF_PERMISSIONS of them, then ok
@@ -131,6 +137,50 @@ class AskPermissionsActivity : AppCompatActivity() {
         if (countPermissions == NUMBER_OF_PERMISSIONS) {
             goToMainApplication()
         }
+
+        showTutorial()
+    }
+
+    private fun showTutorial() {
+        val config = ShowcaseConfig()
+        config.delay = 500
+
+        val sequence = MaterialShowcaseSequence(this, TUTORIAL_ID)
+
+        val toolTip1 = ShowcaseTooltip.build(this)
+            .corner(30)
+            .text("This is a <b>very funky</b> tooltip<br><br>This is a very long sentence to test how this tooltip behaves with longer strings. <br><br>Tap anywhere to continue")
+
+
+        sequence.addSequenceItem(
+            MaterialShowcaseView.Builder(this)
+                .setTarget(locationButton)
+                .setToolTip(toolTip1)
+                .withRectangleShape()
+                .setTooltipMargin(30)
+                .setShapePadding(50)
+                .setDismissOnTouch(true)
+                .setMaskColour(resources.getColor(R.color.black_overlay))
+                .build()
+        )
+
+
+        val toolTip2 = ShowcaseTooltip.build(this)
+            .corner(30)
+            .text("This is another <b>very funky</b> tooltip")
+
+        sequence.addSequenceItem(
+            MaterialShowcaseView.Builder(this)
+                .setTarget(usageButton)
+                .setToolTip(toolTip2)
+                .setTooltipMargin(30)
+                .setShapePadding(50)
+                .setDismissOnTouch(true)
+                .setMaskColour(resources.getColor(R.color.black_overlay))
+                .build()
+        )
+
+        sequence.start()
     }
 
     private fun goToMainApplication() {
