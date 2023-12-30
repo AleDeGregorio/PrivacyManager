@@ -113,7 +113,7 @@
     <string name="saved_rules">Regole salvate:</string>
     <string name="active_rules">Regole attive:</string>
     <string name="notification_title">Notification title</string>
-    <string name="ask_permissions">Per usare l\'applicazione è necessario garantire le seguenti autorizzazioni:</string>
+    <string name="ask_permissions">Per usare l\'applicazione è necessario garantire le seguenti autorizzazioni. Clicca sui bottoni per concederne l\'utilizzo:</string>
     <string name="location_permission">Location permission</string>
     <string name="ask_location">Accesso alla posizione</string>
     <string name="calendar_permission">Calendar permission</string>

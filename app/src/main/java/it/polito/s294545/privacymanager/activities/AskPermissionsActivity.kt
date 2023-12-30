@@ -2,27 +2,35 @@ package it.polito.s294545.privacymanager.activities
 
 import android.Manifest
 import android.app.AppOpsManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.TextView
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.utilities.PreferencesManager
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
 import uk.co.deanwild.materialshowcaseview.ShowcaseTooltip
 
+
 class AskPermissionsActivity : AppCompatActivity() {
 
-    private val TUTORIAL_ID = "Tutorial"
+    private val TUTORIAL_ID = "Tutorial ask permissions"
 
     private val NUMBER_OF_PERMISSIONS = 5
     // Count the permissions granted. If there are NUMBER_OF_PERMISSIONS of them, then ok
@@ -68,6 +76,19 @@ class AskPermissionsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_ask_permissions)
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+        // Get toolbar
+        val toolbarLayout = findViewById<ConstraintLayout>(R.id.toolbarLayout)
+        val toolbar = toolbarLayout.findViewById<MaterialToolbar>(R.id.toolbar)
+
+        // Set the help icon
+        toolbar.inflateMenu(R.menu.toolbar_menu)
+        toolbar.overflowIcon = ContextCompat.getDrawable(this, R.drawable.icon_help)
+
+        toolbar.setOnMenuItemClickListener {
+            showTutorial()
+            true
+        }
 
         // Manage user's back pressure
         val callback = object : OnBackPressedCallback(true) {
@@ -139,11 +160,15 @@ class AskPermissionsActivity : AppCompatActivity() {
             goToMainApplication()
         }
 
-        MaterialShowcaseView.resetAll(this)
-        showTutorial()
+        if (!PreferencesManager.getTutorialShown(this)) {
+            showTutorial()
+            PreferencesManager.saveTutorialShown(this)
+        }
     }
 
     private fun showTutorial() {
+        MaterialShowcaseView.resetSingleUse(this, TUTORIAL_ID)
+
         val config = ShowcaseConfig()
         config.delay = 500
 
@@ -151,7 +176,7 @@ class AskPermissionsActivity : AppCompatActivity() {
 
         sequence.addSequenceItem(
             MaterialShowcaseView.Builder(this)
-                .setTarget(notificationsButton)
+                .setTarget(locationButton)
                 .withoutShape()
                 .setTitleText("Benvenuto!")
                 .setContentText("Lo scopo di questa applicazione è permetterti di gestire la privacy e la sicurezza dei tuoi dati, creando delle regole personalizzate per monitorare il comportamento delle applicazioni che utilizzi")
@@ -159,79 +184,121 @@ class AskPermissionsActivity : AppCompatActivity() {
                 .setDismissText("Tocca per continuare")
                 .setDismissOnTouch(true)
                 .setMaskColour(resources.getColor(R.color.primary))
+                .renderOverNavigationBar()
                 .build()
         )
 
-        sequence.start()
+        sequence.addSequenceItem(
+            MaterialShowcaseView.Builder(this)
+                .setTarget(notificationsButton)
+                .withoutShape()
+                .setTitleText("Prima di cominiciare")
+                .setContentText("È necessario accedere ad alcune funzionalità del tuo dispositivo")
+                .setContentTextColor(resources.getColor(R.color.white))
+                .setDismissText("Tocca per continuare")
+                .setDismissOnTouch(true)
+                .setMaskColour(resources.getColor(R.color.primary))
+                .renderOverNavigationBar()
+                .build()
+        )
 
-        /*
-        MaterialShowcaseView.Builder(this)
-            .setTarget(notificationsButton)
-            .withoutShape()
-            .setTitleText("Benvenuto!")
-            .setContentText("Lo scopo di questa applicazione è permetterti di gestire la privacy e la sicurezza dei tuoi dati, creando delle regole personalizzate per monitorare il comportamento delle applicazioni che utilizzi")
-            .setContentTextColor(resources.getColor(R.color.white))
-            .setDismissText("Tocca per continuare")
-            .setDismissOnTouch(true)
-            .setMaskColour(resources.getColor(R.color.primary))
-            .setDelay(500)
-            .singleUse(TUTORIAL_ID)
-            .show()
-
-        MaterialShowcaseView.Builder(this)
-            .setTarget(notificationsButton)
-            .withoutShape()
-            .setTitleText("Prima di cominiciare")
-            .setContentText("È necessario accedere ad alcune funzionalità del tuo dispositivo")
-            .setContentTextColor(resources.getColor(R.color.white))
-            .setDismissText("Tocca per continuare")
-            .setDismissOnTouch(true)
-            .setMaskColour(resources.getColor(R.color.primary))
-            .setDelay(500)
-            .singleUse(TUTORIAL_ID)
-            .show()
-
-         */
-
-        /*
-        val sequence = MaterialShowcaseSequence(this, TUTORIAL_ID)
-
-        val toolTip1 = ShowcaseTooltip.build(this)
+        val toolTipLocation = ShowcaseTooltip.build(this)
             .corner(30)
-            .text("This is a <b>very funky</b> tooltip<br><br>This is a very long sentence to test how this tooltip behaves with longer strings. <br><br>Tap anywhere to continue")
-
+            .text("Per permetterti di salvare dei luoghi di tuo interesse e monitorare se un'app sta utilizzando il servizio")
 
         sequence.addSequenceItem(
             MaterialShowcaseView.Builder(this)
                 .setTarget(locationButton)
-                .setToolTip(toolTip1)
+                .setToolTip(toolTipLocation)
                 .withRectangleShape()
                 .setTooltipMargin(30)
                 .setShapePadding(50)
                 .setDismissOnTouch(true)
-                .setMaskColour(resources.getColor(R.color.black_overlay))
+                .renderOverNavigationBar()
                 .build()
         )
 
-
-        val toolTip2 = ShowcaseTooltip.build(this)
+        val toolTipCalendar = ShowcaseTooltip.build(this)
             .corner(30)
-            .text("This is another <b>very funky</b> tooltip")
+            .text("Per monitorare se un'app sta utilizzando il servizio, modificando un evento del calendario")
+
+        sequence.addSequenceItem(
+            MaterialShowcaseView.Builder(this)
+                .setTarget(calendarButton)
+                .setToolTip(toolTipCalendar)
+                .withRectangleShape()
+                .setTooltipMargin(30)
+                .setShapePadding(50)
+                .setDismissOnTouch(true)
+                .renderOverNavigationBar()
+                .build()
+        )
+
+        val toolTipBluetooth = ShowcaseTooltip.build(this)
+            .corner(30)
+            .text("Per permetterti di selezionare dei dispositivi bluetooth che hai salvato")
+
+        sequence.addSequenceItem(
+            MaterialShowcaseView.Builder(this)
+                .setTarget(bluetoothButton)
+                .setToolTip(toolTipBluetooth)
+                .withRectangleShape()
+                .setTooltipMargin(30)
+                .setShapePadding(50)
+                .setDismissOnTouch(true)
+                .renderOverNavigationBar()
+                .build()
+        )
+
+        val toolTipNotifications = ShowcaseTooltip.build(this)
+            .corner(30)
+            .text("Per monitorare le notifiche di altre app, oscurandole o bloccandole secondo i tuoi parametri")
+
+        sequence.addSequenceItem(
+            MaterialShowcaseView.Builder(this)
+                .setTarget(notificationsButton)
+                .setToolTip(toolTipNotifications)
+                .withRectangleShape()
+                .setTooltipMargin(30)
+                .setShapePadding(50)
+                .setDismissOnTouch(true)
+                .renderOverNavigationBar()
+                .build()
+        )
+
+        val toolTipUsage = ShowcaseTooltip.build(this)
+            .corner(30)
+            .text("Per monitorare le applicazioni in esecuzione e avvisarti nel caso qualcuna di queste stia violando la regola che hai definito")
 
         sequence.addSequenceItem(
             MaterialShowcaseView.Builder(this)
                 .setTarget(usageButton)
-                .setToolTip(toolTip2)
+                .setToolTip(toolTipUsage)
+                .withRectangleShape()
                 .setTooltipMargin(30)
                 .setShapePadding(50)
                 .setDismissOnTouch(true)
-                .setMaskColour(resources.getColor(R.color.black_overlay))
+                .renderOverNavigationBar()
+                .build()
+        )
+
+        val toolTipConfirm = ShowcaseTooltip.build(this)
+            .corner(30)
+            .text("Quando hai finito, clicca qui per iniziare ad utilizzare l'applicazione")
+
+        sequence.addSequenceItem(
+            MaterialShowcaseView.Builder(this)
+                .setTarget(confirmButton)
+                .setToolTip(toolTipConfirm)
+                .withCircleShape()
+                .setTooltipMargin(30)
+                .setShapePadding(50)
+                .setDismissOnTouch(true)
+                .renderOverNavigationBar()
                 .build()
         )
 
         sequence.start()
-
-         */
     }
 
     private fun goToMainApplication() {
@@ -373,6 +440,18 @@ class AskPermissionsActivity : AppCompatActivity() {
                     setPermissionButton(usageButton)
                 }
             }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.toolbar_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_item_right_icon -> true
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }

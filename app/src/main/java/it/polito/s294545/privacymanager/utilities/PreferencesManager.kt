@@ -7,6 +7,18 @@ object PreferencesManager {
 
     private const val PREFERENCES_NAME = "SavedRules"
 
+    fun saveTutorialShown(context: Context) {
+        val sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("tutorialShown", true)
+        editor.apply()
+    }
+
+    fun getTutorialShown(context: Context): Boolean {
+        val sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean("tutorialShown", false)
+    }
+
     fun savePrivacyRule(context: Context, name: String, jsonPrivacyRule: String) {
         val sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()

@@ -31,7 +31,7 @@
         android:layout_below="@+id/ask_permissions_info"
         android:layout_above="@+id/confirm_permissions"
         android:layout_marginBottom="4dp"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="32dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -42,8 +42,6 @@
                 android:layout_width="@dimen/permission_width"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/ask_permissions_info"
-                android:layout_marginTop="@dimen/permission_margin_top"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="@dimen/permission_margin_start"
                 android:layout_marginEnd="@dimen/permission_margin_start"
