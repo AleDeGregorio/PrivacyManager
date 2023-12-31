@@ -31,9 +31,9 @@ object PreferencesManager {
         return sharedPreferences.getString(name, "") ?: ""
     }
 
-    fun getAllPrivacyRules(context: Context) : MutableMap<String, *>? {
+    fun getAllPrivacyRules(context: Context) : Map<String, Any?>? {
         val sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
-        return sharedPreferences.all
+        return sharedPreferences.all?.filter { it.key != "tutorialShown" }
     }
 
     fun deletePrivacyRule(context: Context, name: String) {
