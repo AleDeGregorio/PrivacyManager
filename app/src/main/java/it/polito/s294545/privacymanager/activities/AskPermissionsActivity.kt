@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -183,7 +184,6 @@ class AskPermissionsActivity : AppCompatActivity() {
                 .setContentTextColor(resources.getColor(R.color.white))
                 .setDismissText("Tocca per continuare")
                 .setDismissOnTouch(true)
-                .setMaskColour(resources.getColor(R.color.primary))
                 .renderOverNavigationBar()
                 .build()
         )
@@ -197,7 +197,6 @@ class AskPermissionsActivity : AppCompatActivity() {
                 .setContentTextColor(resources.getColor(R.color.white))
                 .setDismissText("Tocca per continuare")
                 .setDismissOnTouch(true)
-                .setMaskColour(resources.getColor(R.color.primary))
                 .renderOverNavigationBar()
                 .build()
         )
