@@ -18,7 +18,7 @@ class Rule {
 
     override fun toString(): String {
 
-        return "Name:\t$name\nPermissions:\t$permissions\nApps:\t$apps\nTime slot:\t$timeSlot\n" +
+        return "Name:\t$name\nPermissions:\t$permissions\nApps:\t$apps\nPkgs:\t${packageNames}\nTime slot:\t$timeSlot\n" +
                 "Positions:\t$positions\nNetworks:\t$networks\nBluetooth:\t$bt\nBattery:\t$battery\n" +
                 "Action:\t$action\nActive:\t$active\n"
     }

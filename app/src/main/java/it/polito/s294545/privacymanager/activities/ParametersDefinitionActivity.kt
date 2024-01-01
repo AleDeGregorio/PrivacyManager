@@ -321,7 +321,7 @@ class ParametersDefinitionActivity : AppCompatActivity() {
         rule.name = name
         rule.permissions = savedPermissions
         rule.apps = savedApps
-        rule.packageNames = savedApps
+        rule.packageNames = savedPkgs
 
         if (conditionsIntent != null) {
             rule.timeSlot = savedConditions.timeSlot
