@@ -145,4 +145,6 @@
     <string name="action_button">Action button</string>
     <string name="action">Azione</string>
     <string name="arrow">Arrow</string>
+    <string name="current_position_info">Salvare la posizione corrente?</string>
+    <string name="current_position_name">Inserire un nome per la posizione</string>
 </resources>

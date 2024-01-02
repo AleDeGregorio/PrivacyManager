@@ -1,5 +1,6 @@
 package it.polito.s294545.privacymanager.ruleDefinitionFragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.content.res.Resources
@@ -10,12 +11,17 @@ import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
@@ -23,9 +29,13 @@ import com.google.android.material.textfield.TextInputLayout
 import it.polito.s294545.privacymanager.customDataClasses.CustomAddress
 import it.polito.s294545.privacymanager.utilities.ParameterListener
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.activities.managePopup
 import it.polito.s294545.privacymanager.activities.retrievedRule
+import it.polito.s294545.privacymanager.utilities.PreferencesManager
+import it.polito.s294545.privacymanager.utilities.context
 
 var savedPositions = mutableListOf<CustomAddress>()
+var ctx: Context? = null
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -65,6 +75,7 @@ class PositionsSelectionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        ctx = context
 
         // Check if we are editing a rule
         if (retrievedRule != null) {
@@ -134,6 +145,7 @@ class PositionsSelectionFragment : Fragment() {
 class PositionsSelectionViewHolder(v: View) : RecyclerView.ViewHolder(v) {
     val positionName = v.findViewById<TextInputEditText>(R.id.edit_position)
     val confirmPosition = v.findViewById<FloatingActionButton>(R.id.confirm_position_button)
+    val currentPosition = v.findViewById<FloatingActionButton>(R.id.current_position_button)
     val editPosition = v.findViewById<FloatingActionButton>(R.id.edit_position_button)
     val deletePositionButton = v.findViewById<FloatingActionButton>(R.id.delete_position_button)
 
@@ -165,7 +177,10 @@ class PositionsSelectionAdapter(
 
             holder.positionName.isEnabled = false
             holder.editPosition.visibility = VISIBLE
-            holder.confirmPosition.visibility = GONE
+            holder.confirmPosition.visibility = INVISIBLE
+            holder.currentPosition.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.dark_grey))
+            holder.currentPosition.isClickable = false
+            holder.currentPosition.isFocusable = false
         }
         else {
             // Make the addPositionButton unavailable while inserting new position, waiting for saving
@@ -193,6 +208,8 @@ class PositionsSelectionAdapter(
                 holder.confirmPosition.isClickable = false
             }
         }
+
+        holder.currentPosition.setOnClickListener { v -> showPopupCurrentPosition(v, position, holder) }
 
         // Save inserted position
         holder.confirmPosition.setOnClickListener {
@@ -242,6 +259,10 @@ class PositionsSelectionAdapter(
 
             addPositionButton.isClickable = false
             addPositionButton.setBackgroundColor(resources.getColor(R.color.dark_grey))
+
+            holder.currentPosition.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.primary))
+            holder.currentPosition.isClickable = true
+            holder.currentPosition.isFocusable = true
         }
 
         // Delete inserted position
@@ -257,6 +278,89 @@ class PositionsSelectionAdapter(
             addPositionButton.setBackgroundColor(resources.getColor(R.color.primary))
 
             holder.positionTextInput.defaultHintTextColor = holder.defaultColor
+
+            holder.currentPosition.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.primary))
+            holder.currentPosition.isClickable = true
+            holder.currentPosition.isFocusable = true
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun showPopupCurrentPosition(view: View, position: Int, holder: PositionsSelectionViewHolder) {
+        val (popupView, popupWindow) = managePopup(view, R.layout.popup_current_location)
+
+        // Initialize the elements of our window, install the handler
+        val positionName = popupView.findViewById<TextInputEditText>(R.id.current_position_name)
+        val buttonConfirm = popupView.findViewById<Button>(R.id.confirm_current_position_button)
+        val buttonCancel = popupView.findViewById<Button>(R.id.cancel_current_position_button)
+
+        // Current position name
+        positionName.doOnTextChanged { text, start, before, count ->
+
+            if (!text.isNullOrEmpty()) {
+                buttonConfirm.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.primary))
+                buttonConfirm.isClickable = true
+            }
+            else {
+                buttonConfirm.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.dark_grey))
+                buttonConfirm.isClickable = false
+            }
+        }
+
+        // Save current position
+        buttonConfirm.setOnClickListener {
+            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(ctx!!)
+
+            // Request the current location of the user
+            fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                .addOnSuccessListener { location ->
+                    if (location != null) {
+                        val customAddress = CustomAddress()
+                        customAddress.address = positionName.text.toString().trim()
+                        customAddress.latitude = location.latitude
+                        customAddress.longitude = location.longitude
+
+                        // Insert the position in the list changing the default item set at the beginning
+                        savedPositions[position] = customAddress
+
+                        // Save parameter in activity
+                        parameterListener?.onParameterEntered("positions", savedPositions)
+
+                        // After new position has been saved, we don't need the confirm button anymore
+                        holder.confirmPosition.visibility = INVISIBLE
+                        addPositionButton.isClickable = true
+                        addPositionButton.setBackgroundColor(resources.getColor(R.color.primary))
+
+                        // It is also shown the edit position button
+                        holder.editPosition.visibility = VISIBLE
+
+                        holder.positionName.text = Editable.Factory.getInstance().newEditable(positionName.text.toString().trim())
+
+                        // The text input is now not editable
+                        holder.positionName.isEnabled = false
+                        holder.positionTextInput.defaultHintTextColor = ColorStateList.valueOf(resources.getColor(R.color.primary))
+
+                        holder.currentPosition.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.dark_grey))
+                        holder.currentPosition.isClickable = false
+                        holder.currentPosition.isFocusable = false
+
+                        if (customAddress.address != "") {
+                            popupWindow.dismiss()
+                        }
+                    }
+                }
+        }
+
+        // Dismiss window
+        buttonCancel.setOnClickListener {
+            popupWindow.dismiss()
+        }
+
+
+        // Handler for clicking on the inactive zone of the window
+        popupView.setOnTouchListener { v, event -> // Close the window when clicked
+            popupWindow.dismiss()
+            true
         }
     }
 }
