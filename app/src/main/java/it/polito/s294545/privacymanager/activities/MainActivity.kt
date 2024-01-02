@@ -20,6 +20,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.marginEnd
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -47,6 +48,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         context = this.applicationContext
         setContentView(R.layout.activity_main)
+
+        // Manage user's back pressure
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Do nothing
+            }
+        }
+        onBackPressedDispatcher.addCallback(this, callback)
 
         val retrievedRules = PreferencesManager.getAllPrivacyRules(this)
         noRule = findViewById(R.id.no_rule)
