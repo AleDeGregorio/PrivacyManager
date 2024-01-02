@@ -19,6 +19,18 @@ object PreferencesManager {
         return sharedPreferences.getBoolean("askPermissionsTutorialShown", false)
     }
 
+    fun saveHomepageTutorialShown(context: Context) {
+        val sharedPreferences = context.getSharedPreferences(TUTORIALS_PREFERENCES, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("homepageTutorialShown", true)
+        editor.apply()
+    }
+
+    fun getHomepageTutorialShown(context: Context): Boolean {
+        val sharedPreferences = context.getSharedPreferences(TUTORIALS_PREFERENCES, Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean("homepageTutorialShown", false)
+    }
+
     fun savePrivacyRule(context: Context, name: String, jsonPrivacyRule: String) {
         val sharedPreferences = context.getSharedPreferences(RULES_PREFERENCES, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
