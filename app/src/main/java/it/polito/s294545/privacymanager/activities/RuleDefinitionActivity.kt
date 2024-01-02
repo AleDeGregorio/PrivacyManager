@@ -149,6 +149,10 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         // Register a callback to listen for page changes
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
+                if (error.isVisible) {
+                    error.visibility = GONE
+                }
+
                 // Update button based on the current Fragment
                 // First fragment -> go back
                 if (position == 0) {
@@ -251,7 +255,7 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         }
 
         if (timeSlotError) {
-            viewPager.currentItem = 1
+            viewPager.currentItem = 0
 
             error.text = resources.getString(R.string.error_time)
             error.visibility = VISIBLE
@@ -336,10 +340,6 @@ class RuleDefinitionActivity : AppCompatActivity(), ParameterListener {
         when (parameter) {
             "time_slot" -> {
                 timeSlot = data as TimeSlot?
-
-                if (error.isVisible) {
-                    error.visibility = GONE
-                }
             }
             "positions" -> {
                 positions = data as List<CustomAddress>
