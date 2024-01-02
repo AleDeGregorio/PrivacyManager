@@ -83,7 +83,6 @@ class PositionsSelectionFragment : Fragment() {
             if (retrievedRule!!.positions != null && !retrievedRule!!.positions.isNullOrEmpty()) {
                 savedPositions.addAll(retrievedRule!!.positions!!)
                 parameterListener?.onParameterEntered("positions", savedPositions)
-                retrievedRule!!.positions = null
             }
         }
 
