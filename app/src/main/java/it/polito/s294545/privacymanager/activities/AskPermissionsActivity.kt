@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.provider.Settings
 import android.text.Spannable
@@ -173,9 +172,9 @@ class AskPermissionsActivity : AppCompatActivity() {
             }
         }
 
-        if (!PreferencesManager.getTutorialShown(this)) {
+        if (!PreferencesManager.getAskPermissionsTutorialShown(this)) {
             showTutorial()
-            PreferencesManager.saveTutorialShown(this)
+            PreferencesManager.saveAskPermissionsTutorialShown(this)
         }
     }
 
