@@ -184,6 +184,7 @@ class NetworksSelectionAdapter(
             holder.networkName.setText(savedNetworks[position])
 
             holder.networkName.isEnabled = false
+            holder.networkTextInput.defaultHintTextColor = ColorStateList.valueOf(resources.getColor(R.color.primary))
             holder.editNetwork.visibility = View.VISIBLE
             holder.confirmNetwork.visibility = GONE
         }
@@ -193,6 +194,7 @@ class NetworksSelectionAdapter(
             addNetworkButton.setBackgroundColor(resources.getColor(R.color.dark_grey))
             holder.networkName.text = Editable.Factory.getInstance().newEditable("")
             holder.networkName.isFocusable = true
+            holder.networkTextInput.defaultHintTextColor = ColorStateList.valueOf(resources.getColor(R.color.primary))
         }
 
         // If starting to insert text, make available the confirm button

@@ -176,6 +176,7 @@ class PositionsSelectionAdapter(
             holder.positionName.setText(savedPositions[position].address)
 
             holder.positionName.isEnabled = false
+            holder.positionTextInput.defaultHintTextColor = ColorStateList.valueOf(resources.getColor(R.color.primary))
             holder.editPosition.visibility = VISIBLE
             holder.confirmPosition.visibility = INVISIBLE
             holder.currentPosition.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.dark_grey))
@@ -188,6 +189,7 @@ class PositionsSelectionAdapter(
             addPositionButton.setBackgroundColor(resources.getColor(R.color.dark_grey))
             holder.positionName.text = Editable.Factory.getInstance().newEditable("")
             holder.positionName.isFocusable = true
+            holder.positionTextInput.defaultHintTextColor = ColorStateList.valueOf(resources.getColor(R.color.primary))
         }
 
         // If starting to insert text, make available the confirm button
@@ -233,7 +235,7 @@ class PositionsSelectionAdapter(
                 parameterListener?.onParameterEntered("positions", savedPositions)
 
                 // After new position has been saved, we don't need the confirm button anymore
-                holder.confirmPosition.visibility = GONE
+                holder.confirmPosition.visibility = INVISIBLE
                 addPositionButton.isClickable = true
                 addPositionButton.setBackgroundColor(resources.getColor(R.color.primary))
 
@@ -243,6 +245,10 @@ class PositionsSelectionAdapter(
                 // The text input is now not editable
                 holder.positionName.isEnabled = false
                 holder.positionTextInput.defaultHintTextColor = ColorStateList.valueOf(resources.getColor(R.color.primary))
+
+                holder.currentPosition.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.dark_grey))
+                holder.currentPosition.isClickable = false
+                holder.currentPosition.isFocusable = false
             }
         }
 
