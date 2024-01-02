@@ -116,12 +116,9 @@ class PermissionsSelectionActivity : AppCompatActivity() {
             if (savedPermissions.isNotEmpty()) {
                 val intent = Intent(this, ParametersDefinitionActivity::class.java)
 
-                /*
-                if (editRule != null) {
-                    intent.putExtra("rule", editRule.toString())
+                if (nameIntent != null) {
+                    intent.putExtra("name", nameIntent)
                 }
-
-                 */
 
                 intent.putExtra("permissions", ArrayList(savedPermissions))
 

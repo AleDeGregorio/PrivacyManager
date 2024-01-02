@@ -129,7 +129,13 @@ class ParametersDefinitionActivity : AppCompatActivity() {
         if (conditionsIntent != null) {
             savedConditions = Json.decodeFromString(conditionsIntent.toString())
 
-            conditionsButton.setBackgroundColor(resources.getColor(R.color.primary))
+            if (savedConditions.positions.isNullOrEmpty() && (savedConditions.timeSlot == null || savedConditions.timeSlot!!.days.isEmpty()) &&
+                savedConditions.networks.isNullOrEmpty() && savedConditions.bt.isNullOrEmpty() && savedConditions.battery == null) {
+                conditionsButton.setBackgroundColor(resources.getColor(R.color.cancel))
+            }
+            else {
+                conditionsButton.setBackgroundColor(resources.getColor(R.color.primary))
+            }
         }
 
         // Action
