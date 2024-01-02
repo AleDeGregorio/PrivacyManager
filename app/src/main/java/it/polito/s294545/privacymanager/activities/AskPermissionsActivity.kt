@@ -158,7 +158,11 @@ class AskPermissionsActivity : AppCompatActivity() {
         }
 
         if (countPermissions == NUMBER_OF_PERMISSIONS) {
-            goToMainApplication()
+            val fromHome = intent.extras?.getBoolean("fromHome")
+
+            if (fromHome == null) {
+                goToMainApplication()
+            }
         }
 
         if (!PreferencesManager.getTutorialShown(this)) {

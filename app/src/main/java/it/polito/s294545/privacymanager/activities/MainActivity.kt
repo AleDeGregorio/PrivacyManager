@@ -21,10 +21,12 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.marginEnd
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import it.polito.s294545.privacymanager.R
 import it.polito.s294545.privacymanager.customDataClasses.Rule
@@ -48,6 +50,24 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         context = this.applicationContext
         setContentView(R.layout.activity_main)
+
+        // Get toolbar
+        val toolbarLayout = findViewById<ConstraintLayout>(R.id.toolbarLayout)
+        val toolbar = toolbarLayout.findViewById<MaterialToolbar>(R.id.toolbar)
+
+        // Set the navigation icon
+        toolbar.navigationIcon = ContextCompat.getDrawable(this, R.drawable.icon_settings)
+        toolbar.setNavigationIconTint(resources.getColor(R.color.white))
+
+        toolbar.setNavigationOnClickListener {
+            val intent = Intent(this, AskPermissionsActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+
+            intent.putExtra("fromHome", true)
+
+            startActivity(intent)
+            finish()
+        }
 
         // Manage user's back pressure
         val callback = object : OnBackPressedCallback(true) {
