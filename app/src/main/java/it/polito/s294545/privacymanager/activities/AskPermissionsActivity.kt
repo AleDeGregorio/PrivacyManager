@@ -9,9 +9,13 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.provider.Settings
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -70,6 +74,8 @@ class AskPermissionsActivity : AppCompatActivity() {
     private lateinit var notificationsButton: ExtendedFloatingActionButton
     private lateinit var usageButton: ExtendedFloatingActionButton
 
+    private lateinit var infoTextView: TextView
+
     private lateinit var confirmButton: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,6 +104,8 @@ class AskPermissionsActivity : AppCompatActivity() {
             }
         }
         onBackPressedDispatcher.addCallback(this, callback)
+
+        infoTextView = findViewById(R.id.ask_permissions_info)
 
         // Confirm permissions button
         confirmButton = findViewById(R.id.confirm_permissions)
@@ -181,10 +189,9 @@ class AskPermissionsActivity : AppCompatActivity() {
 
         sequence.addSequenceItem(
             MaterialShowcaseView.Builder(this)
-                .setTarget(locationButton)
+                .setTarget(infoTextView)
                 .withoutShape()
-                .setTitleText("Benvenuto!")
-                .setContentText("Lo scopo di questa applicazione è permetterti di gestire la privacy e la sicurezza dei tuoi dati, creando delle regole personalizzate per monitorare il comportamento delle applicazioni che utilizzi")
+                .setContentText(getText("Benvenuto!\n\n", "Lo scopo di questa applicazione è permetterti di gestire la privacy e la sicurezza dei tuoi dati, creando delle regole personalizzate per monitorare il comportamento delle applicazioni che utilizzi"))
                 .setContentTextColor(resources.getColor(R.color.white))
                 .setDismissText("Tocca per continuare")
                 .setDismissOnTouch(true)
@@ -196,8 +203,7 @@ class AskPermissionsActivity : AppCompatActivity() {
             MaterialShowcaseView.Builder(this)
                 .setTarget(notificationsButton)
                 .withoutShape()
-                .setTitleText("Prima di cominiciare")
-                .setContentText("È necessario accedere ad alcune funzionalità del tuo dispositivo")
+                .setContentText(getText("Prima di cominiciare\n\n", "È necessario accedere ad alcune funzionalità del tuo dispositivo. Ti verranno adesso spiegati i motivi per ciasuna funzionalità richiesta"))
                 .setContentTextColor(resources.getColor(R.color.white))
                 .setDismissText("Tocca per continuare")
                 .setDismissOnTouch(true)
@@ -302,6 +308,16 @@ class AskPermissionsActivity : AppCompatActivity() {
         )
 
         sequence.start()
+    }
+
+    // Fix context text opacity problem in tutorial
+    private fun getText(title: String, content: String): SpannableString {
+        val spannableString = SpannableString(title + content)
+        // 1.5f for title i.e. default text size * 1.5f
+        spannableString.setSpan(RelativeSizeSpan(1.5f), 0, title.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        // 0.85f for content i.e. default text size * 0.85f, smaller than the title
+        spannableString.setSpan(RelativeSizeSpan(1.0f), title.length + 1, (title + content).length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return spannableString
     }
 
     private fun goToMainApplication() {
