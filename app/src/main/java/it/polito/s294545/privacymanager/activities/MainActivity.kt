@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
+import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Spannable
@@ -180,6 +181,7 @@ class MainActivity : AppCompatActivity() {
                 .setDismissText("Tocca per continuare")
                 .setDismissOnTouch(true)
                 .setSkipText("Salta")
+                .setSkipStyle(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC))
                 .renderOverNavigationBar()
                 .build()
         )
@@ -197,6 +199,7 @@ class MainActivity : AppCompatActivity() {
                 .setShapePadding(50)
                 .setDismissOnTouch(true)
                 .setSkipText("Salta")
+                .setSkipStyle(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC))
                 .renderOverNavigationBar()
                 .build()
         )

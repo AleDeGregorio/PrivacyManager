@@ -31,6 +31,19 @@ object PreferencesManager {
         return sharedPreferences.getBoolean("homepageTutorialShown", false)
     }
 
+    fun saveRuleCreationTutorialShown(context: Context) {
+        val sharedPreferences = context.getSharedPreferences(TUTORIALS_PREFERENCES, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("ruleCreationTutorialShown", true)
+        editor.apply()
+    }
+
+    fun getRuleCreationTutorialShown(context: Context): Boolean {
+        val sharedPreferences = context.getSharedPreferences(TUTORIALS_PREFERENCES, Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean("ruleCreationTutorialShown", false)
+    }
+
+
     fun savePrivacyRule(context: Context, name: String, jsonPrivacyRule: String) {
         val sharedPreferences = context.getSharedPreferences(RULES_PREFERENCES, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()

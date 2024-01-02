@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.graphics.Typeface
 import android.os.Bundle
 import android.provider.Settings
 import android.text.Spannable
@@ -195,6 +196,7 @@ class AskPermissionsActivity : AppCompatActivity() {
                 .setDismissText("Tocca per continuare")
                 .setDismissOnTouch(true)
                 .setSkipText("Salta")
+                .setSkipStyle(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC))
                 .renderOverNavigationBar()
                 .build()
         )
@@ -208,6 +210,7 @@ class AskPermissionsActivity : AppCompatActivity() {
                 .setDismissText("Tocca per continuare")
                 .setDismissOnTouch(true)
                 .setSkipText("Salta")
+                .setSkipStyle(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC))
                 .renderOverNavigationBar()
                 .build()
         )
@@ -225,6 +228,7 @@ class AskPermissionsActivity : AppCompatActivity() {
                 .setShapePadding(50)
                 .setDismissOnTouch(true)
                 .setSkipText("Salta")
+                .setSkipStyle(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC))
                 .renderOverNavigationBar()
                 .build()
         )
@@ -242,6 +246,7 @@ class AskPermissionsActivity : AppCompatActivity() {
                 .setShapePadding(50)
                 .setDismissOnTouch(true)
                 .setSkipText("Salta")
+                .setSkipStyle(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC))
                 .renderOverNavigationBar()
                 .build()
         )

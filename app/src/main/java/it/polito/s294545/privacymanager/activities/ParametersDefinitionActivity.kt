@@ -4,9 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.View
 import android.view.View.GONE
@@ -18,6 +22,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import it.polito.s294545.privacymanager.R
@@ -26,8 +31,14 @@ import it.polito.s294545.privacymanager.ruleDefinitionFragments.listAppsInfo
 import it.polito.s294545.privacymanager.utilities.PreferencesManager
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
+import uk.co.deanwild.materialshowcaseview.ShowcaseTooltip
 
 class ParametersDefinitionActivity : AppCompatActivity() {
+
+    private val TUTORIAL_ID = "Tutorial rule creation"
 
     private var permissionsIntent: Any? = null
     private var appsIntent: Any? = null
@@ -44,6 +55,17 @@ class ParametersDefinitionActivity : AppCompatActivity() {
 
     private var name: String? = null
 
+    private lateinit var infoTextView: TextView
+    private lateinit var permissionsCard: MaterialCardView
+    private lateinit var permissionsButton: ExtendedFloatingActionButton
+    private lateinit var appsCard: MaterialCardView
+    private lateinit var appsButton: ExtendedFloatingActionButton
+    private lateinit var conditionsCard: MaterialCardView
+    private lateinit var conditionsButton: ExtendedFloatingActionButton
+    private lateinit var actionCard: MaterialCardView
+    private lateinit var actionButton: ExtendedFloatingActionButton
+    private lateinit var saveButton: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_parameters_definition)
@@ -58,6 +80,15 @@ class ParametersDefinitionActivity : AppCompatActivity() {
 
         toolbar.setNavigationOnClickListener { manageBackNavigation() }
 
+        // Set the help icon
+        toolbar.inflateMenu(R.menu.toolbar_menu)
+        toolbar.overflowIcon = ContextCompat.getDrawable(this, R.drawable.icon_help)
+
+        toolbar.setOnMenuItemClickListener {
+            showTutorial()
+            true
+        }
+
         // Manage cancel button
         val cancelButton = findViewById<Button>(R.id.cancel_button)
         cancelButton.setOnClickListener { manageBackNavigation() }
@@ -70,12 +101,19 @@ class ParametersDefinitionActivity : AppCompatActivity() {
         }
         onBackPressedDispatcher.addCallback(this, callback)
 
-        val permissionsButton = findViewById<ExtendedFloatingActionButton>(R.id.permissions_button)
-        val appsButton = findViewById<ExtendedFloatingActionButton>(R.id.apps_button)
-        val conditionsButton = findViewById<ExtendedFloatingActionButton>(R.id.conditions_button)
-        val actionButton = findViewById<ExtendedFloatingActionButton>(R.id.action_button)
+        infoTextView = findViewById(R.id.infoTextView)
 
-        val saveButton = findViewById<Button>(R.id.save_button)
+        permissionsCard = findViewById(R.id.permissions_card)
+        appsCard = findViewById(R.id.apps_card)
+        conditionsCard = findViewById(R.id.conditions_card)
+        actionCard = findViewById(R.id.action_card)
+
+        permissionsButton = findViewById(R.id.permissions_button)
+        appsButton = findViewById(R.id.apps_button)
+        conditionsButton = findViewById(R.id.conditions_button)
+        actionButton = findViewById(R.id.action_button)
+
+        saveButton = findViewById(R.id.save_button)
 
         // ----- Manage all intents -----
         // Name
@@ -267,6 +305,195 @@ class ParametersDefinitionActivity : AppCompatActivity() {
                 saveButton.setOnClickListener { saveRule() }
             }
         }
+
+        if (!PreferencesManager.getRuleCreationTutorialShown(this)) {
+            showTutorial()
+            PreferencesManager.saveRuleCreationTutorialShown(this)
+        }
+    }
+
+    private fun showTutorial() {
+        MaterialShowcaseView.resetSingleUse(this, TUTORIAL_ID)
+
+        val config = ShowcaseConfig()
+        config.delay = 500
+
+        val sequence = MaterialShowcaseSequence(this, TUTORIAL_ID)
+
+        sequence.addSequenceItem(
+            MaterialShowcaseView.Builder(this)
+                .setTarget(infoTextView)
+                .withoutShape()
+                .setContentText(getText("Qui puoi definire la tua regola\n\n", "Adesso ti verranno spiegati i vari parametri che puoi definire"))
+                .setDismissText("Tocca per continuare")
+                .setDismissOnTouch(true)
+                .setSkipText("Salta")
+                .setSkipStyle(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC))
+                .renderOverNavigationBar()
+                .build()
+        )
+
+        val toolTipPermissions = ShowcaseTooltip.build(this)
+            .corner(30)
+            .text("La parte fondamentale di una regola è rappresentata dalle autorizzazioni. Scegliendo le autorizzazioni che vuoi monitorare verrai avvertito quando viene effettuato un acesso alla funzionalità corrispondente")
+
+        sequence.addSequenceItem(
+            MaterialShowcaseView.Builder(this)
+                .setTarget(permissionsCard)
+                .setToolTip(toolTipPermissions)
+                .withRectangleShape()
+                .setTooltipMargin(30)
+                .setShapePadding(50)
+                .setDismissOnTouch(true)
+                .setSkipText("Salta")
+                .setSkipStyle(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC))
+                .renderOverNavigationBar()
+                .build()
+        )
+
+        val toolTipPermissionsButton = ShowcaseTooltip.build(this)
+            .corner(30)
+            .text("Cliccando su questo bottone potrai selezionare le autorizzazioni di tuo interesse")
+
+        sequence.addSequenceItem(
+            MaterialShowcaseView.Builder(this)
+                .setTarget(permissionsButton)
+                .setToolTip(toolTipPermissionsButton)
+                .withRectangleShape()
+                .setTooltipMargin(30)
+                .setShapePadding(15)
+                .setDismissOnTouch(true)
+                .setSkipText("Salta")
+                .setSkipStyle(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC))
+                .renderOverNavigationBar()
+                .build()
+        )
+
+        val toolTipApps = ShowcaseTooltip.build(this)
+            .corner(30)
+            .text("Una (o più) delle autorizzazioni che hai selezionato possono essere utilizzate da diverse app. Scegli dunque le app che vuoi controllare")
+
+        sequence.addSequenceItem(
+            MaterialShowcaseView.Builder(this)
+                .setTarget(appsCard)
+                .setToolTip(toolTipApps)
+                .withRectangleShape()
+                .setTooltipMargin(30)
+                .setShapePadding(50)
+                .setDismissOnTouch(true)
+                .renderOverNavigationBar()
+                .build()
+        )
+
+        val toolTipAppsButton = ShowcaseTooltip.build(this)
+            .corner(30)
+            .text("Cliccando su questo bottone potrai selezionare le app da monitorare")
+
+        sequence.addSequenceItem(
+            MaterialShowcaseView.Builder(this)
+                .setTarget(appsButton)
+                .setToolTip(toolTipAppsButton)
+                .withRectangleShape()
+                .setTooltipMargin(30)
+                .setShapePadding(15)
+                .setDismissOnTouch(true)
+                .renderOverNavigationBar()
+                .build()
+        )
+
+        val toolTipConditions = ShowcaseTooltip.build(this)
+            .corner(30)
+            .text("Puoi anche scegliere se attivare il monitoraggio definito nella tua regola sempre o a seconda di alcune condizioni. Le condizioni che puoi definire comprendono i giorni e l'orario, la posizione in cui ti trovi, il tipo di connessione utilizzato, i dispositivi bluetooth collegati e il livello di batteria")
+
+        sequence.addSequenceItem(
+            MaterialShowcaseView.Builder(this)
+                .setTarget(conditionsCard)
+                .setToolTip(toolTipConditions)
+                .withRectangleShape()
+                .setTooltipMargin(30)
+                .setShapePadding(50)
+                .setDismissOnTouch(true)
+                .renderOverNavigationBar()
+                .build()
+        )
+
+        val toolTipConditionsButton = ShowcaseTooltip.build(this)
+            .corner(30)
+            .text("Cliccando su questo bottone potrai navigare e scegliere i parametri di tuo interesse")
+
+        sequence.addSequenceItem(
+            MaterialShowcaseView.Builder(this)
+                .setTarget(conditionsButton)
+                .setToolTip(toolTipConditionsButton)
+                .withRectangleShape()
+                .setTooltipMargin(30)
+                .setShapePadding(15)
+                .setDismissOnTouch(true)
+                .renderOverNavigationBar()
+                .build()
+        )
+
+        val toolTipAction = ShowcaseTooltip.build(this)
+            .corner(30)
+            .text("Puoi infine selezionare come intervenire nel caso in cui si verifichi una violazione alla regola definita")
+
+        sequence.addSequenceItem(
+            MaterialShowcaseView.Builder(this)
+                .setTarget(actionCard)
+                .setToolTip(toolTipAction)
+                .withRectangleShape()
+                .setTooltipMargin(30)
+                .setShapePadding(50)
+                .setDismissOnTouch(true)
+                .renderOverNavigationBar()
+                .build()
+        )
+
+        val toolTipActionButton = ShowcaseTooltip.build(this)
+            .corner(30)
+            .text("Cliccando su questo bottone potrai selezionare la reazione che preferisci venga eseguita")
+
+        sequence.addSequenceItem(
+            MaterialShowcaseView.Builder(this)
+                .setTarget(actionButton)
+                .setToolTip(toolTipActionButton)
+                .withRectangleShape()
+                .setTooltipMargin(30)
+                .setShapePadding(15)
+                .setDismissOnTouch(true)
+                .renderOverNavigationBar()
+                .build()
+        )
+
+        val toolTipSave = ShowcaseTooltip.build(this)
+            .corner(30)
+            .text("Quando hai finito potrai cliccare su questo bottone per dare un nome alla tua regola e salvarla")
+
+        sequence.addSequenceItem(
+            MaterialShowcaseView.Builder(this)
+                .setTarget(saveButton)
+                .setToolTip(toolTipSave)
+                .withRectangleShape()
+                .setTooltipMargin(30)
+                .setShapePadding(15)
+                .setDismissOnTouch(true)
+                .setSkipText("Salta")
+                .setSkipStyle(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC))
+                .renderOverNavigationBar()
+                .build()
+        )
+
+        sequence.start()
+    }
+
+    // Fix context text opacity problem in tutorial
+    private fun getText(title: String, content: String): SpannableString {
+        val spannableString = SpannableString(title + content)
+        // 1.5f for title i.e. default text size * 1.5f
+        spannableString.setSpan(RelativeSizeSpan(1.5f), 0, title.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        // 0.85f for content i.e. default text size * 0.85f, smaller than the title
+        spannableString.setSpan(RelativeSizeSpan(1.0f), title.length + 1, (title + content).length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return spannableString
     }
 
     @SuppressLint("ClickableViewAccessibility")
