@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "496755584763",
+    "project_id": "privacy-manager-3d124",
+    "storage_bucket": "privacy-manager-3d124.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:496755584763:android:202fcb2fe7159f15df8a5e",
+        "android_client_info": {
+          "package_name": "it.polito.s294545.privacymanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "496755584763-dmntasau0d4buigs0ashnt947ohdsfe5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.polito.s294545.privacymanager",
+            "certificate_hash": "1223db6ad6c4167bb3861608278fa2a96af199d8"
+          }
+        },
+        {
+          "client_id": "496755584763-hgpsttm073qt4irrl32hptmf73jeb1nt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrb5stSOkyt8hxLTbUvGp6sf_UgTViJuM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "496755584763-hgpsttm073qt4irrl32hptmf73jeb1nt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
