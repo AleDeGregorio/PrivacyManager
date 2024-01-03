@@ -6,6 +6,39 @@ object PreferencesManager {
 
     private const val RULES_PREFERENCES = "SavedRules"
     private const val TUTORIALS_PREFERENCES = "Tutorials"
+    private const val USER_LOGGED = "Login"
+
+    fun deleteAll(context: Context) {
+        val sharedPreferencesRules = context.getSharedPreferences(RULES_PREFERENCES, Context.MODE_PRIVATE)
+
+        var editor = sharedPreferencesRules.edit()
+        editor.clear()
+        editor.apply()
+
+        val sharedPreferencesTutorials = context.getSharedPreferences(TUTORIALS_PREFERENCES, Context.MODE_PRIVATE)
+
+        editor = sharedPreferencesTutorials.edit()
+        editor.clear()
+        editor.apply()
+
+        val sharedPreferencesLogin = context.getSharedPreferences(USER_LOGGED, Context.MODE_PRIVATE)
+
+        editor = sharedPreferencesLogin.edit()
+        editor.clear()
+        editor.apply()
+    }
+
+    fun saveUserLogged(context: Context) {
+        val sharedPreferences = context.getSharedPreferences(USER_LOGGED, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("userLogged", true)
+        editor.apply()
+    }
+
+    fun getUserLogged(context: Context): Boolean {
+        val sharedPreferences = context.getSharedPreferences(USER_LOGGED, Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean("userLogged", false)
+    }
 
     fun saveAskPermissionsTutorialShown(context: Context) {
         val sharedPreferences = context.getSharedPreferences(TUTORIALS_PREFERENCES, Context.MODE_PRIVATE)

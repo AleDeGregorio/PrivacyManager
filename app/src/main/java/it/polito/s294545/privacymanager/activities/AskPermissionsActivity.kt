@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.FirebaseApp
 import it.polito.s294545.privacymanager.R
 import it.polito.s294545.privacymanager.utilities.PreferencesManager
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
@@ -82,7 +83,20 @@ class AskPermissionsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ask_permissions)
 
+        // Set light theme
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+        val loggedUser = PreferencesManager.getUserLogged(this)
+
+        // Initialize Firestore
+        FirebaseApp.initializeApp(this)
+
+        if (!loggedUser) {
+            val intent = Intent(this, SignInActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(intent)
+            finish()
+        }
 
         // Get toolbar
         val toolbarLayout = findViewById<ConstraintLayout>(R.id.toolbarLayout)
