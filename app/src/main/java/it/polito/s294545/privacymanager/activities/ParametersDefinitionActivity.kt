@@ -477,8 +477,6 @@ class ParametersDefinitionActivity : AppCompatActivity() {
                 .setTooltipMargin(30)
                 .setShapePadding(15)
                 .setDismissOnTouch(true)
-                .setSkipText("Salta")
-                .setSkipStyle(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC))
                 .renderOverNavigationBar()
                 .build()
         )
