@@ -22,7 +22,7 @@ import it.polito.s294545.privacymanager.utilities.PreferencesManager
 class SignInActivity : AppCompatActivity() {
 
     private lateinit var loginLauncher: ActivityResultLauncher<Intent>
-    val db = FirebaseFirestore.getInstance()
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,6 +86,7 @@ class SignInActivity : AppCompatActivity() {
                 // User already signed in, go to main application
                 if (task.result.exists()) {
                     PreferencesManager.saveUserLogged(this)
+                    PreferencesManager.saveUserID(this, user.uid)
                     startActivity(intent)
                 }
                 // User not signed in, save data in DB and in shared preferences and then go to main application
@@ -93,12 +94,14 @@ class SignInActivity : AppCompatActivity() {
                     val userData = hashMapOf(
                         "email" to user.email,
                         "name" to user.displayName,
-                        "timestampSignIn" to FieldValue.serverTimestamp()
+                        "timestampSignIn" to FieldValue.serverTimestamp(),
+                        "tutorialsOpened" to 0
                     )
 
                     userRef.set(userData)
                         .addOnSuccessListener {
                             PreferencesManager.saveUserLogged(this)
+                            PreferencesManager.saveUserID(this, user.uid)
                             startActivity(intent)
                         }
                 }

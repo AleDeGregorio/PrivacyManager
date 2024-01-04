@@ -26,6 +26,8 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.FirebaseApp
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.s294545.privacymanager.R
 import it.polito.s294545.privacymanager.utilities.PreferencesManager
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
@@ -35,6 +37,8 @@ import uk.co.deanwild.materialshowcaseview.ShowcaseTooltip
 
 
 class AskPermissionsActivity : AppCompatActivity() {
+
+    private val db = FirebaseFirestore.getInstance()
 
     private val TUTORIAL_ID = "Tutorial ask permissions"
 
@@ -107,7 +111,14 @@ class AskPermissionsActivity : AppCompatActivity() {
         toolbar.overflowIcon = ContextCompat.getDrawable(this, R.drawable.icon_help)
 
         toolbar.setOnMenuItemClickListener {
-            showTutorial()
+            val userID = PreferencesManager.getUserID(this)
+
+            val userRef = db.collection("users").document(userID)
+
+            userRef
+                .update("tutorialsOpened", FieldValue.increment(1))
+                .addOnSuccessListener { showTutorial() }
+
             true
         }
 

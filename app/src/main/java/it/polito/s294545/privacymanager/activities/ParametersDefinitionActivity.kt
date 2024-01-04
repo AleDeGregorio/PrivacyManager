@@ -25,6 +25,8 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.s294545.privacymanager.R
 import it.polito.s294545.privacymanager.customDataClasses.Rule
 import it.polito.s294545.privacymanager.ruleDefinitionFragments.listAppsInfo
@@ -37,6 +39,8 @@ import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
 import uk.co.deanwild.materialshowcaseview.ShowcaseTooltip
 
 class ParametersDefinitionActivity : AppCompatActivity() {
+
+    private val db = FirebaseFirestore.getInstance()
 
     private val TUTORIAL_ID = "Tutorial rule creation"
 
@@ -85,7 +89,14 @@ class ParametersDefinitionActivity : AppCompatActivity() {
         toolbar.overflowIcon = ContextCompat.getDrawable(this, R.drawable.icon_help)
 
         toolbar.setOnMenuItemClickListener {
-            showTutorial()
+            val userID = PreferencesManager.getUserID(this)
+
+            val userRef = db.collection("users").document(userID)
+
+            userRef
+                .update("tutorialsOpened", FieldValue.increment(1))
+                .addOnSuccessListener { showTutorial() }
+
             true
         }
 

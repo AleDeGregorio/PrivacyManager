@@ -28,6 +28,18 @@ object PreferencesManager {
         editor.apply()
     }
 
+    fun saveUserID(context: Context, id: String) {
+        val sharedPreferences = context.getSharedPreferences(USER_LOGGED, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("userID", id)
+        editor.apply()
+    }
+
+    fun getUserID(context: Context): String {
+        val sharedPreferences = context.getSharedPreferences(USER_LOGGED, Context.MODE_PRIVATE)
+        return sharedPreferences.getString("userID", "") ?: ""
+    }
+
     fun saveUserLogged(context: Context) {
         val sharedPreferences = context.getSharedPreferences(USER_LOGGED, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()

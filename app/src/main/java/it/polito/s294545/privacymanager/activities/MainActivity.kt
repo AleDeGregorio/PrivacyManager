@@ -32,6 +32,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.s294545.privacymanager.R
 import it.polito.s294545.privacymanager.customDataClasses.Rule
 import it.polito.s294545.privacymanager.utilities.MonitorManager
@@ -53,6 +55,8 @@ private lateinit var noRule : TextView
 private lateinit var noActiveRule : TextView
 
 class MainActivity : AppCompatActivity() {
+
+    private val db = FirebaseFirestore.getInstance()
 
     private val TUTORIAL_ID = "Tutorial homepage"
 
@@ -85,7 +89,14 @@ class MainActivity : AppCompatActivity() {
         toolbar.overflowIcon = ContextCompat.getDrawable(this, R.drawable.icon_help)
 
         toolbar.setOnMenuItemClickListener {
-            showTutorial()
+            val userID = PreferencesManager.getUserID(this)
+
+            val userRef = db.collection("users").document(userID)
+
+            userRef
+                .update("tutorialsOpened", FieldValue.increment(1))
+                .addOnSuccessListener { showTutorial() }
+
             true
         }
 
