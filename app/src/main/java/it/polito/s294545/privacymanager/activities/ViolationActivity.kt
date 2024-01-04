@@ -15,9 +15,15 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.utilities.PreferencesManager
 
 class ViolationActivity : AppCompatActivity() {
+
+    private val db = FirebaseFirestore.getInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_violation)
@@ -46,6 +52,11 @@ class ViolationActivity : AppCompatActivity() {
         // Set name of rule violated
         val ruleName = intent.extras?.getString("ruleName")
         val infoText = findViewById<TextView>(R.id.infoTextView)
+
+        val userID = PreferencesManager.getUserID(this)
+        val ruleRef = db.collection("users").document(userID).collection("statistics").document(ruleName!!)
+
+        ruleRef.update("violations", FieldValue.increment(1))
 
         val info = when (action) {
             "signal_app" -> "La seguente app ha violato la regola \"$ruleName\""

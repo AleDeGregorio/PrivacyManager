@@ -45,6 +45,8 @@ import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
 import uk.co.deanwild.materialshowcaseview.ShowcaseTooltip
+import java.time.Duration
+import java.time.LocalDateTime
 
 //val listRules = listOf("Test rule 1", "Test rule 2", "Test rule 3")
 private var savedRules = mutableListOf<Rule>()
@@ -54,9 +56,9 @@ private lateinit var context : Context
 private lateinit var noRule : TextView
 private lateinit var noActiveRule : TextView
 
-class MainActivity : AppCompatActivity() {
+private val db = FirebaseFirestore.getInstance()
 
-    private val db = FirebaseFirestore.getInstance()
+class MainActivity : AppCompatActivity() {
 
     private val TUTORIAL_ID = "Tutorial homepage"
 
@@ -490,6 +492,28 @@ fun showPopupActiveRule(view: View, rule: Rule) {
 
         savedRules.clear()
         activeRules.clear()
+
+        // Rule has been activated
+        if (rule.active) {
+            PreferencesManager.saveStartRule(context, rule.name!!)
+
+            val userID = PreferencesManager.getUserID(context)
+            val ruleRef = db.collection("users").document(userID).collection("statistics").document(rule.name!!)
+
+            ruleRef.update("activations", FieldValue.increment(1))
+        }
+        // Rule has been stopped
+        else {
+            val startTime = PreferencesManager.getStartRule(context, rule.name!!)
+            PreferencesManager.deleteStartRule(context, rule.name!!)
+
+            val activeDuration = Duration.between(startTime, LocalDateTime.now())
+
+            val userID = PreferencesManager.getUserID(context)
+            val ruleRef = db.collection("users").document(userID).collection("statistics").document(rule.name!!)
+
+            ruleRef.update("timeOfAction", FieldValue.increment(activeDuration.seconds))
+        }
 
         // Reload homepage
         val intent = Intent(context, MainActivity::class.java)

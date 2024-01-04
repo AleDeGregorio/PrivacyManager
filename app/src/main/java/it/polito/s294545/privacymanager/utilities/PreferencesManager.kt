@@ -1,12 +1,14 @@
 package it.polito.s294545.privacymanager.utilities
 
 import android.content.Context
+import java.time.LocalDateTime
 
 object PreferencesManager {
 
     private const val RULES_PREFERENCES = "SavedRules"
     private const val TUTORIALS_PREFERENCES = "Tutorials"
     private const val USER_LOGGED = "Login"
+    private const val STARTED_RULES = "StartedRules"
 
     fun deleteAll(context: Context) {
         val sharedPreferencesRules = context.getSharedPreferences(RULES_PREFERENCES, Context.MODE_PRIVATE)
@@ -86,6 +88,29 @@ object PreferencesManager {
     fun getRuleCreationTutorialShown(context: Context): Boolean {
         val sharedPreferences = context.getSharedPreferences(TUTORIALS_PREFERENCES, Context.MODE_PRIVATE)
         return sharedPreferences.getBoolean("ruleCreationTutorialShown", false)
+    }
+
+    fun saveStartRule(context: Context, name: String) {
+        val startTimeStamp = LocalDateTime.now()
+
+        val sharedPreferences = context.getSharedPreferences(STARTED_RULES, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString(name, startTimeStamp.toString())
+        editor.apply()
+    }
+
+    fun getStartRule(context: Context, name: String) : LocalDateTime {
+        val sharedPreferences = context.getSharedPreferences(STARTED_RULES, Context.MODE_PRIVATE)
+        val startTimestamp = sharedPreferences.getString(name, "")
+
+        return LocalDateTime.parse(startTimestamp)
+    }
+
+    fun deleteStartRule(context: Context, name: String) {
+        val sharedPreferences = context.getSharedPreferences(STARTED_RULES, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.remove(name)
+        editor.apply()
     }
 
 

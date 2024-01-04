@@ -9,9 +9,15 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.imageview.ShapeableImageView
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.s294545.privacymanager.R
+import it.polito.s294545.privacymanager.utilities.PreferencesManager
 
 class NotificationActivity : AppCompatActivity() {
+
+    private val db = FirebaseFirestore.getInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_notification)
@@ -42,6 +48,11 @@ class NotificationActivity : AppCompatActivity() {
 
         val infoText = findViewById<TextView>(R.id.infoTextView)
         infoText.text = "La seguente app definita in \"$ruleName\" ha inviato questa notifica"
+
+        val userID = PreferencesManager.getUserID(this)
+        val ruleRef = db.collection("users").document(userID).collection("statistics").document(ruleName!!)
+
+        ruleRef.update("violations", FieldValue.increment(1))
 
         // Get app info from package name
         val packageManager = packageManager

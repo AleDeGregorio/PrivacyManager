@@ -17,6 +17,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -565,12 +566,30 @@ class ParametersDefinitionActivity : AppCompatActivity() {
         rule.apps = savedApps
         rule.packageNames = savedPkgs
 
+        val conditionsChosen = arrayListOf<String>()
+
         if (conditionsIntent != null) {
             rule.timeSlot = savedConditions.timeSlot
             rule.positions = savedConditions.positions?.filter { it.latitude != null }
             rule.networks = savedConditions.networks
             rule.bt = savedConditions.bt
             rule.battery = savedConditions.battery
+
+            if (rule.timeSlot != null && rule.timeSlot!!.days.isNotEmpty()) {
+                conditionsChosen.add("timeSlot")
+            }
+            if (!rule.positions.isNullOrEmpty()) {
+                conditionsChosen.add("position")
+            }
+            if (!rule.networks.isNullOrEmpty()) {
+                conditionsChosen.add("network")
+            }
+            if (!rule.bt.isNullOrEmpty()) {
+                conditionsChosen.add("bluetooth")
+            }
+            if (rule.battery != null) {
+                conditionsChosen.add("battery")
+            }
         }
 
         rule.action = savedAction
@@ -580,6 +599,30 @@ class ParametersDefinitionActivity : AppCompatActivity() {
 
         // Save privacy rule in shared preferences
         PreferencesManager.savePrivacyRule(this, rule.name!!, ruleJSON)
+
+        val userID = PreferencesManager.getUserID(this)
+        val ruleRef = db.collection("users").document(userID).collection("statistics").document(name!!)
+
+        ruleRef.get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val ruleData = hashMapOf(
+                    "permissionsChosen" to rule.permissions,
+                    "appsChosen" to rule.apps,
+                    "conditionsChosen" to conditionsChosen,
+                    "actionChosen" to rule.action,
+
+                    "activations" to 0,
+                    "timeOfAction" to 0,
+                    "violations" to 0
+                )
+
+                ruleRef.set(ruleData)
+            }
+            // Error during data retrieving
+            else {
+                Toast.makeText(this, "Si è verificato un errore: ${task.exception}", Toast.LENGTH_LONG).show()
+            }
+        }
 
         clearAll()
 
