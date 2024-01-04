@@ -3,6 +3,8 @@ package it.polito.s294545.privacymanager.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -76,19 +78,35 @@ class SignInActivity : AppCompatActivity() {
 
         val userRef = db.collection("users").document(user.uid)
 
-        val userData = hashMapOf(
-            "email" to user.email,
-            "name" to user.displayName,
-            "timestampSignIn" to FieldValue.serverTimestamp()
-        )
+        val intent = Intent(this, AskPermissionsActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
 
-        userRef.set(userData).addOnSuccessListener {
-            PreferencesManager.saveUserLogged(this)
+        userRef.get().addOnCompleteListener {task ->
+            if (task.isSuccessful) {
+                // User already signed in, go to main application
+                if (task.result.exists()) {
+                    PreferencesManager.saveUserLogged(this)
+                    startActivity(intent)
+                }
+                // User not signed in, save data in DB and in shared preferences and then go to main application
+                else {
+                    val userData = hashMapOf(
+                        "email" to user.email,
+                        "name" to user.displayName,
+                        "timestampSignIn" to FieldValue.serverTimestamp()
+                    )
 
-            val intent = Intent(this, AskPermissionsActivity::class.java)
-
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent)
+                    userRef.set(userData)
+                        .addOnSuccessListener {
+                            PreferencesManager.saveUserLogged(this)
+                            startActivity(intent)
+                        }
+                }
+            }
+            // Error during data retrieving
+            else {
+                Toast.makeText(this, "Si è verificato un errore: ${task.exception}", Toast.LENGTH_LONG).show()
+            }
         }
     }
 }
