@@ -399,6 +399,7 @@ class SavedRulesAdapter(private val listRules: MutableList<Rule>, context: Conte
             popupWindow.dismiss()
             savedRules.removeAt(holder.adapterPosition)
             PreferencesManager.deletePrivacyRule(context, ruleName)
+            PreferencesManager.deleteRuleID(context, ruleName)
 
             // Show "no saved rule" message if list is empty
             if (savedRules.isEmpty()) {
@@ -498,7 +499,8 @@ fun showPopupActiveRule(view: View, rule: Rule) {
             PreferencesManager.saveStartRule(context, rule.name!!)
 
             val userID = PreferencesManager.getUserID(context)
-            val ruleRef = db.collection("users").document(userID).collection("statistics").document(rule.name!!)
+            val ruleID = PreferencesManager.getRuleID(context, rule.name!!)
+            val ruleRef = db.collection("users").document(userID).collection("statistics").document(ruleID)
 
             ruleRef.update("activations", FieldValue.increment(1))
         }
@@ -510,7 +512,8 @@ fun showPopupActiveRule(view: View, rule: Rule) {
             val activeDuration = Duration.between(startTime, LocalDateTime.now())
 
             val userID = PreferencesManager.getUserID(context)
-            val ruleRef = db.collection("users").document(userID).collection("statistics").document(rule.name!!)
+            val ruleID = PreferencesManager.getRuleID(context, rule.name!!)
+            val ruleRef = db.collection("users").document(userID).collection("statistics").document(ruleID)
 
             ruleRef.update("timeOfAction", FieldValue.increment(activeDuration.seconds))
         }

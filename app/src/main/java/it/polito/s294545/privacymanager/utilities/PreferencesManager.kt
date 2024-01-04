@@ -9,6 +9,7 @@ object PreferencesManager {
     private const val TUTORIALS_PREFERENCES = "Tutorials"
     private const val USER_LOGGED = "Login"
     private const val STARTED_RULES = "StartedRules"
+    private const val RULES_ID = "RulesID"
 
     fun deleteAll(context: Context) {
         val sharedPreferencesRules = context.getSharedPreferences(RULES_PREFERENCES, Context.MODE_PRIVATE)
@@ -113,6 +114,24 @@ object PreferencesManager {
         editor.apply()
     }
 
+    fun saveRuleID(context: Context, name: String, id: String) {
+        val sharedPreferences = context.getSharedPreferences(RULES_ID, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString(name, id)
+        editor.apply()
+    }
+
+    fun getRuleID(context: Context, name: String) : String {
+        val sharedPreferences = context.getSharedPreferences(RULES_ID, Context.MODE_PRIVATE)
+        return sharedPreferences.getString(name, "") ?: ""
+    }
+
+    fun deleteRuleID(context: Context, name: String) {
+        val sharedPreferences = context.getSharedPreferences(RULES_ID, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.remove(name)
+        editor.apply()
+    }
 
     fun savePrivacyRule(context: Context, name: String, jsonPrivacyRule: String) {
         val sharedPreferences = context.getSharedPreferences(RULES_PREFERENCES, Context.MODE_PRIVATE)

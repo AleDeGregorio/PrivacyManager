@@ -601,11 +601,12 @@ class ParametersDefinitionActivity : AppCompatActivity() {
         PreferencesManager.savePrivacyRule(this, rule.name!!, ruleJSON)
 
         val userID = PreferencesManager.getUserID(this)
-        val ruleRef = db.collection("users").document(userID).collection("statistics").document(name!!)
+        val ruleRef = db.collection("users").document(userID).collection("statistics")
 
         ruleRef.get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val ruleData = hashMapOf(
+                    "ruleName" to rule.name,
                     "permissionsChosen" to rule.permissions,
                     "appsChosen" to rule.apps,
                     "conditionsChosen" to conditionsChosen,
@@ -616,7 +617,9 @@ class ParametersDefinitionActivity : AppCompatActivity() {
                     "violations" to 0
                 )
 
-                ruleRef.set(ruleData)
+                ruleRef.add(ruleData).addOnSuccessListener { ruleReference ->
+                    PreferencesManager.saveRuleID(this, rule.name!!, ruleReference.id)
+                }
             }
             // Error during data retrieving
             else {

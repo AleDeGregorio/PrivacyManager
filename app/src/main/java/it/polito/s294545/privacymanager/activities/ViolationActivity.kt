@@ -54,7 +54,8 @@ class ViolationActivity : AppCompatActivity() {
         val infoText = findViewById<TextView>(R.id.infoTextView)
 
         val userID = PreferencesManager.getUserID(this)
-        val ruleRef = db.collection("users").document(userID).collection("statistics").document(ruleName!!)
+        val ruleID = PreferencesManager.getRuleID(this, ruleName!!)
+        val ruleRef = db.collection("users").document(userID).collection("statistics").document(ruleID)
 
         ruleRef.update("violations", FieldValue.increment(1))
 
