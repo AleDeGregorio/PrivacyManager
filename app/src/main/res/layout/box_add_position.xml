@@ -30,74 +30,75 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_position"
-                android:layout_width="190dp"
+                android:layout_width="170dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/insert_position_hint"
                 android:inputType="textAutoCorrect|text"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/confirm_position_button"
-            android:layout_width="46dp"
-            android:layout_height="47dp"
+            android:layout_width="40dp"
+            android:layout_height="41dp"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/text_input_position"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="10dp"
             android:layout_gravity="end|bottom"
             android:layout_marginTop="6dp"
             android:contentDescription="@string/confirm_position_info"
             android:src="@drawable/icon_confirm"
             app:backgroundTint="@color/dark_grey"
             android:clickable="false"
-            app:fabCustomSize="45dp"
+            app:fabCustomSize="39dp"
             app:tint="@color/white" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/edit_position_button"
             android:visibility="gone"
-            android:layout_width="46dp"
-            android:layout_height="47dp"
+            android:layout_width="40dp"
+            android:layout_height="41dp"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/text_input_position"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="10dp"
             android:layout_gravity="end|bottom"
             android:layout_marginTop="6dp"
             android:contentDescription="@string/confirm_position_info"
             android:src="@drawable/icon_pencil"
             app:backgroundTint="@color/primary"
             android:clickable="false"
-            app:fabCustomSize="45dp"
+            app:fabCustomSize="39dp"
             app:tint="@color/white" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/current_position_button"
-            android:layout_width="46dp"
-            android:layout_height="47dp"
+            android:layout_width="40dp"
+            android:layout_height="41dp"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/confirm_position_button"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="8dp"
             android:layout_gravity="end|bottom"
             android:layout_marginTop="6dp"
             android:contentDescription="@string/confirm_position_info"
             android:src="@drawable/icon_location"
             app:backgroundTint="@color/primary"
             android:clickable="false"
-            app:fabCustomSize="45dp"
+            app:fabCustomSize="39dp"
             app:tint="@color/white" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/delete_position_button"
-            android:layout_width="46dp"
-            android:layout_height="47dp"
+            android:layout_width="40dp"
+            android:layout_height="41dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_gravity="end|bottom"
             android:layout_marginTop="6dp"
+            android:layout_marginEnd="1dp"
             android:contentDescription="@string/delete_position_info"
             android:src="@drawable/icon_trash_bin"
             app:backgroundTint="@color/secondary"
-            app:fabCustomSize="45dp"
+            app:fabCustomSize="37dp"
             app:tint="@color/white" />
 
         <View

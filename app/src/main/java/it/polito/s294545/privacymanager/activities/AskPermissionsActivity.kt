@@ -1,12 +1,15 @@
 package it.polito.s294545.privacymanager.activities
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.app.AppOpsManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.Spannable
@@ -15,8 +18,11 @@ import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View.VISIBLE
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -66,16 +72,23 @@ class AskPermissionsActivity : AppCompatActivity() {
         Manifest.permission.BLUETOOTH_CONNECT
     )
 
+    private val RECEIVE_NOTIFICATIONS_PERMISSION_REQUEST = 107
+    private val RESTRICTED_SETTINGS_PERMISSION_REQUEST = 108
+
     private val NOTIFICATION_PERMISSION_REQUEST = 104
 
     private val PACKAGE_USAGE_STATS_PERMISSION_REQUEST = 105
 
     private val KILL_PROCESS_PERMISSION_REQUEST = 106
 
+    private var android13 = false
+
     // Permission buttons
     private lateinit var locationButton: ExtendedFloatingActionButton
     private lateinit var calendarButton: ExtendedFloatingActionButton
     private lateinit var bluetoothButton: ExtendedFloatingActionButton
+    private var receiveNotificationsButton: ExtendedFloatingActionButton? = null
+    private var restrictedSettingsButton: ExtendedFloatingActionButton? = null
     private lateinit var notificationsButton: ExtendedFloatingActionButton
     private lateinit var usageButton: ExtendedFloatingActionButton
 
@@ -83,6 +96,7 @@ class AskPermissionsActivity : AppCompatActivity() {
 
     private lateinit var confirmButton: FloatingActionButton
 
+    @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ask_permissions)
@@ -166,6 +180,36 @@ class AskPermissionsActivity : AppCompatActivity() {
             }
         }
 
+        // Just for Android 13
+        val currentVersion = Build.VERSION.SDK_INT
+        android13 = currentVersion >= Build.VERSION_CODES.TIRAMISU
+        if (android13) {
+            receiveNotificationsButton = findViewById(R.id.receive_notifications_permission)
+            restrictedSettingsButton = findViewById(R.id.restricted_settings_permission)
+
+            receiveNotificationsButton!!.visibility = VISIBLE
+            restrictedSettingsButton!!.visibility = VISIBLE
+
+            if (hasReceiveNotificationsPermission()) {
+                setPermissionButton(receiveNotificationsButton!!)
+            }
+            else {
+                receiveNotificationsButton!!.setOnClickListener {
+                    requestReceiveNotificationsPermission()
+                }
+            }
+
+            if (hasRestrictedSetting()) {
+                setPermissionButton(restrictedSettingsButton!!)
+            }
+            else {
+                restrictedSettingsButton!!.setOnClickListener {
+                    requestRestrictedSettings()
+                }
+            }
+        }
+
+
         notificationsButton = findViewById(R.id.notifications_permission)
         if (hasNotificationPermission()) {
             setPermissionButton(notificationsButton)
@@ -190,7 +234,7 @@ class AskPermissionsActivity : AppCompatActivity() {
             requestKillProcessPermission()
         }
 
-        if (countPermissions == NUMBER_OF_PERMISSIONS) {
+        if ((!android13 && countPermissions == NUMBER_OF_PERMISSIONS) || (android13 && countPermissions == NUMBER_OF_PERMISSIONS+2)) {
             val fromHome = intent.extras?.getBoolean("fromHome")
 
             if (fromHome == null) {
@@ -228,7 +272,7 @@ class AskPermissionsActivity : AppCompatActivity() {
 
         sequence.addSequenceItem(
             MaterialShowcaseView.Builder(this)
-                .setTarget(notificationsButton)
+                .setTarget(infoTextView)
                 .withoutShape()
                 .setContentText(getText("Prima di cominiciare\n\n", "È necessario accedere ad alcune funzionalità del tuo dispositivo. Ti verranno adesso spiegati i motivi per ciasuna funzionalità richiesta"))
                 .setContentTextColor(resources.getColor(R.color.white))
@@ -250,7 +294,7 @@ class AskPermissionsActivity : AppCompatActivity() {
                 .setToolTip(toolTipLocation)
                 .withRectangleShape()
                 .setTooltipMargin(30)
-                .setShapePadding(50)
+                .setShapePadding(20)
                 .setDismissOnTouch(true)
                 .setSkipText("Salta")
                 .setSkipStyle(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC))
@@ -268,7 +312,7 @@ class AskPermissionsActivity : AppCompatActivity() {
                 .setToolTip(toolTipCalendar)
                 .withRectangleShape()
                 .setTooltipMargin(30)
-                .setShapePadding(50)
+                .setShapePadding(20)
                 .setDismissOnTouch(true)
                 .setSkipText("Salta")
                 .setSkipStyle(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC))
@@ -286,31 +330,16 @@ class AskPermissionsActivity : AppCompatActivity() {
                 .setToolTip(toolTipBluetooth)
                 .withRectangleShape()
                 .setTooltipMargin(30)
-                .setShapePadding(50)
+                .setShapePadding(20)
                 .setDismissOnTouch(true)
-                .renderOverNavigationBar()
-                .build()
-        )
-
-        val toolTipNotifications = ShowcaseTooltip.build(this)
-            .corner(30)
-            .text("Per monitorare le notifiche di altre app, oscurandole o bloccandole secondo i tuoi parametri")
-
-        sequence.addSequenceItem(
-            MaterialShowcaseView.Builder(this)
-                .setTarget(notificationsButton)
-                .setToolTip(toolTipNotifications)
-                .withRectangleShape()
-                .setTooltipMargin(30)
-                .setShapePadding(50)
-                .setDismissOnTouch(true)
+                .setSkipText("Salta")
                 .renderOverNavigationBar()
                 .build()
         )
 
         val toolTipUsage = ShowcaseTooltip.build(this)
             .corner(30)
-            .text("Per monitorare le applicazioni in esecuzione e avvisarti nel caso qualcuna di queste stia violando la regola che hai definito")
+            .text("Per monitorare le applicazioni in esecuzione e avvisarti nel caso qualcuna di queste stia violando la regola che hai definito. Per potere abilitare questa funzionalità, dopo aver cliccato su questo bottone, seleziona l'app \"Privacy Manager\" e consenti l'accesso ai dati di utilizzo")
 
         sequence.addSequenceItem(
             MaterialShowcaseView.Builder(this)
@@ -318,7 +347,58 @@ class AskPermissionsActivity : AppCompatActivity() {
                 .setToolTip(toolTipUsage)
                 .withRectangleShape()
                 .setTooltipMargin(30)
-                .setShapePadding(50)
+                .setShapePadding(20)
+                .setDismissOnTouch(true)
+                .renderOverNavigationBar()
+                .build()
+        )
+
+        if (android13) {
+
+            val toolTipReceiveNotifications = ShowcaseTooltip.build(this)
+                .corner(30)
+                .text("Per avvertirti nel caso in cui un'applicazione da te scelta sta violando la regola che hai definito")
+
+            sequence.addSequenceItem(
+                MaterialShowcaseView.Builder(this)
+                    .setTarget(receiveNotificationsButton)
+                    .setToolTip(toolTipReceiveNotifications)
+                    .withRectangleShape()
+                    .setTooltipMargin(30)
+                    .setShapePadding(20)
+                    .setDismissOnTouch(true)
+                    .renderOverNavigationBar()
+                    .build()
+            )
+
+            val toolTipRestrictedSettings = ShowcaseTooltip.build(this)
+                .corner(30)
+                .text("Per potere monitorare le notifiche di altre app, oscurandole o bloccandole secondo i tuoi parametri. Per potere abilitare questa funzionalità, dopo aver cliccato su questo bottone, seleziona l'app \"Privacy Manager\", clicca i tre puntini in alto a destra e consenti le impostazioni con limitazioni")
+
+            sequence.addSequenceItem(
+                MaterialShowcaseView.Builder(this)
+                    .setTarget(restrictedSettingsButton)
+                    .setToolTip(toolTipRestrictedSettings)
+                    .withRectangleShape()
+                    .setTooltipMargin(30)
+                    .setShapePadding(20)
+                    .setDismissOnTouch(true)
+                    .renderOverNavigationBar()
+                    .build()
+            )
+        }
+
+        val toolTipNotifications = ShowcaseTooltip.build(this)
+            .corner(30)
+            .text("Per monitorare le notifiche di altre app, oscurandole o bloccandole secondo i tuoi parametri. Per potere abilitare questa funzionalità, dopo aver cliccato su questo bottone, seleziona l'app \"Privacy Manager\" e consenti l'accesso alle notifiche")
+
+        sequence.addSequenceItem(
+            MaterialShowcaseView.Builder(this)
+                .setTarget(notificationsButton)
+                .setToolTip(toolTipNotifications)
+                .withRectangleShape()
+                .setTooltipMargin(30)
+                .setShapePadding(20)
                 .setDismissOnTouch(true)
                 .renderOverNavigationBar()
                 .build()
@@ -334,7 +414,7 @@ class AskPermissionsActivity : AppCompatActivity() {
                 .setToolTip(toolTipConfirm)
                 .withCircleShape()
                 .setTooltipMargin(30)
-                .setShapePadding(50)
+                .setShapePadding(20)
                 .setDismissOnTouch(true)
                 .renderOverNavigationBar()
                 .build()
@@ -373,7 +453,7 @@ class AskPermissionsActivity : AppCompatActivity() {
     private fun setPermissionButton(button: ExtendedFloatingActionButton) {
         countPermissions++
 
-        if (countPermissions == NUMBER_OF_PERMISSIONS) {
+        if ((!android13 && countPermissions == NUMBER_OF_PERMISSIONS) || (android13 && countPermissions == NUMBER_OF_PERMISSIONS+1)) {
             setConfirmButton()
         }
 
@@ -404,6 +484,16 @@ class AskPermissionsActivity : AppCompatActivity() {
         return NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun hasReceiveNotificationsPermission() : Boolean {
+        return checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun hasRestrictedSetting() : Boolean {
+        return hasNotificationPermission()
+    }
+
     private fun hasUsageStatsPermission() : Boolean {
         val appOps = getSystemService(APP_OPS_SERVICE) as AppOpsManager
         val mode = appOps.checkOpNoThrow(
@@ -432,6 +522,17 @@ class AskPermissionsActivity : AppCompatActivity() {
 
     private fun requestBluetoothPermission() {
         requestPermissions(BLUETOOTH_PERMISSIONS, BLUETOOTH_PERMISSION_REQUEST)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun requestReceiveNotificationsPermission() {
+        requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), RECEIVE_NOTIFICATIONS_PERMISSION_REQUEST)
+    }
+
+    private fun requestRestrictedSettings() {
+        val intent = Intent(Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS)
+        startActivity(intent)
+
     }
 
     private fun requestNotificationPermission() {
@@ -469,6 +570,11 @@ class AskPermissionsActivity : AppCompatActivity() {
                     setPermissionButton(bluetoothButton)
                 }
             }
+            RECEIVE_NOTIFICATIONS_PERMISSION_REQUEST -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    setPermissionButton(receiveNotificationsButton!!)
+                }
+            }
         }
     }
 
@@ -479,6 +585,7 @@ class AskPermissionsActivity : AppCompatActivity() {
             NOTIFICATION_PERMISSION_REQUEST -> {
                 if (NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)) {
                     setPermissionButton(notificationsButton)
+                    setPermissionButton(restrictedSettingsButton!!)
                 }
             }
             PACKAGE_USAGE_STATS_PERMISSION_REQUEST -> {

@@ -115,15 +115,15 @@
     <string name="notification_title">Notification title</string>
     <string name="ask_permissions">Per usare l\'applicazione è necessario garantire le seguenti autorizzazioni. Clicca sui bottoni per concederne l\'utilizzo:</string>
     <string name="location_permission">Location permission</string>
-    <string name="ask_location">Accesso alla posizione</string>
+    <string name="ask_location">Posizione</string>
     <string name="calendar_permission">Calendar permission</string>
-    <string name="ask_calendar">Accesso al calendario</string>
+    <string name="ask_calendar">Calendario</string>
     <string name="bluetooth_permission">Bluetooth permission</string>
-    <string name="ask_bluetooth">Accesso al bluetooth</string>
+    <string name="ask_bluetooth">Bluetooth</string>
     <string name="notifications_permission">Notifications permission</string>
-    <string name="ask_notifications">Monitoraggio notifiche</string>
+    <string name="ask_notifications">Leggi notifiche</string>
     <string name="usage_permission">Usage permission</string>
-    <string name="ask_usage">Ricerca informazioni app</string>
+    <string name="ask_usage">Monitora app</string>
     <string name="confirm_permissions">Confirm permissions</string>
     <string name="no_active_rule">Nessuna regola attiva</string>
     <string name="reset_time_slot_info">Reset</string>
@@ -149,4 +149,5 @@
     <string name="current_position_name">Inserire un nome per la posizione</string>
     <string name="sign_in_text">Accedi con il tuo account Google</string>
     <string name="app_logo">App logo</string>
+    <string name="receive_notifications">Ricevi notifiche</string>
 </resources>

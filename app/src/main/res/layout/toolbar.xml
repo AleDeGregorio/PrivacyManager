@@ -20,7 +20,7 @@
                 android:minHeight="?attr/actionBarSize"
                 app:title="Privacy Manager"
                 app:titleCentered="true"
-                app:titleTextAppearance="@style/TextAppearance.AppCompat.Display1"
+                app:titleTextAppearance="@style/TextAppearance.AppCompat.Large"
                 app:titleTextColor="@color/white" />
 
         </com.google.android.material.appbar.AppBarLayout>
