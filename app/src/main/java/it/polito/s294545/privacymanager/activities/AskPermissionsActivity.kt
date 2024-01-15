@@ -104,6 +104,8 @@ class AskPermissionsActivity : AppCompatActivity() {
         // Set light theme
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
+        //PreferencesManager.deleteAll(this)
+
         val loggedUser = PreferencesManager.getUserLogged(this)
 
         // Initialize Firestore
@@ -585,7 +587,10 @@ class AskPermissionsActivity : AppCompatActivity() {
             NOTIFICATION_PERMISSION_REQUEST -> {
                 if (NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)) {
                     setPermissionButton(notificationsButton)
-                    setPermissionButton(restrictedSettingsButton!!)
+
+                    if (android13) {
+                        setPermissionButton(restrictedSettingsButton!!)
+                    }
                 }
             }
             PACKAGE_USAGE_STATS_PERMISSION_REQUEST -> {
