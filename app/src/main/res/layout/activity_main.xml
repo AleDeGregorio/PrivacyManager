@@ -38,7 +38,7 @@
             android:id="@+id/saved_rules"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/saved_rules"
+            android:text="Regole non attive:"
             android:layout_marginStart="@dimen/margin_top_title"
             android:layout_marginBottom="@dimen/margin_top_title"
             android:textSize="24sp"
