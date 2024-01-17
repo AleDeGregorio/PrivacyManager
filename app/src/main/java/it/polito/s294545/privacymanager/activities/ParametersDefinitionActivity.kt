@@ -38,6 +38,8 @@ import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
 import uk.co.deanwild.materialshowcaseview.ShowcaseTooltip
+import java.time.Duration
+import java.time.LocalDateTime
 
 class ParametersDefinitionActivity : AppCompatActivity() {
 
@@ -314,7 +316,7 @@ class ParametersDefinitionActivity : AppCompatActivity() {
             }
             // It is an edited rule
             else {
-                saveButton.setOnClickListener { saveRule() }
+                saveButton.setOnClickListener { v -> showPopupActiveRule(v) }
             }
         }
 
@@ -465,7 +467,7 @@ class ParametersDefinitionActivity : AppCompatActivity() {
         }
 
         // Save rule
-        buttonConfirm.setOnClickListener {
+        buttonConfirm.setOnClickListener {v ->
             if (!ruleName.text.isNullOrEmpty()) {
                 name = ruleName.text.toString().trim()
 
@@ -473,7 +475,8 @@ class ParametersDefinitionActivity : AppCompatActivity() {
                     errorName.visibility = VISIBLE
                 }
                 else {
-                    saveRule()
+                    popupWindow.dismiss()
+                    showPopupActiveRule(v)
                 }
             }
         }
@@ -491,7 +494,28 @@ class ParametersDefinitionActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveRule() {
+    private fun showPopupActiveRule(view: View) {
+        val (popupView, popupWindow) = managePopup(view, R.layout.popup_start_rule)
+
+        // Initialize the elements of our window, install the handler
+        val title = popupView.findViewById<TextView>(R.id.title)
+        val buttonStartRule = popupView.findViewById<Button>(R.id.start_rule_button)
+        val buttonCancel = popupView.findViewById<Button>(R.id.cancel_button)
+
+        title.text = "Attivare subito la regola?"
+        buttonStartRule.text = "Sì"
+        buttonCancel.text = "No"
+
+        buttonStartRule.setOnClickListener {
+            saveRule(true)
+        }
+
+        buttonCancel.setOnClickListener {
+            saveRule(false)
+        }
+    }
+
+    private fun saveRule(startRule: Boolean) {
         // Save the inserted rule in a Rule object
         val rule = Rule()
 
@@ -528,6 +552,12 @@ class ParametersDefinitionActivity : AppCompatActivity() {
 
         rule.action = savedAction
 
+        rule.active = startRule
+
+        if (startRule) {
+            PreferencesManager.saveStartRule(this, rule.name!!)
+        }
+
         // Convert rule object to JSON string
         val ruleJSON = Json.encodeToString(Rule.serializer(), rule)
 
@@ -546,7 +576,7 @@ class ParametersDefinitionActivity : AppCompatActivity() {
                     "conditionsChosen" to conditionsChosen,
                     "actionChosen" to rule.action,
 
-                    "activations" to 0,
+                    "activations" to if (startRule) 1 else 0,
                     "timeOfAction" to 0,
                     "violations" to 0
                 )
