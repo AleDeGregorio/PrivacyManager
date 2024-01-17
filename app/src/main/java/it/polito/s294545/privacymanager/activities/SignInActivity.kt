@@ -92,8 +92,6 @@ class SignInActivity : AppCompatActivity() {
                 // User not signed in, save data in DB and in shared preferences and then go to main application
                 else {
                     val userData = hashMapOf(
-                        "email" to user.email,
-                        "name" to user.displayName,
                         "timestampSignIn" to FieldValue.serverTimestamp(),
                         "tutorialsOpened" to 0
                     )

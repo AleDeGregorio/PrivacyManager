@@ -578,7 +578,8 @@ class ParametersDefinitionActivity : AppCompatActivity() {
 
                     "activations" to if (startRule) 1 else 0,
                     "timeOfAction" to 0,
-                    "violations" to 0
+                    "violations" to 0,
+                    "timestampViolations" to emptyList<Long>()
                 )
 
                 ruleRef.add(ruleData).addOnSuccessListener { ruleReference ->

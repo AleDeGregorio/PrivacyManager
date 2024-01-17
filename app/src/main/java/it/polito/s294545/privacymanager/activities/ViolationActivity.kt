@@ -58,6 +58,7 @@ class ViolationActivity : AppCompatActivity() {
         val ruleRef = db.collection("users").document(userID).collection("statistics").document(ruleID)
 
         ruleRef.update("violations", FieldValue.increment(1))
+        ruleRef.update("timestampViolations", FieldValue.arrayUnion(System.currentTimeMillis()))
 
         val info = when (action) {
             "signal_app" -> "La seguente app ha violato la regola \"$ruleName\""
