@@ -434,8 +434,8 @@ class SavedRulesAdapter(private val listRules: MutableList<Rule>, context: Conte
 // Define recycler view for active rules
 class ActiveRulesViewHolder(v: View) : RecyclerView.ViewHolder(v){
     val buttonRule = v.findViewById<Button>(R.id.button_rule)
-    val stopRuleButton = v.findViewById<FloatingActionButton>(R.id.edit_rule)
-    val editRuleButton = v.findViewById<FloatingActionButton>(R.id.start_rule)
+    val stopRuleButton = v.findViewById<FloatingActionButton>(R.id.start_rule)
+    val editRuleButton = v.findViewById<FloatingActionButton>(R.id.edit_rule)
     val deleteRuleButton = v.findViewById<FloatingActionButton>(R.id.delete_rule)
 }
 
@@ -457,13 +457,66 @@ class ActiveRulesAdapter(private val listRules: MutableList<Rule>, context: Cont
         holder.buttonRule.text = ruleName
         holder.buttonRule.setBackgroundColor(resources.getColor(R.color.primary))
 
-        holder.editRuleButton.visibility = INVISIBLE
-        holder.deleteRuleButton.visibility = INVISIBLE
-
         holder.stopRuleButton.setImageDrawable(resources.getDrawable(R.drawable.icon_stop))
 
         // Manage stop active rule
         holder.stopRuleButton.setOnClickListener { v -> showPopupActiveRule(v, rule) }
+
+        // Manage edit rule
+        holder.editRuleButton.setOnClickListener {
+            // Change rule state
+            rule.active = !rule.active
+
+            // Update rule in shared preferences
+            // Convert rule object to JSON string
+            val ruleJSON = Json.encodeToString(Rule.serializer(), rule)
+
+            // Save privacy rule in shared preferences
+            PreferencesManager.savePrivacyRule(context, rule.name!!, ruleJSON)
+
+            savedRules.clear()
+            activeRules.clear()
+
+            // Update statistics in Firebase
+            val startTime = PreferencesManager.getStartRule(context, rule.name!!)
+            PreferencesManager.deleteStartRule(context, rule.name!!)
+
+            val activeDuration = Duration.between(startTime, LocalDateTime.now())
+
+            val userID = PreferencesManager.getUserID(context)
+            val ruleID = PreferencesManager.getRuleID(context, rule.name!!)
+            val ruleRef = db.collection("users").document(userID).collection("statistics").document(ruleID)
+
+            ruleRef.update("timeOfAction", FieldValue.increment(activeDuration.seconds))
+
+            // Go to edit rule
+            val intent = Intent(context, ParametersDefinitionActivity::class.java)
+
+            intent.putExtra("permissions", ArrayList(rule.permissions!!))
+            intent.putExtra("apps", ArrayList(rule.apps!!))
+            intent.putExtra("pkgs", ArrayList(rule.packageNames!!))
+
+            val conditions = Rule()
+
+            conditions.timeSlot = rule.timeSlot
+            conditions.positions = rule.positions
+            conditions.networks = rule.networks
+            conditions.bt = rule.bt
+            conditions.battery = rule.battery
+
+            val conditionsJSON = Json.encodeToString(Rule.serializer(), rule)
+            intent.putExtra("rule", conditionsJSON)
+
+            intent.putExtra("action", rule.action)
+
+            intent.putExtra("name", rule.name)
+
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+        }
+
+        // Manage delete inserted rule button
+        holder.deleteRuleButton.setOnClickListener { v -> showPopupDeleteRule(v, ruleName!!, holder, rule) }
 
         // Manage saved rule
         holder.buttonRule.setOnClickListener {
@@ -471,6 +524,60 @@ class ActiveRulesAdapter(private val listRules: MutableList<Rule>, context: Cont
             intent.putExtra("rule", Json.encodeToString(rule))
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun showPopupDeleteRule(view: View, ruleName: String, holder: ActiveRulesViewHolder, rule: Rule) {
+        val (popupView, popupWindow) = managePopup(view, R.layout.popup_delete_rule)
+
+        val deleteInfo = popupView.findViewById<TextView>(R.id.delete_info)
+        deleteInfo.text = "Desideri cancellare \"$ruleName\"?"
+
+        // Initialize the elements of our window, install the handler
+        val buttonConfirm = popupView.findViewById<Button>(R.id.confirm_delete_button)
+        buttonConfirm.setOnClickListener {
+            // Update statistics in Firebase
+            val startTime = PreferencesManager.getStartRule(context, rule.name!!)
+            PreferencesManager.deleteStartRule(context, rule.name!!)
+
+            val activeDuration = Duration.between(startTime, LocalDateTime.now())
+
+            val userID = PreferencesManager.getUserID(context)
+            val ruleID = PreferencesManager.getRuleID(context, rule.name!!)
+            val ruleRef = db.collection("users").document(userID).collection("statistics").document(ruleID)
+
+            ruleRef.update("timeOfAction", FieldValue.increment(activeDuration.seconds))
+
+            // Delete rule
+            popupWindow.dismiss()
+            activeRules.removeAt(holder.adapterPosition)
+            PreferencesManager.deletePrivacyRule(context, ruleName)
+            PreferencesManager.deleteRuleID(context, ruleName)
+
+            // Show "no active rule" message if list is empty
+            if (activeRules.isEmpty()) {
+                noActiveRule.visibility = VISIBLE
+            }
+
+            notifyItemRemoved(holder.adapterPosition)
+
+            // Reload homepage
+            val intent = Intent(context, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+        }
+
+        val buttonCancel = popupView.findViewById<Button>(R.id.cancel_delete_button)
+        buttonCancel.setOnClickListener {
+            popupWindow.dismiss()
+        }
+
+
+        // Handler for clicking on the inactive zone of the window
+        popupView.setOnTouchListener { v, event -> // Close the window when clicked
+            popupWindow.dismiss()
+            true
         }
     }
 }
