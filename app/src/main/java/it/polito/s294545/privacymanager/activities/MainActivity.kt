@@ -170,7 +170,13 @@ class MainActivity : AppCompatActivity() {
 
         // Manage insert new rule button
         newRuleButton = findViewById(R.id.new_rule)
-        newRuleButton.setOnClickListener { v -> showPopupNewRule(v) }
+        newRuleButton.setOnClickListener {
+            // Create new rule
+            val intent = Intent(this, ParametersDefinitionActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(intent)
+            finish()
+        }
 
         if (!PreferencesManager.getHomepageTutorialShown(this)) {
             showTutorial()
@@ -269,6 +275,7 @@ class MainActivity : AppCompatActivity() {
         activeRules.clear()
     }
 
+    /*
     @SuppressLint("ClickableViewAccessibility")
     private fun showPopupNewRule(view: View) {
         val (popupView, popupWindow) = managePopup(view, R.layout.popup_new_rule)
@@ -295,6 +302,7 @@ class MainActivity : AppCompatActivity() {
             true
         }
     }
+     */
 }
 
 fun managePopup(view: View, layout: Int) : Pair<View, PopupWindow> {
