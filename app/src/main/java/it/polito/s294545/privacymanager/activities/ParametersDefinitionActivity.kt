@@ -363,24 +363,6 @@ class ParametersDefinitionActivity : AppCompatActivity() {
                 .build()
         )
 
-        val toolTipPermissionsButton = ShowcaseTooltip.build(this)
-            .corner(30)
-            .text("Cliccando su questo bottone potrai selezionare le autorizzazioni di tuo interesse")
-
-        sequence.addSequenceItem(
-            MaterialShowcaseView.Builder(this)
-                .setTarget(permissionsButton)
-                .setToolTip(toolTipPermissionsButton)
-                .withRectangleShape()
-                .setTooltipMargin(30)
-                .setShapePadding(15)
-                .setDismissOnTouch(true)
-                .setSkipText("Salta")
-                .setSkipStyle(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC))
-                .renderOverNavigationBar()
-                .build()
-        )
-
         val toolTipApps = ShowcaseTooltip.build(this)
             .corner(30)
             .text("Una (o più) delle autorizzazioni che hai selezionato possono essere utilizzate da diverse app. Scegli dunque le app che vuoi controllare")
@@ -392,22 +374,6 @@ class ParametersDefinitionActivity : AppCompatActivity() {
                 .withRectangleShape()
                 .setTooltipMargin(30)
                 .setShapePadding(50)
-                .setDismissOnTouch(true)
-                .renderOverNavigationBar()
-                .build()
-        )
-
-        val toolTipAppsButton = ShowcaseTooltip.build(this)
-            .corner(30)
-            .text("Cliccando su questo bottone potrai selezionare le app da monitorare")
-
-        sequence.addSequenceItem(
-            MaterialShowcaseView.Builder(this)
-                .setTarget(appsButton)
-                .setToolTip(toolTipAppsButton)
-                .withRectangleShape()
-                .setTooltipMargin(30)
-                .setShapePadding(15)
                 .setDismissOnTouch(true)
                 .renderOverNavigationBar()
                 .build()
@@ -429,22 +395,6 @@ class ParametersDefinitionActivity : AppCompatActivity() {
                 .build()
         )
 
-        val toolTipConditionsButton = ShowcaseTooltip.build(this)
-            .corner(30)
-            .text("Cliccando su questo bottone potrai navigare e scegliere i parametri di tuo interesse")
-
-        sequence.addSequenceItem(
-            MaterialShowcaseView.Builder(this)
-                .setTarget(conditionsButton)
-                .setToolTip(toolTipConditionsButton)
-                .withRectangleShape()
-                .setTooltipMargin(30)
-                .setShapePadding(15)
-                .setDismissOnTouch(true)
-                .renderOverNavigationBar()
-                .build()
-        )
-
         val toolTipAction = ShowcaseTooltip.build(this)
             .corner(30)
             .text("Puoi infine selezionare come intervenire nel caso in cui si verifichi una violazione alla regola definita")
@@ -456,22 +406,6 @@ class ParametersDefinitionActivity : AppCompatActivity() {
                 .withRectangleShape()
                 .setTooltipMargin(30)
                 .setShapePadding(50)
-                .setDismissOnTouch(true)
-                .renderOverNavigationBar()
-                .build()
-        )
-
-        val toolTipActionButton = ShowcaseTooltip.build(this)
-            .corner(30)
-            .text("Cliccando su questo bottone potrai selezionare la reazione che preferisci venga eseguita")
-
-        sequence.addSequenceItem(
-            MaterialShowcaseView.Builder(this)
-                .setTarget(actionButton)
-                .setToolTip(toolTipActionButton)
-                .withRectangleShape()
-                .setTooltipMargin(30)
-                .setShapePadding(15)
                 .setDismissOnTouch(true)
                 .renderOverNavigationBar()
                 .build()

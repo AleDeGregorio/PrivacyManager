@@ -207,7 +207,7 @@ class MainActivity : AppCompatActivity() {
 
         val toolTipSavedRules = ShowcaseTooltip.build(this)
             .corner(30)
-            .text("Questa è una lista dove ti verranno mostrate tutte le regole che hai salvato. Da qui puoi vedere i dettagli della tua regola, attivarla, modificarla oppure eliminarla")
+            .text("Questa è una lista dove ti verranno mostrate tutte le regole che hai salvato ma non ancora attivato. Da qui puoi vedere i dettagli della tua regola, attivarla, modificarla oppure eliminarla")
 
         sequence.addSequenceItem(
             MaterialShowcaseView.Builder(this)
@@ -225,7 +225,7 @@ class MainActivity : AppCompatActivity() {
 
         val toolTipActiveRules = ShowcaseTooltip.build(this)
             .corner(30)
-            .text("Qui, invece, ti verranno mostrate tutte le regole che hai attualmente attivato. Anche da qui puoi vedere i dettagli della regola e disattivarla")
+            .text("Qui, invece, ti verranno mostrate tutte le regole che hai attualmente attivato. Anche da qui puoi vedere i dettagli della regola e disattivarla, oltre a modificarla o eliminarla")
 
         sequence.addSequenceItem(
             MaterialShowcaseView.Builder(this)

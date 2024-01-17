@@ -130,7 +130,7 @@
     <string name="reset_time_slot">Reset orario</string>
     <string name="filter_app">Cerca applicazione</string>
     <string name="rule_definition">Definizione regola</string>
-    <string name="rule_definition_info">Per definire la regola è necessario specificare i seguenti parametri</string>
+    <string name="rule_definition_info">Per definire la regola è necessario specificare i seguenti parametri. Clicca sui bottoni corrispondenti per definirli</string>
     <string name="permissions_title">Cosa monitorare?</string>
     <string name="permissions_button">Permissions button</string>
     <string name="permissions">Autorizzazioni</string>
