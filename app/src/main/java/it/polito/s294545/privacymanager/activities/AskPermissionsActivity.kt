@@ -21,6 +21,7 @@ import android.view.MenuItem
 import android.view.View.VISIBLE
 import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -121,6 +122,21 @@ class AskPermissionsActivity : AppCompatActivity() {
         // Get toolbar
         val toolbarLayout = findViewById<ConstraintLayout>(R.id.toolbarLayout)
         val toolbar = toolbarLayout.findViewById<MaterialToolbar>(R.id.toolbar)
+
+        // Set the navigation icon
+        toolbar.navigationIcon = ContextCompat.getDrawable(this, R.drawable.icon_logout)
+        toolbar.setNavigationIconTint(resources.getColor(R.color.white))
+
+        toolbar.setNavigationOnClickListener {
+            PreferencesManager.deleteAll(this)
+
+            Toast.makeText(this, "Logout effettuato con successo!", Toast.LENGTH_LONG).show()
+
+            val intent = Intent(this, SignInActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(intent)
+            finish()
+        }
 
         // Set the help icon
         toolbar.inflateMenu(R.menu.toolbar_menu)
