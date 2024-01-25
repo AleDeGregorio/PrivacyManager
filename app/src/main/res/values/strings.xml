@@ -109,7 +109,7 @@
     <string name="location_icon">Location icon</string>
     <string name="time_slot_icon">Time slot icon</string>
     <string name="parameters_icon">Parameters icon</string>
-    <string name="no_rule_saved">Nessuna regola non attiva</string>
+    <string name="no_rule_saved">Nessuna regola presente</string>
     <string name="saved_rules">Regole salvate:</string>
     <string name="active_rules">Regole attive:</string>
     <string name="notification_title">Notification title</string>
@@ -125,7 +125,7 @@
     <string name="usage_permission">Usage permission</string>
     <string name="ask_usage">Monitora app</string>
     <string name="confirm_permissions">Confirm permissions</string>
-    <string name="no_active_rule">Nessuna regola attiva</string>
+    <string name="no_active_rule">Nessuna regola presente</string>
     <string name="reset_time_slot_info">Reset</string>
     <string name="reset_time_slot">Reset orario</string>
     <string name="filter_app">Cerca applicazione</string>

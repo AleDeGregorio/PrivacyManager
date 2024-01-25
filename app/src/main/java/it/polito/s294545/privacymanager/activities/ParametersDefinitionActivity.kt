@@ -349,7 +349,7 @@ class ParametersDefinitionActivity : AppCompatActivity() {
 
         val toolTipPermissions = ShowcaseTooltip.build(this)
             .corner(30)
-            .text("La parte fondamentale di una regola è rappresentata dalle autorizzazioni. Scegliendo le autorizzazioni che vuoi monitorare verrai avvertito quando viene effettuato un acesso alla funzionalità corrispondente")
+            .text("La parte fondamentale di una regola è rappresentata dalle autorizzazioni. Scegliendo le autorizzazioni che vuoi monitorare verrai avvertito quando viene effettuato un accesso alla funzionalità corrispondente")
 
         sequence.addSequenceItem(
             MaterialShowcaseView.Builder(this)
