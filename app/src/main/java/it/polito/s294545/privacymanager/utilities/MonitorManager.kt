@@ -31,6 +31,7 @@ import android.os.BatteryManager
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
+import android.os.UserHandle
 import android.provider.CalendarContract
 import android.provider.Settings
 import android.service.notification.NotificationListenerService
@@ -579,6 +580,11 @@ class NotificationListener : NotificationListenerService() {
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
+        // Check if notification is silent
+        if (!sbn.isClearable || sbn.notification.extras.getString(Notification.EXTRA_TEXT).isNullOrEmpty()) {
+            return
+        }
+
         val notificationRules = mutableListOf<Rule>()
 
         // Consider only rules with permission "notifications"
@@ -621,7 +627,7 @@ class NotificationListener : NotificationListenerService() {
                     intent.putExtra("content", content)
 
                     // Necessary to have a unique notification id
-                    val timestamp = System.currentTimeMillis().toInt()
+                    val timestamp = (System.currentTimeMillis().toInt() / 1000) * 1000
 
                     val pendingIntent = PendingIntent.getActivity(context, timestamp, intent, PendingIntent.FLAG_MUTABLE)
 
