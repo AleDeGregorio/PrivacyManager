@@ -581,7 +581,7 @@ class NotificationListener : NotificationListenerService() {
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         // Check if notification is silent
-        if (!sbn.isClearable || sbn.notification.extras.getString(Notification.EXTRA_TEXT).isNullOrEmpty()) {
+        if (!sbn.isClearable) {
             return
         }
 
