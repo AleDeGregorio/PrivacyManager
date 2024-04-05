@@ -6,6 +6,9 @@ Progetto di tesi realizzato al Politecnico di Torino, anno accademico 2023-2024
 Gli utenti dell'app hanno la possibilità di definire delle regole di sicurezza, e di adattare il comportamento di queste in base alle proprie esigenze personali. L'approccio usato è quello dell'End-User Development.
 Il comportamento del sistema prevede il monitoraggio delle app usate dall'utente e le funzionalità (autorizzazioni) che vengono richieste da queste. Il sistema si occupa quindi di segnalare all'utente le eventuali problematiche di privacy che vengono riscontrate, in base alle regole di sicurezza definite dall'utente
 
+# Download
+https://drive.google.com/file/d/1X3Y-O3sbo3WxMAf9TJ-QUvJ8ktrf5WZF/view?usp=drive_link
+
 # Screenshot
 ![homepage](./img/homepage.jpg)
 ![creazione_regola](./img/creazione_regola.jpg)
