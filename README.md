@@ -7,3 +7,10 @@ Gli utenti dell'app hanno la possibilità di definire delle regole di sicurezza,
 Il comportamento del sistema prevede il monitoraggio delle app usate dall'utente e le funzionalità (autorizzazioni) che vengono richieste da queste. Il sistema si occupa quindi di segnalare all'utente le eventuali problematiche di privacy che vengono riscontrate, in base alle regole di sicurezza definite dall'utente
 
 # Screenshot
+![homepage](./img/homepage.jpg)
+![creazione_regola](./img/creazione_regola.jpg)
+![regola_salvata](./img/regola_salvata.jpg)
+![notifica_violazione](./img/notifica_violazione.jpg)
+![violazione](./img/violazione.jpg)
+![notifica_oscurata](./img/notifica_oscurata.jpg)
+![violazione_notifica](./img/violazione_notifica.jpg)
